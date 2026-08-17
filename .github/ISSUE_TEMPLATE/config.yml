@@ -1,0 +1,20 @@
+# The issue chooser. Blank issues stay enabled on purpose: a bug found
+# the night before the demo must not be blocked by a form.
+blank_issues_enabled: true
+
+contact_links:
+  - name: The backlog is generated, not written
+    url: https://github.com/{{REPO}}/blob/main/docs/BACKLOG.md
+    about: Stories come from the specification. A new one is opened here AND added to the specification — the two never diverge.
+
+  - name: Golden rules
+    url: https://github.com/{{REPO}}/blob/main/GOLDEN_RULES.md
+    about: How we write code here. A blocked pull request names the rule by its number.
+
+  - name: Definition of Ready and Done
+    url: https://github.com/{{REPO}}/blob/main/DOR_DOD.md
+    about: When a story is allowed to start, and when it is genuinely finished.
+
+  - name: Delivery board
+    url: https://github.com/{{REPO}}/projects
+    about: Status, batch, points and priority for every issue.

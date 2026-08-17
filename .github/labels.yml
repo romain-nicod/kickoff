@@ -1,0 +1,74 @@
+# The repository's label set. Created by scripts/create_issues.py; this
+# file is the readable reference of what exists and what it means.
+#
+# Four families, and nothing else. A label that belongs to no family is a
+# label nobody filters on.
+
+# ── Epic — where the story comes from in the specification ───────────────
+# One per epic, created by scripts/create_issues.py from the
+# specification. Listed here only for reference.
+
+# ── Priority — the phasing from the specification ────────────────────────
+- name: "prio:P1"
+  color: "FF8A3D"
+  description: "Core journey, committed scope"
+- name: "prio:P2"
+  color: "A8410A"
+  description: "Second wave, committed if capacity allows"
+- name: "prio:P3"
+  color: "6E665B"
+  description: "Vision, not committed"
+
+# ── Batch — the delivery plan ────────────────────────────────────────────
+- name: "batch:B0"
+  color: "C9C0B4"
+  description: "Technical foundation"
+- name: "batch:B1"
+  color: "C9C0B4"
+  description: "The demo that works"
+- name: "batch:B2"
+  color: "C9C0B4"
+  description: "Third batch"
+- name: "batch:B3"
+  color: "C9C0B4"
+  description: "Fourth batch"
+- name: "batch:B4"
+  color: "C9C0B4"
+  description: "Fifth batch"
+- name: "batch:B5"
+  color: "C9C0B4"
+  description: "If time allows"
+- name: "batch:out-of-scope"
+  color: "6E665B"
+  description: "Out of the committed scope"
+
+# ── Complexity — the input of the velocity measurement ───────────────────
+- name: "pts:1"
+  color: "6E665B"
+  description: "Relative complexity 1"
+- name: "pts:2"
+  color: "6E665B"
+  description: "Relative complexity 2"
+- name: "pts:3"
+  color: "6E665B"
+  description: "Relative complexity 3"
+- name: "pts:4"
+  color: "6E665B"
+  description: "Relative complexity 4"
+- name: "pts:5"
+  color: "6E665B"
+  description: "Relative complexity 5"
+- name: "pts:8"
+  color: "6E665B"
+  description: "Relative complexity 8"
+- name: "pts:13"
+  color: "6E665B"
+  description: "Relative complexity 13 — outside the curriculum"
+
+# ── Nature — only for what the specification did not generate ────────────
+- name: "bug"
+  color: "17130E"
+  description: "Behaves differently from its acceptance criteria"
+- name: "chore"
+  color: "17130E"
+  description: "Technical work carrying no user story"

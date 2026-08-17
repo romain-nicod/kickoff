@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+"""Initialise a project from the kickoff template.
+
+Reads kickoff.yml, substitutes every placeholder, merges the chosen
+stack layer, then deletes what belongs to the template and not to the
+project — including this script.
+
+    bin/kickoff            # do it
+    bin/kickoff --dry-run  # say what would happen
+
+Runs on a plain Python 3, no dependency: kickoff.yml is parsed as flat
+`key: value` lines on purpose.
+"""
+
+import argparse
+import re
+import shutil
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CONFIG = ROOT / "kickoff.yml"
+
+# Files and directories that belong to the template, not to a project.
+TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "bin/kickoff"]
+
+# Text files we substitute into. Everything else is copied untouched.
+TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".py", ".erb", ".html", ".css",
+                 ".js", ".rb", ".example", ".txt", ""}
+
+SKIP_DIRS = {".git", "node_modules", "tmp", "log", "vendor"}
+
+
+def read_config():
+    if not CONFIG.exists():
+        sys.exit("kickoff.yml is missing — are you at the root of the repository?")
+
+    values = {}
+    for line in CONFIG.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        values[key.strip()] = value.strip()
+
+    missing = [k for k in ("project_name", "repo", "stack") if not values.get(k)]
+    if missing:
+        sys.exit(f"kickoff.yml: missing value for {', '.join(missing)}")
+    if values["repo"] == "owner/repo" or values["project_name"] == "My Project":
+        sys.exit("kickoff.yml still holds its example values — fill it in first.")
+
+    owner, _, name = values["repo"].partition("/")
+    capacity = (float(values.get("dev_days", 10))
+                * float(values.get("team_size", 4))
+                * float(values.get("velocity", 2.5)))
+
+    return {
+        "PROJECT_NAME": values["project_name"],
+        "REPO": values["repo"],
+        "OWNER": owner,
+        "REPO_NAME": name,
+        "TAGLINE": values.get("tagline", ""),
+        "STACK": values["stack"],
+        "DEV_DAYS": values.get("dev_days", "10"),
+        "TEAM_SIZE": values.get("team_size", "4"),
+        "VELOCITY": values.get("velocity", "2.5"),
+        "CAPACITY": str(int(capacity)),
+        "LANGUAGE": values.get("language", "en"),
+    }
+
+
+def files_to_process():
+    for path in ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        if any(part in SKIP_DIRS for part in path.parts):
+            continue
+        if path.suffix in TEXT_SUFFIXES or path.suffix == "":
+            yield path
+
+
+def substitute(values, dry_run):
+    pattern = re.compile(r"\{\{([A-Z_]+)\}\}")
+    unknown, touched = set(), 0
+
+    for path in files_to_process():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, PermissionError):
+            continue
+        if "{{" not in text:
+            continue
+
+        def replace(match):
+            key = match.group(1)
+            if key in values:
+                return values[key]
+            unknown.add(key)
+            return match.group(0)
+
+        new_text = pattern.sub(replace, text)
+        if new_text != text:
+            touched += 1
+            if not dry_run:
+                path.write_text(new_text, encoding="utf-8")
+
+    print(f"  {touched} files rewritten")
+    if unknown:
+        print(f"  ⚠️  unknown placeholders left as-is: {', '.join(sorted(unknown))}")
+
+
+def apply_stack(stack, dry_run):
+    if stack in ("none", ""):
+        print("  no stack layer")
+        return
+
+    layer = ROOT / "stacks" / stack
+    if not layer.is_dir():
+        available = sorted(p.name for p in (ROOT / "stacks").iterdir() if p.is_dir())
+        sys.exit(f"unknown stack '{stack}' — available: {', '.join(available)}, or none")
+
+    for source in sorted(layer.rglob("*")):
+        if not source.is_file() or source.name == "README.md":
+            continue
+        relative = source.relative_to(layer)
+
+        # foo.append.md is appended to foo.md instead of replacing it.
+        if source.name.endswith(".append.md"):
+            target = ROOT / relative.parent / source.name.replace(".append.md", ".md")
+            if target.exists():
+                print(f"  append  {target.relative_to(ROOT)}")
+                if not dry_run:
+                    target.write_text(
+                        target.read_text(encoding="utf-8").rstrip()
+                        + "\n\n" + source.read_text(encoding="utf-8").lstrip(),
+                        encoding="utf-8")
+                continue
+
+        target = ROOT / relative
+        print(f"  copy    {relative}")
+        if not dry_run:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+
+
+def clean_up(dry_run):
+    for name in TEMPLATE_ONLY:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        print(f"  remove  {name}")
+        if dry_run:
+            continue
+        shutil.rmtree(path) if path.is_dir() else path.unlink()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    values = read_config()
+
+    print(f"\n{values['PROJECT_NAME']} · {values['REPO']} · stack "
+          f"{values['STACK']}")
+    print(f"capacity: {values['DEV_DAYS']} days × {values['TEAM_SIZE']} people "
+          f"× {values['VELOCITY']} = {values['CAPACITY']} points\n")
+
+    print("Substituting")
+    substitute(values, args.dry_run)
+    print("Stack layer")
+    apply_stack(values["STACK"], args.dry_run)
+    print("Cleaning up")
+    clean_up(args.dry_run)
+
+    if args.dry_run:
+        print("\nDry run — nothing was written.")
+        return
+
+    print(f"""
+Done. What is left for you:
+
+  1. Fill in the four gaps left on purpose:
+     ROLES.md            the names behind each hat
+     TEAM_CHARTER.md     each person's real working hours
+     docs/MILESTONES.md  the dates, derived from the demo date
+     docs/GO_LIVE.md     where your host's rollback button is
+
+  2. Write the specification in docs/, then populate GitHub:
+
+     python3 scripts/build_backlog.py
+     python3 scripts/create_issues.py
+     python3 scripts/create_epic_issues.py
+     python3 scripts/setup_project.py       # needs: gh auth refresh -s project
+
+  3. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
+""")
+
+
+if __name__ == "__main__":
+    main()

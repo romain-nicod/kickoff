@@ -1,0 +1,32 @@
+# The eight values. Fill them in, then run bin/kickoff.
+# Format is deliberately flat "key: value" — no YAML library needed.
+
+# The product's name, as a human says it. Example: Go Meal
+project_name: My Project
+
+# owner/repo on GitHub. Example: ai-gmented-pm/go-meal
+repo: owner/repo
+
+# One sentence: what the product does, for whom. It lands in the README
+# and in the repository description.
+tagline: One sentence saying what this does and for whom.
+
+# Stack layer: rails, static, or none.
+stack: rails
+
+# Development days actually available, once framing, pitch preparation
+# and the final presentation are removed.
+dev_days: 10
+
+# People on the team.
+team_size: 4
+
+# Points per person per day. 2.5 is a starting hypothesis for developers
+# on a stack they have just learnt — measure it at the end of week one
+# and re-run the numbers.
+velocity: 2.5
+
+# Language of the repository: en or fr. Everything is written in English
+# by default; "fr" only changes the convention stated in the docs, not
+# the files themselves.
+language: en
