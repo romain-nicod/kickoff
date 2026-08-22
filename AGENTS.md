@@ -1,5 +1,11 @@
 # {{PROJECT_NAME}} — working instructions
 
+> ⚙️ Règles de travail communes à tout ce dossier : `~/Documents/Claude/CLAUDE.md`.
+
+> **La mémoire du projet vit dans le vault**, pas ici :
+> `~/Documents/Claude/ObsiClaud/dev/`
+> Ce fichier ne porte que les règles de travail sur ce dépôt.
+
 This file is the substance for any agent (Claude Code, Copilot, Cursor…)
 and for any human picking the project up. `CLAUDE.md` is only a pointer
 to it.
