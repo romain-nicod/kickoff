@@ -25,7 +25,7 @@ They change in the specification first, then the issue follows.
 
 ## Definition of Done
 
-A story is **not Done** until all seven hold. Merged is not done.
+A story is **not Done** until all eight hold. Merged is not done.
 
 - [ ] Every acceptance criterion of the issue is checked, one by one.
 - [ ] CI is green.
@@ -36,6 +36,8 @@ A story is **not Done** until all seven hold. Merged is not done.
 - [ ] Accessibility holds: touch targets, contrast, no information
       carried by colour alone.
 - [ ] Its error and empty states exist and lead somewhere.
+- [ ] No key in the code: everything is read from the environment, and
+      any new variable is in `.env.example` (rule 28).
 - [ ] The README or `AGENTS.md` is updated **in the same commit** if a
       command, a variable or a URL changed.
 

@@ -130,8 +130,24 @@ review comments you will get are things you would have caught yourself.
 **27 — Push daily.** Work that exists only on your laptop does not exist
 for the team, and cannot be picked up if you are ill.
 
-**28 — Never commit a secret, never force-push a shared branch.** If a
-key leaks: revoke and rotate first, clean the history after.
+**28 — Every key lives in `.env`, and `.env` is never pushed.** One
+mechanism, no exception: an API key, a token, a password, a connection
+string, a webhook URL — it goes in `.env`, which `.gitignore` already
+covers. In the code you read it through the environment
+(`ENV.fetch("STRIPE_KEY")`), never as a literal, and never "just for
+this test". Add the variable to `.env.example` **in the same commit**,
+with an empty value: that file is how the next person learns it exists.
+In production there is no `.env` at all — the values are the host's
+secrets.
+
+```ruby
+# no  api_key = "sk_live_5f3a…"
+# yes api_key = ENV.fetch("STRIPE_KEY")
+```
+
+Never force-push a shared branch either. If a key leaks: revoke and
+rotate first, clean the history after — revocation is instant and
+total, history rewriting is slow and imperfect.
 
 **29 — CI green before you ask for a review.** Asking someone to read
 code that does not build spends their time to save yours.
@@ -150,6 +166,7 @@ and someone else has probably already hit the same wall.
 | The specification | Changing it is a product decision, and the issue scripts must be re-run |
 | The database schema | Conflicts are resolved by re-running migrations, never by hand |
 | The linter configuration | An exclusion is a team decision, not a way to make your PR green |
+| `.gitignore`, `.env.example` | Removing a line from one of them is how a secret reaches the history |
 
 ---
 
