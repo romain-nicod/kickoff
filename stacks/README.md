@@ -25,7 +25,7 @@ That is the whole contract. A layer is a directory and two files.
 
 | Layer | What it adds |
 |---|---|
-| `rails` | Rules 31 to 57 (Rails idioms, CSS components and tokens, Hotwire), a CI workflow with PostgreSQL, RuboCop and Brakeman |
+| `rails` | Rules 31 to 59 (Rails idioms and boilerplate helpers, CSS components and tokens, Hotwire), a CI workflow with PostgreSQL, RuboCop and Brakeman |
 | `static` | Rules 31 to 40 (structure, assets, no framework), a CI workflow that lints and checks links |
 | `none` | Nothing. The method only. |
 

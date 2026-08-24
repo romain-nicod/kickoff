@@ -46,7 +46,7 @@ bin/dev
 | `bootstrap ~> 5.3` + `autoprefixer-rails` | Hand-written CSS | Grid and components on day one |
 | `font-awesome-sass ~> 6.1` | Inline SVG | `icon(...)` straight from a view |
 | `simple_form` (from GitHub) | `form_with` and manual markup | `f.input` renders a Bootstrap field |
-| `lewagon/rails-stylesheets` | Rails' default CSS | The component/token layout of rule 46 |
+| `lewagon/rails-stylesheets` | Rails' default CSS | The component/token layout of rule 48 |
 | Importmap, with Bootstrap and Popper pinned | jsbundling, Yarn, Node | No Node toolchain to keep alive |
 
 🔴 **Sprockets and Propshaft do not coexist.** To go back to Propshaft
