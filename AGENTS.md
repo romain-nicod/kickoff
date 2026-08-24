@@ -2,9 +2,12 @@
 
 > ⚙️ Règles de travail communes à tout ce dossier : `~/Documents/Claude/CLAUDE.md`.
 
-> **La mémoire du projet vit dans le vault**, pas ici :
-> `~/Documents/Claude/ObsiClaud/dev/`
-> Ce fichier ne porte que les règles de travail sur ce dépôt.
+> 🔴 **La mémoire de ce projet vit dans le vault**, pas ici :
+> `~/Documents/Claude/ObsiClaud/<domaine>/{{REPO_NAME}}/`
+> — remplacer `<domaine>` par `perso`, `le-wagon`, `ai-gmented` ou `dev`,
+> et créer le dossier avec sa carte (`{{PROJECT_NAME}}.md`) et son
+> `CLAUDE.md` **le jour où le dépôt naît**, pas plus tard.
+> Ce fichier-ci ne porte que les règles de travail sur ce dépôt.
 
 This file is the substance for any agent (Claude Code, Copilot, Cursor…)
 and for any human picking the project up. `CLAUDE.md` is only a pointer
@@ -28,6 +31,9 @@ to it.
 | Why the product is what it is | |
 | Any visual value | |
 | What it looks like | `design/` |
+| How a key reaches the app | `.env` only — golden rule 28, `docs/SECRETS.md` |
+| Which generator the skeleton came from | `docs/BOILERPLATE.md` |
+| The long memory: decisions, traps already paid | the vault folder above |
 
 <!-- One rule to state here: which document wins when two disagree. A
      project with two references has none. -->
@@ -43,7 +49,22 @@ to it.
      🔴 No hard-coded visual value: everything reads a token.
      🔴 A hard constraint is never traded against a preference.
      🔴 Data with no source is not displayed.
-     🔴 No hypothesis is presented as a measurement. -->
+     🔴 No hypothesis is presented as a measurement.
+
+     Two are already decided for every project and are not up for
+     debate here — keep them: -->
+
+🔴 **Every key lives in `.env`, and `.env` is never pushed.** One
+mechanism, no exception, no "just for this test". Read through
+`ENV.fetch(...)`, declare the name in `.env.example` in the same commit.
+A key in the history is compromised even in a private repository — see
+golden rule 28.
+
+🔴 **The application skeleton comes from `minimal`, Le Wagon's Rails
+template.** Not a bare `rails new`, not a hand-assembled stack: it is the
+base everyone here learnt on, and day one is not spent relearning where
+the CSS lives. Departing from it is allowed and gets written down in
+`README.md` — see `docs/BOILERPLATE.md`.
 
 🔴
 

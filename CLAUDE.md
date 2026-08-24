@@ -9,16 +9,28 @@ pull request names the rule by its number.
 
 Reminders that are expensive to forget:
 
-<!-- Copy the three or four absolute rules from AGENTS.md, section 3.
-     Not all of them — the ones that get broken. -->
+<!-- Copy the ones from AGENTS.md, section 3, that actually get broken.
+     The two below are decided for every project — keep them. -->
 
-- 🔴
+- 🔴 **Every key lives in `.env`, and `.env` is never pushed** (rule 28).
+  `ENV.fetch(...)` in the code, the variable name in `.env.example`, in
+  the same commit. No exception for a test or a demo.
+- 🔴 **The skeleton comes from `minimal`, Le Wagon's Rails template** —
+  see `docs/BOILERPLATE.md`. Departing from it is written down in
+  `README.md`.
 - 🔴
 - 🔴
 
 The reference specification is `docs/`. A story cited in code is cited
 by its number (`US-nnn`), a business rule by its own (`BR-nn`).
 
-<!-- If the project has a long memory outside the repository — a vault,
-     a wiki, a drive — say where it is and what belongs there rather
-     than here. -->
+Two skills are installed in `.claude/skills/` and load on their own:
+`methode-projet` (which deliverable now, who validates it) and
+`methode-wagon` (how the code is written here). They come from the
+`kickoff` template, which is authoritative for them — edit them there,
+not here.
+
+🔴 **The long memory of this project lives in the vault**, not in this
+repository: the folder named at the top of `AGENTS.md`. Decisions and
+their reasons, traps already paid for, state of play. A decision that
+changes, changes there.

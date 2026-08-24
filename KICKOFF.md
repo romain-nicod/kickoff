@@ -39,6 +39,8 @@ is left for you to do.
 | **Architecture** | `docs/ARCHITECTURE.md` and `docs/SCHEMA.md` — **living documents**, updated in the same commit as the change they describe |
 | **Documentation** | `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/SYSTEM_DESIGN.md`, `docs/decisions/`, `docs/WIKI.md` |
 | **Prompts** | `docs/PROMPTS.md` — how to ask for each deliverable above, and what to check before accepting it |
+| **Boilerplate** | `docs/BOILERPLATE.md` (stack layer) — `minimal`, Le Wagon's Rails template, and what it decides for you |
+| **Skills** | `skills/` — three Claude skills; two are installed into the project's `.claude/skills/` |
 | **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` |
 | **Automation** | `scripts/` — specification → issues, epics, milestones, board |
 
@@ -77,16 +79,62 @@ Adding a layer is a directory and two files. See
 
 ## What this template is not
 
-It is **not an application skeleton**. It does not run `rails new` for
-you: your generator does that better than a copy would, and a frozen
-skeleton rots in two framework releases. Generate the app, then apply
-this template on top — or the reverse, both work.
+It is **not a frozen application skeleton**, and it never will be: a
+skeleton copied into a repository rots in two framework releases.
+
+But it does have an opinion about which generator you run. On the
+`rails` layer the default is **`minimal`** — Le Wagon's Rails template of
+that name, `minimal.rb` in `lewagon/rails-templates` — with the exact
+command and every choice it makes documented in `docs/BOILERPLATE.md`. You run it after `bin/kickoff`, in the cloned
+repository, with `--skip` so that what is already there wins. Not using
+it is fine; not saying why, in `README.md`, is not.
 
 It is **not a substitute for thinking about your product.** It gives you
 the shape of a specification, not its content. The intelligence — a
 backlog derived from a real product idea, batches sized against a real
 capacity, rules specific to what you are building — is what the
 companion Claude Code skill does.
+
+---
+
+## Who is authoritative
+
+Three places carry the same method, on purpose — the skills drive Claude,
+this template starts a repository, Amorce's generators serve a team. They
+must agree, so each subject has **one** home. Change it there; the others
+follow.
+
+| Subject | Authoritative | Why |
+|---|---|---|
+| Method documents (DoR/DoD, roles, charter, ceremonies, Git conventions, review) | **`kickoff`** | Written to be read, not derived |
+| Golden rules, per-stack layers | **`kickoff`** | Only lives here |
+| Specification → issues, epics, milestones, board | **`kickoff`** | Only lives here |
+| The three Claude skills | **`kickoff`** (`skills/`) | Moved here on 24/08/2026; `~/.claude/skills/` is an install, never an edit |
+| The boilerplate default (`minimal`) and its reasons | **`kickoff`** (`docs/BOILERPLATE.md`) | Which generator we start from is a method decision |
+| The executable `template.rb` | **`amorce`** (`boilerplate` brick) | Derived from a project profile; a copy here would rot |
+| `docs/PROMPTS.md` | **`amorce`** (`bibliotheque_prompts` brick) | Generated there, committed here — the file says so in its first line |
+| Profile-derived wording of any document | **`amorce`** | This template substitutes values; it does not derive text |
+| Repository configuration by API (labels, branch protection, board, Pages) | **`amorce`** | Only lives there |
+
+🔴 **Never apply both to the same repository.** They write the same
+subjects to different file names — you end up with `docs/MILESTONES.md`
+*and* `docs/JALONS.md`, and two Definitions of Done that disagree about
+estimation.
+
+The full comparison, and the ten contradictions found on 24/08/2026:
+`ObsiClaud/dev/Kickoff et Amorce - recouvrement et arbitrage.md`.
+
+## This template's own memory
+
+The long memory of **this repository** lives in the vault, not here:
+
+```
+~/Documents/Claude/ObsiClaud/dev/kickoff/
+```
+
+`AGENTS.md` in this repository is a **template for the project you are
+creating** — its vault pointer is a placeholder you fill in with your own
+project's folder. It is not this repository's own agent file.
 
 ---
 

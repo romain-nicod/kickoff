@@ -48,7 +48,12 @@ Requirements: <!-- exact versions, and the traps of this machine -->
 ```bash
 git clone git@github.com:{{REPO}}.git
 cd {{REPO_NAME}}
+cp .env.example .env   # then fill in your own values — see section 6
 ```
+
+<!-- The application skeleton comes from `minimal`, Le Wagon's Rails
+     template — see docs/BOILERPLATE.md for the exact command and what
+     it decides. If you did not use it, say why under section 4. -->
 
 ## 6. Environment variables
 
@@ -56,8 +61,11 @@ cd {{REPO_NAME}}
 |---|---|---|
 | | | |
 
-Real values live in the host's secrets and never in Git. See
-[`docs/SECRETS.md`](docs/SECRETS.md).
+🔴 **Every key lives in `.env`, and `.env` is never pushed** (golden rule
+28). One mechanism, no exception. `.env.example` carries the same
+variable names with empty values and is updated **in the same commit** as
+any new variable. In production there is no `.env`: the values are the
+host's secrets. See [`docs/SECRETS.md`](docs/SECRETS.md).
 
 ## 7. Tests and quality
 
@@ -111,12 +119,19 @@ The method is set up before the code, not after.
 | **Launch** | [`docs/GO_LIVE.md`](docs/GO_LIVE.md) |
 | **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/specification.md`](docs/specification.md) · [`docs/SCENARIOS.md`](docs/SCENARIOS.md) |
 | **Prompts** | [`docs/PROMPTS.md`](docs/PROMPTS.md) — one prompt per design deliverable, each with what to check in the answer |
+| **Boilerplate** | [`docs/BOILERPLATE.md`](docs/BOILERPLATE.md) — `minimal`, Le Wagon's Rails template, and what it decides for you |
 | **Architecture** | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/SCHEMA.md`](docs/SCHEMA.md) · [`docs/decisions/`](docs/decisions/) |
 | **Documentation** | [`AGENTS.md`](AGENTS.md) · [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) · [`docs/WIKI.md`](docs/WIKI.md) |
 
 Four before writing a line of code: `GOLDEN_RULES.md` for how we write,
 `AGENTS.md` for what this product forbids, `DOR_DOD.md` for when a story
 starts and ends, `CONTRIBUTING.md` for how a change reaches `main`.
+
+Two Claude skills are installed in `.claude/skills/` — `methode-projet`
+(which deliverable now, who validates it) and `methode-wagon` (how the
+code is written here). Any session opened in this repository picks them
+up with no setup. They are versioned with the project; they come from
+the `kickoff` template, which is authoritative for them.
 
 ## 11. Licence
 
