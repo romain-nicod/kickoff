@@ -109,7 +109,9 @@ The method is set up before the code, not after.
 | **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`DOR_DOD.md`](DOR_DOD.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
 | **Team** | [`ROLES.md`](ROLES.md) · [`TEAM_CHARTER.md`](TEAM_CHARTER.md) · [`CEREMONIES.md`](CEREMONIES.md) · [`docs/STANDUP.md`](docs/STANDUP.md) · [`docs/ONBOARDING.md`](docs/ONBOARDING.md) |
 | **Launch** | [`docs/GO_LIVE.md`](docs/GO_LIVE.md) |
-| **Documentation** | [`AGENTS.md`](AGENTS.md) · [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) · [`docs/decisions/`](docs/decisions/) · [`docs/WIKI.md`](docs/WIKI.md) |
+| **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/specification.md`](docs/specification.md) |
+| **Architecture** | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/SCHEMA.md`](docs/SCHEMA.md) · [`docs/decisions/`](docs/decisions/) |
+| **Documentation** | [`AGENTS.md`](AGENTS.md) · [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) · [`docs/WIKI.md`](docs/WIKI.md) |
 
 Four before writing a line of code: `GOLDEN_RULES.md` for how we write,
 `AGENTS.md` for what this product forbids, `DOR_DOD.md` for when a story
