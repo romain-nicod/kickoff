@@ -121,6 +121,28 @@ reversed by accident.
 If the user keeps a knowledge base outside the repository, write the
 project's memory there too: decisions, traps met, state of play.
 
+## 7. Register the repository in the repository map
+
+🔴 **Before the first push**, add the new repository to
+`~/Documents/Claude/ObsiClaud/dev/Dépôts AI-GMENTED.md` — the map of every
+repository on the account. Three edits, in the same commit as the creation:
+
+1. **A row in the overview table** (§1), in the right family: name,
+   visibility, whether a local clone exists, one line on what it is.
+2. **A paragraph in §2**: what it holds, its state, its live URL if it has
+   one, its GitHub account if it is not `ai-gmented-pm`.
+3. **An overlap entry in §3** — *only if it applies, and it usually does*.
+   Does this repository carry material that already lives elsewhere: content,
+   a method document, a skill, shared site code? Then say so, and **name
+   which copy is authoritative**. An unwritten overlap is an overlap that
+   will silently diverge.
+
+Then bump the note's footer version and date.
+
+**Judge visibility on what is actually served, not on the repository
+setting.** A private repository with GitHub Pages enabled publishes its
+content to everyone. Check before writing "private" in the table.
+
 ---
 
 ## What good looks like at the end
@@ -133,6 +155,8 @@ project's memory there too: decisions, traps met, state of play.
 - A green CI on the first push
 - Four gaps explicitly left for the kick-off meeting, not silently
   invented
+- A row, a paragraph and — where it applies — an overlap entry in the
+  repository map, written before the first push
 
 ## Traps
 
