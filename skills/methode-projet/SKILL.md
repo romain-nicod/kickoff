@@ -259,6 +259,30 @@ en est le rendu.
 
 ---
 
+## 🔴 Les routes sont un livrable de conception, pas de la plomberie
+
+Elles s'écrivent **avant le code**, après le schéma de données et avant les
+specs — étape 5 bis du parcours. Sur une US : ouvrir `config/routes.rb`, écrire
+les lignes, lancer `bin/rails routes`, lire ce qui sort.
+
+**Ce que tu vérifies en le rendant :** les ressources sont nommées au pluriel
+dans le vocabulaire du métier ; `resources ... only: [...]` ne déclare que ce
+que l'US utilise ; l'imbrication ne dépasse jamais une profondeur ; aucune route
+orpheline dans un sens ni dans l'autre ; et tu sais nommer le `_path` de chaque
+écran du wireframe.
+
+**Pourquoi c'est un livrable et pas une ligne de code.** Une route est une
+décision de **découpage du domaine**. Écrite en premier, elle fait apparaître
+qu'un besoin qui n'entre pas dans les sept actions RESTful est une deuxième
+ressource — la conversation a lieu à ce moment-là, ou elle n'a jamais lieu.
+Écrite au moment de coder, elle épouse le contrôleur qu'on avait déjà en tête et
+ne révèle plus rien.
+
+Sans elles, l'étape 6 est bloquée : une spec de requête a besoin du chemin, une
+spec de feature a besoin du `_path`.
+
+---
+
 ## 🔴 Deux passes avant qu'une US parte — et c'est toi qui les demandes
 
 Une US n'est pas rendue sur la parole de celui qui l'a écrite. Deux passes,

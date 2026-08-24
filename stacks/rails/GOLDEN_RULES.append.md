@@ -43,9 +43,19 @@ expression buried in ERB can be neither.
 **34 — Named routes, never string paths.** A route that moves then
 breaks in one place, not in forty.
 
-**35 — RESTful routes, seven actions.** A need that does not fit `index
-show new create edit update destroy` is usually a second resource, not
-an eighth action.
+**35 — RESTful routes, seven actions — and you write them before the
+code.** A need that does not fit `index show new create edit update
+destroy` is usually a second resource, not an eighth action.
+
+Write them first, flat, in `config/routes.rb`, and read `bin/rails
+routes` before opening a controller. A route is a **decision about how
+the domain is cut**, not plumbing: written first, it makes the second
+resource visible while there is still time to discuss it. Written while
+you code, it takes the shape of the controller you already had in mind,
+and shows you nothing.
+
+`resources ... only: [...]` — declare what the story uses, nothing else.
+One level of nesting, never two.
 
 **36 — Fat model, skinny controller.** Business logic in the model or a
 concern, called from anywhere.

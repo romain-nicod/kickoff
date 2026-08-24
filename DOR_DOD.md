@@ -7,13 +7,16 @@ worse than no checklist.
 
 ## Definition of Ready
 
-A story is **not started** until all five hold.
+A story is **not started** until all six hold.
 
 - [ ] It has an issue, with its acceptance criteria written down.
 - [ ] It carries its epic, priority, batch and complexity labels.
 - [ ] Its acceptance criteria are testable by someone who did not write
       it — "the screen is fast" is not, "first result in under 3 s on
       4G" is.
+- [ ] The routes it adds or changes are named — verb and path — and they
+      fit the seven RESTful actions, or the story says which second
+      resource it needs instead.
 - [ ] Its dependencies are delivered, or explicitly stubbed.
 - [ ] The business rules it touches are identified by number and not
       contradicted by the design.
@@ -25,12 +28,15 @@ They change in the specification first, then the issue follows.
 
 ## Definition of Done
 
-A story is **not Done** until all nine hold. Merged is not done.
+A story is **not Done** until all ten hold. Merged is not done.
 
 - [ ] Every acceptance criterion of the issue is checked, one by one.
 - [ ] CI is green.
 - [ ] It respects the golden rules — no hard-coded value, business logic
       in the right layer, no string outside the translation layer.
+- [ ] `routes` lists exactly the paths the story needed, no more: no route
+      without an action, no action without a route, and every view uses the
+      named helper rather than a string path.
 - [ ] It works **on the real target device**, not only in a desktop
       browser at the right width.
 - [ ] Accessibility holds: touch targets, contrast, no information

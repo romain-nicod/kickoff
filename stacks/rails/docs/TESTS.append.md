@@ -22,6 +22,10 @@ bundle exec rspec spec/models/venue_spec.rb:42
 | A route's behaviour, a redirect, a status | `spec/requests/` |
 | The demo journey, once it exists | `spec/features/` — one, not ten |
 
+⚠️ **Request and feature specs need the routes to exist.** They ask for a
+path and click a named helper. That is why routes are written before the
+tests, not while you code — see rule 35.
+
 ### The name is the acceptance criterion
 
 Written before the code, in the words of the issue. Someone who did not

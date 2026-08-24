@@ -33,6 +33,7 @@ sait pas écrire faute de critères d'acceptation).
  3. Prototype cliquable — seulement si l'interaction est non évidente
  4. Design system — Bootstrap d'abord, composant nouveau ajouté AVANT d'être codé
  5. Schéma de données — types, associations, index, contraintes, dependent:
+ 5 bis. **Routes** — écrites dans `routes.rb` AVANT de coder, vérifiées au `bin/rails routes`
  6. Specs RSpec — un `it` par critère ; les specs EXISTANTES aussi sont mises à jour
  6 bis. Scénarios Given/When/Then dans `docs/SCENARIOS.md`, mappés par la description du `it`
  7. Pseudo-code en commentaires numérotés
@@ -46,6 +47,11 @@ sait pas écrire faute de critères d'acceptation).
 
 **On ne saute pas d'étape, mais on saute les étapes sans objet.** Une US qui ne touche pas
 l'interface n'a ni wireframe ni prototype — le dire est une décision, pas un oubli.
+
+⚠️ **Les titres `##` de cette skill ont leur propre numérotation (0 à 7) et ne
+correspondent PAS aux douze étapes ci-dessus.** Une étape se cite toujours
+« étape N du parcours » — sans quoi « 5 bis » désigne les routes pour l'un et la
+section sur DRY pour l'autre.
 
 **Le détail de chaque étape, avec ses critères de « fini quand » :**
 `~/Documents/Claude/ObsiClaud/le-wagon/methode/Wagon - Cheat sheet US.md`
@@ -118,6 +124,14 @@ Les plus coûteuses à violer :
 - **Comportement JS = contrôleur Stimulus + attributs `data-`**, jamais un `<script>` inline
   ni `querySelector`/`addEventListener` à la main.
 - **`simple_form_for`**, pas `form_with` — les classes Bootstrap viennent avec.
+- 🔴 **Les routes s'écrivent AVANT le code**, à plat dans `routes.rb`, et se
+  vérifient au `bin/rails routes`. Une route est une **décision de découpage**,
+  pas de la plomberie : écrite en premier, elle révèle qu'un besoin qui n'entre
+  pas dans `index show new create edit update destroy` est une **deuxième
+  ressource** et pas une huitième action. Écrite au moment de coder, elle épouse
+  le contrôleur qu'on avait déjà en tête, et on ne voit plus rien. C'est aussi
+  ce qui rend les specs de requête et de feature écrivables : elles ont besoin
+  du `_path`.
 - **Strong params** systématiques ; `resources ... only: [...]` plutôt que les 7 routes ;
   un seul niveau de nesting, et sur les actions de collection uniquement.
 - **`dependent: :destroy` explicite**, index sur chaque clé étrangère, **Active Storage**
@@ -189,6 +203,11 @@ méthode.** C'est le critère de découpage à utiliser — pas une règle de lo
 ## 2. Coder en silo
 
 Une **tranche verticale complète**, testée, avant de commencer la suivante.
+
+🔴 **Les routes sont déjà écrites** — étape 5 bis, avant les specs. Ce qu'on
+implémente ici en silo, c'est l'action et la vue de chaque page ; la ligne dans
+`routes.rb` existe. Si elle manque, c'est qu'on a sauté l'étape 5 bis : y
+retourner, ne pas l'improviser au fil du contrôleur.
 
 En Rails, le flux est : `route ➡️ controller#action ➡️ view`.
 
