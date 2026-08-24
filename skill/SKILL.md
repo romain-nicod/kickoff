@@ -143,6 +143,11 @@ Then bump the note's footer version and date.
 setting.** A private repository with GitHub Pages enabled publishes its
 content to everyone. Check before writing "private" in the table.
 
+The map covers the repository's whole life, not just its birth: flipping
+visibility, renaming, transferring or deleting it is written there in the
+same move — including what the change breaks (forks, stars, watchers,
+Pages). A map that lags behind GitHub is worse than no map.
+
 ---
 
 ## What good looks like at the end
