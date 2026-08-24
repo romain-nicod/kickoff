@@ -162,6 +162,18 @@ Les plus coûteuses à violer :
   code, le nom de la variable dans `.env.example` au même commit, secrets de
   l'hébergeur en prod. Une seule mécanique, sans exception « juste pour ce test »
   (règle d'or 28).
+- **Viser moins de 80 colonnes par ligne.** Un objectif, pas un dogme — mais le
+  défaut. Deux fichiers tiennent côte à côte, un diff se lit en deux colonnes,
+  et surtout : **une ligne qui ne rentre pas est presque toujours une ligne qui
+  en fait trop.** Trois appels chaînés, un ternaire imbriqué, une condition à
+  quatre clauses — la largeur est le symptôme, la structure est le problème.
+  Extraire la variable, nommer le résultat intermédiaire, couper la condition :
+  le code devient plus court **et** plus lisible, ce qui n'est pas le compromis
+  habituel. Exceptions légitimes : une URL, une chaîne qu'on ne peut pas
+  couper, un fichier généré.
+  ⚠️ **On ne reformate pas du code qui marche** pour tenir la limite — ce serait
+  une refactorisation que personne n'a demandée, et c'est interdit ici. Ça vaut
+  pour ce qu'on écrit maintenant.
 - 🔴 **Le test d'abord, à chaque US.** On écrit la spec RSpec depuis le critère
   d'acceptation, **on la regarde échouer**, puis on écrit le minimum qui la fait
   passer. Un test écrit après teste le code ; un test écrit avant teste l'US —

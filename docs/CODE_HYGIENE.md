@@ -30,6 +30,35 @@ block in a short project is a block nobody dares delete at the end.
 **No `TODO` without an issue number.** `# TODO: handle the empty case`
 is noise; `# TODO(US-1006): handle the exhausted supply` is a pointer.
 
+**Aim for lines under 80 columns.** An objective, not a dogma — but the
+default, and the exceptions are named rather than accumulated.
+
+Three reasons, and the third is the one that matters:
+
+- Two files fit side by side on one screen, and a diff reads in two
+  columns without wrapping.
+- A projected screen — a livecode, a demo, a review on someone else's
+  laptop — cuts around there. A line that wraps on the projector is a
+  line nobody in the room follows.
+- **A line that will not fit is usually a line doing too much.** Three
+  chained calls, a nested ternary, a condition with four clauses: the
+  width is the symptom, the structure is the problem. Extract the
+  variable, name the intermediate result, split the condition — the code
+  gets shorter *and* readable, which is not the usual trade.
+
+```ruby
+# no
+render json: venues.select { |v| v.open_at?(Time.current) && v.distance < radius }.map { |v| serialize(v) }
+
+# yes
+open_nearby = venues.select { |venue| venue.open_at?(Time.current) && venue.distance < radius }
+render json: open_nearby.map { |venue| serialize(venue) }
+```
+
+Legitimate exceptions: a long URL, a string you must not break, a
+generated file. You do not reformat working code to satisfy the limit —
+that is a refactor nobody asked for. It applies to what you write now.
+
 **A function does one thing, and its name says which.** If the name
 needs `and`, it is two functions.
 

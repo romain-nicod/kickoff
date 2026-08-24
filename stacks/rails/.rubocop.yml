@@ -1,0 +1,21 @@
+# Omakase Ruby styling for Rails, plus this project's house rules.
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+# Omakase leaves LineLength off. We turn it on: the project starts from
+# an empty repository, so 80 columns costs nothing to hold from day one
+# and is impossible to retrofit later. See docs/CODE_HYGIENE.md for why
+# 80 — and for the part that matters, which is that a line refusing to
+# fit is usually a line doing too much.
+Layout/LineLength:
+  Enabled: true
+  Max: 80
+  # A URL or a long string cannot be split without breaking it, and
+  # wrapping a comment mid-sentence helps nobody.
+  AllowedPatterns:
+    - '\A\s*#'
+    - 'https?://'
+  # Generated files are not ours to reformat.
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/*_schema.rb'
+    - 'bin/**/*'
