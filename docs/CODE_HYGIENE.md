@@ -33,6 +33,59 @@ is noise; `# TODO(US-1006): handle the exhausted supply` is a pointer.
 **A function does one thing, and its name says which.** If the name
 needs `and`, it is two functions.
 
+## Not repeating yourself — and knowing when to stop
+
+**One thing per file, one thing per function.** If you need "and" to
+describe it, it is two things.
+
+**DRY is about decisions, not characters.** Before factoring out two
+pieces that look alike, ask one question:
+
+> If this rule changes, will I *always* have to change both, in the same
+> way?
+
+Yes: it is the same decision written twice — factor it out. No: they
+resemble each other by accident. Leave them apart. Merging them couples
+two things that are going to diverge, and that is how a codebase ends up
+with a boolean parameter threaded through everything.
+
+**Rule of three.** Two occurrences are tolerated; you factor out at the
+third. With two, the shape of the abstraction is a guess — and a wrong
+abstraction costs more than a copy, because everyone works around it
+instead of deleting it. The cost is asymmetric: removing a copy takes
+five minutes, undoing an abstraction that ten files depend on takes a
+day.
+
+**No `utils` or `helpers` catch-all file.** A file whose responsibility
+is "miscellaneous" is the exact opposite of a single responsibility.
+Name the file after what it does.
+
+### Moving a value into a configuration file
+
+Do it when all three answers are yes:
+
+1. Does the value change **without the code changing**? (a prompt, a
+   threshold, a list of labels, an API URL)
+2. Do you want to change it **without reading the surrounding code**?
+3. Is there **more than one**, or will there be?
+
+A single value read in a single place stays in the code, named as a
+constant. A configuration file with one entry is one more file to open
+and nothing else.
+
+Three guard rails whenever you do extract:
+
+- **One place reads the file** and hands the values to the rest of the
+  code. Scattered reads are the same value with several truths.
+- **Every entry has a default**, and a **clear failure** when it is
+  missing or malformed — otherwise you traded a visible bug for a silent
+  one.
+- The code that uses a value says where it comes from.
+
+🔴 **The stopping test, in both cases: can you still explain one
+behaviour by opening two files?** If it takes four, the extraction cost
+more than it returned, whatever theory justified it.
+
 ## Comments
 
 Comment **why**, never what. The code says what.
