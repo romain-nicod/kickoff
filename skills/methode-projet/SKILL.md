@@ -259,6 +259,41 @@ en est le rendu.
 
 ---
 
+## 🔴 Deux passes avant qu'une US parte — et c'est toi qui les demandes
+
+Une US n'est pas rendue sur la parole de celui qui l'a écrite. Deux passes,
+**demandées explicitement**, jamais supposées faites.
+
+| Passe | Répond à | Quand |
+|---|---|---|
+| **Vérification** | Est-ce que ça fait vraiment ce que l'US promettait, dans l'app qui tourne ? | Chaque US, avant d'ouvrir la PR |
+| **Revue de sécurité** | Est-ce que ça ouvre quelque chose qui était fermé ? | Toute US qui touche l'auth, une saisie, un upload, de l'argent ou un appel tiers — **et une fois par semaine quoi qu'il arrive** |
+
+**La vérification n'est pas « les tests sont verts ».** L'app tourne, et chaque
+critère d'acceptation de l'issue y est parcouru un par un : les états vide,
+erreur et chargement atteints exprès, le vrai appareil, la console propre, le
+log sans la même requête imprimée trente fois. Une suite verte prouve que le
+code fait ce que dit le test — pas que le test dit ce que dit l'US.
+
+**La revue de sécurité** : `/security-review` sur le diff, plus les outils de
+la stack (`brakeman`, `bundler-audit`), en **lisant ce qu'ils impriment**. Puis
+les questions qui valent partout : toute clé nouvelle lue dans `ENV` et aucune
+dans le code, strong params sur chaque écriture, aucune saisie rendue en markup
+brut, aucune requête construite par interpolation, autorisation vérifiée côté
+serveur et pas seulement masquée dans la vue.
+
+🔴 **C'est toi qui décides et qui demandes.** À la fin du travail sur une US,
+nomme laquelle des deux passes est due et demande-la — n'attends pas qu'il y
+pense. Le silence n'est pas une passe : une US rendue sans l'une ni l'autre est
+une US que personne n'a vérifiée. Et si aucune n'a tourné depuis une semaine,
+la revue de sécurité est due, même si rien ne l'a déclenchée.
+
+⚠️ **`/verify` n'existe pas comme commande installée** sur ce poste — la passe
+de vérification se conduit à la main, dans l'app qui tourne. `/security-review`,
+elle, existe. La liste des critères est dans `docs/QUALITY.md` du dépôt.
+
+---
+
 ## 🔴 Qui fait foi, quand `kickoff` et `amorce` disent deux choses
 
 Les deux produisent les mêmes documents de méthode par deux routes. Chaque

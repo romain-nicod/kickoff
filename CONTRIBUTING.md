@@ -55,6 +55,7 @@ git rebase origin/main
 | A secret committed | A missing test on a trivial view |
 | A golden rule broken, named by its number | A golden rule you would have written differently |
 | Business logic in the view instead of the model | Formatting the linter already accepts |
+| No verification pass on a story that changed behaviour | The reviewer would have verified differently |
 
 Everything in the right-hand column is a comment, not a request for
 changes. **A blocked PR must state which rule it breaks**, by number.
@@ -65,6 +66,16 @@ changes. **A blocked PR must state which rule it breaks**, by number.
 
 ```bash
 ```
+
+Then the **verification pass**: the app running, every acceptance
+criterion of the issue walked through in it. And a **security review** if
+the story touched auth, input, uploads, money or a third-party call — at
+minimum once a week whatever happened. Both are described in
+[`docs/QUALITY.md`](docs/QUALITY.md).
+
+🔴 **Both are asked for explicitly.** Whoever did the work names which
+one is due; a story handed over without either is a story nobody
+checked.
 
 ## Definition of Ready and Definition of Done
 
