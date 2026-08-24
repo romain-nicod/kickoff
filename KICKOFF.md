@@ -38,6 +38,7 @@ is left for you to do.
 | **Product** | `docs/PRD.md` (intent, outcomes, non-goals), `docs/specification.md` (stories), `docs/SCENARIOS.md` (Given/When/Then, mapped to the RSpec examples) |
 | **Architecture** | `docs/ARCHITECTURE.md` and `docs/SCHEMA.md` — **living documents**, updated in the same commit as the change they describe |
 | **Documentation** | `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/SYSTEM_DESIGN.md`, `docs/decisions/`, `docs/WIKI.md` |
+| **Prompts** | `docs/PROMPTS.md` — how to ask for each deliverable above, and what to check before accepting it |
 | **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` |
 | **Automation** | `scripts/` — specification → issues, epics, milestones, board |
 
