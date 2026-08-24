@@ -22,7 +22,14 @@ ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "kickoff.yml"
 
 # Files and directories that belong to the template, not to a project.
-TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "bin/kickoff"]
+# `skills` goes too: the two a project needs are installed into
+# .claude/skills/ first, and project-kickoff has done its job by then.
+TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
+
+# Skills copied into the project's own .claude/skills/, so that every
+# session opened in the repository picks them up with no setup — for
+# everyone on the team, not just whoever ran this script.
+PROJECT_SKILLS = ["methode-projet", "methode-wagon"]
 
 # Text files we substitute into. Everything else is copied untouched.
 TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".py", ".erb", ".html", ".css",
@@ -150,6 +157,23 @@ def apply_stack(stack, dry_run):
             shutil.copy2(source, target)
 
 
+def install_skills(dry_run):
+    target_root = ROOT / ".claude" / "skills"
+    for name in PROJECT_SKILLS:
+        source = ROOT / "skills" / name
+        if not source.is_dir():
+            print(f"  ⚠️  skills/{name} is missing — skipped")
+            continue
+        print(f"  install .claude/skills/{name}")
+        if dry_run:
+            continue
+        target = target_root / name
+        if target.exists():
+            shutil.rmtree(target)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(source, target)
+
+
 def clean_up(dry_run):
     for name in TEMPLATE_ONLY:
         path = ROOT / name
@@ -177,6 +201,8 @@ def main():
     substitute(values, args.dry_run)
     print("Stack layer")
     apply_stack(values["STACK"], args.dry_run)
+    print("Skills")
+    install_skills(args.dry_run)
     print("Cleaning up")
     clean_up(args.dry_run)
 
@@ -201,6 +227,10 @@ Done. What is left for you:
      python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 
   3. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
+
+Two skills were installed in .claude/skills/ — methode-projet and
+methode-wagon. Any Claude Code session opened here picks them up with no
+setup. They are versioned with the project: commit them.
 """)
 
 

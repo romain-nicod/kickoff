@@ -47,8 +47,33 @@ Then fill `kickoff.yml` with the eight values and run:
 bin/kickoff
 ```
 
-It substitutes everywhere, merges the stack layer, and deletes itself.
-Read its output: it lists the four gaps left on purpose.
+It substitutes everywhere, merges the stack layer, installs
+`methode-projet` and `methode-wagon` into the project's `.claude/skills/`,
+and deletes itself. Read its output: it lists the four gaps left on
+purpose.
+
+Then generate the application skeleton, in the cloned repository:
+
+```bash
+rails new -d postgresql \
+  -m https://raw.githubusercontent.com/lewagon/rails-templates/master/minimal.rb \
+  --skip \
+  .
+```
+
+🔴 **`minimal` is the default and needs no discussion** — it is Le Wagon's
+Rails template of that name, the base the team learnt on. `--skip` keeps
+the files the clone already holds. Not using it is a legitimate choice
+that gets **written into `README.md` under "Structural decisions"**, in
+the same commit. See `docs/BOILERPLATE.md`.
+
+Add `dotenv-rails` in the same move (rule 28 needs it):
+
+```ruby
+group :development, :test do
+  gem "dotenv-rails"
+end
+```
 
 ## 3. Fill the method documents — briefly
 
@@ -68,6 +93,16 @@ must speak for itself. Fill only those:
 eight prohibitions specific to this product, each with its reason. They
 come from the specification and from the design, not from a generic
 list. If you cannot write five, the product is not understood yet.
+
+Two of them arrive already written and stay: **every key in `.env`**
+(rule 28) and **the skeleton comes from `minimal`**. Do not paraphrase
+them into something weaker.
+
+🔴 **Fill the vault pointer at the top of `AGENTS.md`** with the real
+folder — `~/Documents/Claude/ObsiClaud/<domaine>/<projet>/` — and create
+that folder now, with its card (`<Projet>.md`) and its `CLAUDE.md`. A
+project whose memory has no home writes it into the repository, and the
+repository is not where it belongs.
 
 ## 4. Write the specification in the parsed format
 
@@ -111,7 +146,22 @@ Two things the API cannot do, to hand to the user step by step:
 2. Creating the **Board view**: `+` next to the view tabs → Board, group
    by Status.
 
-## 6. Record what was decided
+## 6. Keys, before anything is pushed
+
+🔴 **Every key lives in `.env`, and `.env` is never pushed** — golden rule
+28, and the one thing on this list that cannot be fixed afterwards. Check
+three things before the first push:
+
+1. `git check-ignore -v .env` answers. If it does not, stop.
+2. No literal key anywhere: `git grep -nE '(sk_|pk_|ghp_|AKIA|BEGIN .*PRIVATE KEY)'`
+   comes back empty.
+3. Every variable the app reads is in `.env.example`, with an empty
+   value and a line saying what it is for.
+
+Never ask the user to paste a secret into the conversation. Host secrets
+are set by them, in the host's dashboard, step by step.
+
+## 7. Record what was decided
 
 Write the structural decisions as ADRs in `docs/decisions/` while the
 reasons are fresh — especially the one about what you deliberately did
@@ -121,7 +171,7 @@ reversed by accident.
 If the user keeps a knowledge base outside the repository, write the
 project's memory there too: decisions, traps met, state of play.
 
-## 7. Register the repository in the repository map
+## 8. Register the repository in the repository map
 
 🔴 **Before the first push**, add the new repository to
 `~/Documents/Claude/ObsiClaud/dev/Dépôts AI-GMENTED.md` — the map of every
@@ -150,6 +200,28 @@ Pages). A map that lags behind GitHub is worse than no map.
 
 ---
 
+## Who is authoritative, when the two systems disagree
+
+`kickoff` and `amorce` produce the same method documents by different
+routes. Each subject has one home — the table is in `KICKOFF.md`,
+section "Who is authoritative", and the full comparison is in
+`ObsiClaud/dev/Kickoff et Amorce - recouvrement et arbitrage.md`.
+
+The three that get confused most often:
+
+| Subject | Authoritative |
+|---|---|
+| The three Claude skills | **`kickoff`** (`skills/`) — `~/.claude/skills/` is an install, never an edit |
+| The executable `template.rb` | **`amorce`** (`boilerplate` brick) |
+| `docs/PROMPTS.md` | **`amorce`** (`bibliotheque_prompts` brick) — generated there, committed into `kickoff` |
+
+🔴 **Never apply both systems to the same repository.** They write the
+same subjects under different file names: `docs/MILESTONES.md` against
+`docs/JALONS.md`, and two Definitions of Done that disagree about
+estimation.
+
+---
+
 ## What good looks like at the end
 
 - A repository whose README a stranger can follow to a running app
@@ -162,6 +234,10 @@ Pages). A map that lags behind GitHub is worse than no map.
   invented
 - A row, a paragraph and — where it applies — an overlap entry in the
   repository map, written before the first push
+- A vault folder for the project, with its card and its `CLAUDE.md`, and
+  `AGENTS.md` pointing at it
+- `.env` gitignored, `.env.example` filled with names only, and no
+  literal key anywhere in the history
 
 ## Traps
 
