@@ -73,7 +73,11 @@ def files_to_process():
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if any(part in SKIP_DIRS for part in path.parts):
+        # Relative to ROOT, never the absolute path: a repository cloned
+        # under a directory called tmp/, log/ or vendor/ would otherwise
+        # have every one of its files skipped, and the substitution would
+        # silently do nothing.
+        if any(part in SKIP_DIRS for part in path.relative_to(ROOT).parts):
             continue
         if path.suffix in TEXT_SUFFIXES or path.suffix == "":
             yield path
@@ -105,6 +109,9 @@ def substitute(values, dry_run):
                 path.write_text(new_text, encoding="utf-8")
 
     print(f"  {touched} files rewritten")
+    if not touched:
+        print("  ⚠️  nothing was substituted — expected at least README.md. "
+              "Are you at the root of the repository?")
     if unknown:
         print(f"  ⚠️  unknown placeholders left as-is: {', '.join(sorted(unknown))}")
 
