@@ -144,7 +144,17 @@ Les plus coûteuses à violer :
   niveau d'imbrication.**
 - **`redirect_to` après un POST réussi** — convention Rails, et exigence de Turbo : un POST
   qui ne redirige pas est rejeté en silence.
-- **Aucune clé d'API dans le code** : `dotenv` en local, variables d'environnement en prod.
+- 🔴 **Toutes les clés dans `.env`, jamais poussé** — `ENV.fetch("NOM")` dans le
+  code, le nom de la variable dans `.env.example` au même commit, secrets de
+  l'hébergeur en prod. Une seule mécanique, sans exception « juste pour ce test »
+  (règle d'or 28).
+- 🔴 **Le test d'abord, à chaque US.** On écrit la spec RSpec depuis le critère
+  d'acceptation, **on la regarde échouer**, puis on écrit le minimum qui la fait
+  passer. Un test écrit après teste le code ; un test écrit avant teste l'US —
+  ils se ressemblent dans le diff et ce n'est pas le même objet. Et un critère
+  qu'on n'arrive pas à transformer en test qui échoue est un critère qui n'était
+  pas assez précis : le découvrir avant de coder coûte une heure, le découvrir à
+  la démo coûte la démo.
 
 Quand tu écris une forme hors de cette liste alors qu'une forme idiomatique existe,
 **dis-le et propose l'idiomatique** — ne tranche pas en silence.
