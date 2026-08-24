@@ -35,7 +35,7 @@ is left for you to do.
 | **Quality** | `GOLDEN_RULES.md`, `DOR_DOD.md`, `docs/QUALITY.md`, `docs/NAMING.md` |
 | **Team** | `ROLES.md`, `TEAM_CHARTER.md`, `CEREMONIES.md`, `docs/STANDUP.md`, `docs/ONBOARDING.md` |
 | **Launch** | `docs/GO_LIVE.md` |
-| **Product** | `docs/PRD.md` (intent, outcomes, non-goals), `docs/specification.md` (stories) |
+| **Product** | `docs/PRD.md` (intent, outcomes, non-goals), `docs/specification.md` (stories), `docs/SCENARIOS.md` (Given/When/Then, mapped to the RSpec examples) |
 | **Architecture** | `docs/ARCHITECTURE.md` and `docs/SCHEMA.md` — **living documents**, updated in the same commit as the change they describe |
 | **Documentation** | `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/SYSTEM_DESIGN.md`, `docs/decisions/`, `docs/WIKI.md` |
 | **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` |
