@@ -52,7 +52,12 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-      - name: Prepare the database
-        run: bin/rails db:prepare
+      # 🔴 db:test:prepare, never db:prepare. db:prepare LOADS THE SEEDS,
+      # and seeds that read a key with ENV.fetch (golden rule 28) die in
+      # CI on a KeyError at the bottom of a rake trace — where nothing
+      # says the cause is the seeds. db:test:prepare loads the schema and
+      # nothing else, which is all a test run needs.
+      - name: Prepare the test database
+        run: bin/rails db:test:prepare
       - name: Test
         run: bundle exec rspec

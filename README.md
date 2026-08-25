@@ -107,6 +107,17 @@ python3 scripts/create_epic_issues.py  # epics + sub-issue links
 python3 scripts/setup_project.py       # board and its fields
 ```
 
+And one that answers a different question — what did this template leave
+blank that nobody filled in:
+
+```bash
+python3 scripts/check_placeholders.py
+```
+
+It names the file and the line, and it is in the Definition of Done.
+Nothing else can see an empty stack table: a linter, a test suite and a
+security scan are all silent on a heading with nothing under it.
+
 If an acceptance criterion must change, it changes in the specification
 first, then the scripts are re-run. Stories discovered along the way are
 opened from the issue template **and** added to the specification —
@@ -124,7 +135,7 @@ The method is set up before the code, not after.
 | Axis | Document |
 |---|---|
 | **Engineering** | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`docs/ENVIRONMENTS.md`](docs/ENVIRONMENTS.md) · [`docs/CODE_HYGIENE.md`](docs/CODE_HYGIENE.md) · [`docs/TESTS.md`](docs/TESTS.md) · [`docs/SECRETS.md`](docs/SECRETS.md) |
-| **Delivery** | [`docs/BOARD.md`](docs/BOARD.md) · [`docs/BACKLOG.md`](docs/BACKLOG.md) · [`docs/MILESTONES.md`](docs/MILESTONES.md) · [`docs/DEMO.md`](docs/DEMO.md) |
+| **Delivery** | [`docs/BOARD.md`](docs/BOARD.md) · [`docs/BACKLOG.md`](docs/BACKLOG.md) · [`docs/MILESTONES.md`](docs/MILESTONES.md) · [`docs/DEMO.md`](docs/DEMO.md) · [`docs/PARALLEL_WORK.md`](docs/PARALLEL_WORK.md) — building several stories at once without two writers overwriting each other |
 | **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`DOR_DOD.md`](DOR_DOD.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
 <!-- team-only -->
 | **Team** | [`ROLES.md`](ROLES.md) · [`TEAM_CHARTER.md`](TEAM_CHARTER.md) · [`CEREMONIES.md`](CEREMONIES.md) · [`docs/STANDUP.md`](docs/STANDUP.md) · [`docs/ONBOARDING.md`](docs/ONBOARDING.md) |

@@ -126,7 +126,12 @@ def fix_gitignore(dry_run):
     nobody corrects.
     """
     path = ROOT / ".gitignore"
-    text = path.read_text(encoding="utf-8")
+    # ⚠️ `rails new` writes no .gitignore when one already exists, and a
+    # `git init` done by hand beforehand leaves none at all — which is
+    # how 1779 runtime files got committed once. Starting from empty is
+    # the right answer here, not a crash: every rule below is then
+    # missing and gets written.
+    text = path.read_text(encoding="utf-8") if path.exists() else ""
     present = {line.strip() for line in text.splitlines()}
 
     missing = [line.strip() for line in RAILS_IGNORE.splitlines()
@@ -192,6 +197,58 @@ def point_generators_at_rspec(dry_run):
                     encoding="utf-8")
     return "  config/application.rb: generators point at RSpec"
 
+TEST_DB_NOTE = """  # 🔴 One test database PER WORKTREE, not one for the repository.
+  #
+  # docs/PARALLEL_WORK.md sends parallel stories into their own git
+  # worktree — a checkout of this same repository, so it carries this
+  # same file, so every worktree ran its suite against ONE database. Two
+  # suites at once then fight over the same rows: records vanish
+  # mid-example and the failures MOVE between runs. Nothing in the report
+  # points at the cause, and the natural reaction is to hunt a bug in
+  # code that was passing a minute ago.
+  #
+  # TEST_DB_SUFFIX is set per worktree; without it the name is
+  # unchanged, so a single checkout behaves exactly as before.
+"""
+
+
+def isolate_test_database(dry_run):
+    """Make the test database name carry TEST_DB_SUFFIX.
+
+    `rails new` writes one test database for the repository. That is
+    correct until two suites run at once, which is what the parallel
+    model in docs/PARALLEL_WORK.md asks for on every batch.
+    """
+    path = ROOT / "config" / "database.yml"
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    if "TEST_DB_SUFFIX" in text:
+        return None
+
+    marker = "\ntest:\n"
+    if marker not in text:
+        return ("  WARNING  no `test:` block in config/database.yml — add "
+                "TEST_DB_SUFFIX to the test database name by hand")
+
+    head, tail = text.split(marker, 1)
+    lines = tail.split("\n")
+    for index, line in enumerate(lines):
+        if line.strip().startswith("database:"):
+            break
+    else:
+        return ("  WARNING  the `test:` block of config/database.yml names "
+                "no database — add TEST_DB_SUFFIX by hand")
+
+    if dry_run:
+        return "  add TEST_DB_SUFFIX to the test database in config/database.yml"
+
+    name = lines[index].split("database:", 1)[1].strip()
+    lines[index] = f'  database: {name}<%= ENV["TEST_DB_SUFFIX"] %>'
+    lines.insert(index, TEST_DB_NOTE.rstrip("\n"))
+    path.write_text(head + marker + "\n".join(lines), encoding="utf-8")
+    return "  config/database.yml: one test database per worktree"
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -208,6 +265,7 @@ def main():
         fix_gitignore(args.dry_run),
         untrack_runtime(args.dry_run),
         point_generators_at_rspec(args.dry_run),
+        isolate_test_database(args.dry_run),
     ]
     reported = [line for line in done if line]
     print("\n".join(reported) if reported else "  nothing to do")
