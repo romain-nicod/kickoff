@@ -103,6 +103,35 @@ here it is, one line per destination.
 - [ ] `README.md`, `AGENTS.md` and `.env.example` are updated if a
       command, a variable or a URL changed. No key in the code:
       everything is read from the environment (rule 28).
+- [ ] 🔴 **A QA pass was run on the deliverable itself, in the browser.**
+      Not the same thing as a green suite: the suite proves the code does
+      what a spec says, the QA pass asks whether the SCREEN is right.
+
+      **What it is:** open the screens the story touched at **three
+      widths — 1280 px, 768 px and 375 px** — in **both themes**, and
+      look. Measure anything colour-related rather than judging it, and
+      write a defect down **with its measurement**.
+
+      ⚠️ 768 px is Bootstrap's `md` breakpoint exactly: it is where a
+      table replaces cards and where a header row decides whether to
+      wrap. **A layout right at 1280 and at 375 can still be wrong
+      between them.**
+
+      **Why it earns its line.** On the first real project built from
+      this template, everything expensive was found this way and none of
+      it by a green suite: eight P1 points unreachable because two
+      partials were rendered by nothing; a form error pinned to the
+      corner of the viewport; 56 % of a phone screen spent on navigation
+      before the first button; a primary colour at **2.92:1** on a dark
+      card — below AA even for large text, and raising no error anywhere.
+
+      🔴 **Four of the defects it caught were in the SEEDS**: a business
+      losing money every month, entries dated in the future, three
+      identical months so every comparison read "unchanged", and five
+      payment methods at exactly 20 % each. Implausible demo data does
+      not merely look bad — **it makes a working feature look broken**,
+      and no test ever asks whether a figure is plausible.
+
 - [ ] **No section this template left blank is still blank.** The check
       is a command, not a reading:
 
