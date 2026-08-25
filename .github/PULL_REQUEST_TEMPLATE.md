@@ -7,6 +7,8 @@ Closes #
 ## Definition of Done
 
 - [ ] Every acceptance criterion of the issue is met
+- [ ] The issue's success criterion is instrumented — whatever it is
+      read from exists and produces a number
 - [ ] CI is green
 - [ ] No hard-coded value that belongs in a token or a constant
 - [ ] Business logic in the right layer, not in the view

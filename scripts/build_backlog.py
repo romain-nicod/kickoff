@@ -26,7 +26,19 @@ for match in re.finditer(r"^## (E\d+) — (.+)$", spec, re.M):
     epics[match.group(1)] = match.group(2).strip()
 
 # ------------------------------------------------------- user stories
-# | **US-101** | Proposal on launch | As a ... | 1. ...<br>2. ... | P1 |
+# | **US-101** | Proposal on launch | As a ... | 1. ...<br>2. ... | <8 s median, read at D+14 | P1 |
+#
+# Six columns since the success criterion became mandatory. The
+# five-column shape is still recognised so an older specification parses,
+# but it lands without a success criterion and the run then stops on the
+# check at the bottom of this file.
+STORY_ROW = re.compile(
+    r"^\| \*\*(US-\d+)\*\* \| (.+?) \| (.+?) \| (.+?) \| (.+?) \| (P\d) \|$"
+)
+LEGACY_STORY_ROW = re.compile(
+    r"^\| \*\*(US-\d+)\*\* \| (.+?) \| (.+?) \| (.+?) \| (P\d) \|$"
+)
+
 stories = {}
 current_epic = None
 for line in spec.splitlines():
@@ -37,20 +49,29 @@ for line in spec.splitlines():
     if line.startswith("## Business rules"):
         current_epic = None
 
-    row = re.match(
-        r"^\| \*\*(US-\d+)\*\* \| (.+?) \| (.+?) \| (.+?) \| (P\d) \|$", line
-    )
-    if row and current_epic:
+    row = STORY_ROW.match(line)
+    if row:
+        story_id, feature, story, criteria, success, priority = row.groups()
+    else:
+        row = LEGACY_STORY_ROW.match(line)
+        if not row:
+            continue
         story_id, feature, story, criteria, priority = row.groups()
-        stories[story_id] = {
-            "id": story_id,
-            "epic": current_epic,
-            "epic_title": epics[current_epic],
-            "feature": feature.strip(),
-            "story": story.strip(),
-            "criteria": [c.strip() for c in criteria.split("<br>") if c.strip()],
-            "priority": priority,
-        }
+        success = ""
+
+    if not current_epic:
+        continue
+
+    stories[story_id] = {
+        "id": story_id,
+        "epic": current_epic,
+        "epic_title": epics[current_epic],
+        "feature": feature.strip(),
+        "story": story.strip(),
+        "criteria": [c.strip() for c in criteria.split("<br>") if c.strip()],
+        "success": success.strip(),
+        "priority": priority,
+    }
 
 # --------------------------------------------------------- complexity
 # | US-101 | Proposal on launch | **5** | JS · RAILS · SQL | P1 |
@@ -84,6 +105,16 @@ backlog = sorted(stories.values(), key=lambda s: (int(s["epic"][1:]), s["id"]))
 missing = [s["id"] for s in backlog if "points" not in s]
 if missing:
     raise SystemExit(f"No complexity found for: {', '.join(missing)}")
+
+without_success = [s["id"] for s in backlog if not s["success"]]
+if without_success:
+    raise SystemExit(
+        "No success criterion for: " + ", ".join(without_success) + "\n"
+        "Every story states the outcome that proves it was worth doing — "
+        "its threshold and when it is read. If the outcome only exists at "
+        "epic level, say so in the column: "
+        '"carried by E3 — median time to a booked slot under 90 s".'
+    )
 
 OUT.write_text(json.dumps(backlog, ensure_ascii=False, indent=2), encoding="utf-8")
 

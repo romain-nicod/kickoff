@@ -66,6 +66,23 @@ def ensure_milestone(title, description, dry_run):
          "-f", f"description={description}"])
 
 
+# The Definition of Done, copied into every story so it is ticked there.
+# Reference: DOR_DOD.md. A change to one is a change to both — and to
+# .github/ISSUE_TEMPLATE/user_story.md, which carries the same list for
+# stories opened by hand.
+DEFINITION_OF_DONE = """- [ ] Every acceptance criterion above is checked, one by one
+- [ ] The success criterion is instrumented — whatever it is read from exists and produces a number
+- [ ] CI is green
+- [ ] It respects the golden rules — no hard-coded value, business logic in the right layer, no string outside the translation layer
+- [ ] `routes` lists exactly the paths the story needed, no more, and every view uses the named helper rather than a string path
+- [ ] It works **on the real target device**, not only in a desktop browser at the right width
+- [ ] Accessibility holds: touch targets, contrast, no information carried by colour alone
+- [ ] Its error and empty states exist and lead somewhere
+- [ ] No key in the code: everything is read from the environment, and any new variable is in `.env.example`
+- [ ] The **verification pass** was asked for and done: every acceptance criterion walked through in the running app — plus a security review if the story touched auth, input, uploads, money or a third-party call
+- [ ] The README or `AGENTS.md` is updated **in the same commit** if a command, a variable or a URL changed"""
+
+
 def body_for(story):
     batch = story.get("batch")
     meta = [
@@ -87,12 +104,23 @@ def body_for(story):
 
 {criteria}
 
+### Success criterion
+
+{story["success"]}
+
+### Definition of Done
+
+Merged is not done. The reference is `DOR_DOD.md`; this copy is here so
+it gets ticked on the story itself.
+
+{DEFINITION_OF_DONE}
+
 ---
 
 <sub>Quoted verbatim from the reference specification
-`docs/specification.md`, section {story["epic"]}. An acceptance
-criterion is never translated nor reworded: if it must change, it changes
-in the specification first.</sub>
+`docs/specification.md`, section {story["epic"]}. An acceptance or
+success criterion is never translated nor reworded: if it must change, it
+changes in the specification first.</sub>
 """
 
 

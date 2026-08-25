@@ -72,11 +72,13 @@ the document stays readable on its own:
 
 > **Capability**: what the user can do that they could not before.
 
-| ID | Feature | User story | Acceptance criteria | Pri |
-|---|---|---|---|---|
-| **US-101** | Short name | As a …, I want …, so that … | 1. …<br>2. … | P1 |
+| ID | Feature | User story | Acceptance criteria | Success criterion | Pri |
+|---|---|---|---|---|---|
+| **US-101** | Short name | As a …, I want …, so that … | 1. …<br>2. … | Outcome, threshold, when it is read. | P1 |
 ```
 
 Plus one table of complexity per story and one per batch. See
 `scripts/build_backlog.py` — it states exactly which shapes it reads,
-and it fails loudly rather than guessing.
+and it fails loudly rather than guessing. It also refuses a story with an
+empty success criterion: acceptance says whether it does what was asked,
+success says whether it was worth doing, and a story states both.

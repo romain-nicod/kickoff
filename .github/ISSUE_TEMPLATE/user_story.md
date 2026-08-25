@@ -35,8 +35,26 @@ As a <who>, I want <what>, so that <why>.
 - [ ] 2.
 - [ ] 3.
 
-<!-- Testable by someone who did not write them. "The screen is fast" is
-     not a criterion; "first proposal in under 3 s on 4G" is. -->
+<!-- Does it do what was asked? Binary, functional, and testable by
+     someone who did not write them. "The screen is fast" is not a
+     criterion; "first proposal in under 3 s on 4G" is.
+     They are checked before the story is closed. -->
+
+### Success criterion
+
+<!-- Was it worth doing? One measurable outcome, with its threshold and
+     when it is read — not a restatement of the acceptance criteria.
+
+     An acceptance criterion is met on the day of the merge; a success
+     criterion is read afterwards, on the running product. "The upload
+     accepts a 10 MB file" is acceptance. "Fewer than 5% of uploads are
+     abandoned, measured over the first two weeks" is success.
+
+     If the outcome cannot be read at story level, name the measure the
+     epic carries and say so: "carried by E3 — median time to a booked
+     slot under 90 s". Every story states one; none is left blank. -->
+
+-
 
 ### Business rules touched
 
@@ -52,7 +70,10 @@ As a <who>, I want <what>, so that <why>.
 
 ### Definition of Ready
 
+<!-- Before the first line of code. -->
+
 - [ ] Acceptance criteria are testable by someone else
+- [ ] A success criterion is written, with its threshold and its reading date
 - [ ] Dependencies are delivered, or explicitly stubbed
 - [ ] Complexity estimated on the shared scale (1 · 2 · 3 · 5 · 8 · 13)
 - [ ] Placed in a batch — including "out of scope", which is a decision
@@ -63,3 +84,31 @@ As a <who>, I want <what>, so that <why>.
      1 trivial · 2 simple CRUD · 3 standard · 5 custom JS, external API
      or geospatial query · 8 an algorithm or a pipeline · 13 outside the
      curriculum. -->
+
+### Definition of Done
+
+<!-- Before the issue is closed. Merged is not done. The reference is
+     DOR_DOD.md; this copy is here so it gets ticked on the story
+     itself. A change to one is a change to both. -->
+
+- [ ] Every acceptance criterion above is checked, one by one
+- [ ] The success criterion is instrumented — whatever it is read from
+      exists and produces a number
+- [ ] CI is green
+- [ ] It respects the golden rules — no hard-coded value, business logic
+      in the right layer, no string outside the translation layer
+- [ ] `routes` lists exactly the paths the story needed, no more, and
+      every view uses the named helper rather than a string path
+- [ ] It works **on the real target device**, not only in a desktop
+      browser at the right width
+- [ ] Accessibility holds: touch targets, contrast, no information
+      carried by colour alone
+- [ ] Its error and empty states exist and lead somewhere
+- [ ] No key in the code: everything is read from the environment, and
+      any new variable is in `.env.example`
+- [ ] The **verification pass** was asked for and done: every acceptance
+      criterion walked through in the running app — plus a security
+      review if the story touched auth, input, uploads, money or a
+      third-party call
+- [ ] The README or `AGENTS.md` is updated **in the same commit** if a
+      command, a variable or a URL changed

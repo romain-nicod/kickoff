@@ -111,10 +111,18 @@ what `scripts/build_backlog.py` reads. Fill it with real content —
 epics, stories with testable acceptance criteria, business rules,
 complexity per story, batches.
 
-Three things that make it worth reading rather than merely parseable:
+Four things that make it worth reading rather than merely parseable:
 
 **Acceptance criteria are testable by someone who did not write them.**
 "The screen is fast" is not one; "first result in under 3 s on 4G" is.
+
+**Every story also carries a success criterion, and the build fails
+without one.** It answers a different question: acceptance is met the day
+of the merge, success is read afterwards on the running product — one
+outcome, its threshold, when it is read. "The upload accepts a 10 MB
+file" is acceptance; "fewer than 5% of uploads abandoned over the first
+two weeks" is success. When the outcome only exists at epic level, name
+the epic measure rather than inventing a story-level one.
 
 **Complexity is relative, and the anchors are in the template.** Score
 every story, then sum. That sum against the capacity is the sentence

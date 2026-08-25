@@ -25,17 +25,28 @@ product deserves.
 
 > **Capability**: what the user can do that they could not before.
 
-| ID | Feature | User story | Acceptance criteria | Pri |
-|---|---|---|---|---|
-| **US-101** | Short name | As a <who>, I want <what>, so that <why>. | 1. First criterion.<br>2. Second criterion.<br>3. Third. | P1 |
-| **US-102** | | | | P1 |
+| ID | Feature | User story | Acceptance criteria | Success criterion | Pri |
+|---|---|---|---|---|---|
+| **US-101** | Short name | As a <who>, I want <what>, so that <why>. | 1. First criterion.<br>2. Second criterion.<br>3. Third. | Measured outcome, its threshold, when it is read. | P1 |
+| **US-102** | | | | | P1 |
 
 <!-- One section per epic, numbered E1, E2… Story numbers follow the
      epic: US-1nn for E1, US-12nn for E12.
 
-     Criteria are separated by <br> and numbered. They are quoted
-     verbatim into the issue, so write them as you want to read them
-     there: testable by someone who did not write them. -->
+     Acceptance criteria are separated by <br> and numbered. They are
+     quoted verbatim into the issue, so write them as you want to read
+     them there: testable by someone who did not write them.
+
+     The success criterion is a different question, and the column is
+     mandatory — build_backlog.py refuses a story without one.
+     Acceptance answers "does it do what was asked", and is met the day
+     of the merge. Success answers "was it worth doing", and is read
+     afterwards on the running product: one outcome, its threshold, and
+     when it is read. "The upload accepts a 10 MB file" is acceptance;
+     "fewer than 5% of uploads abandoned over the first two weeks" is
+     success. When the outcome is only readable at epic level, name the
+     epic measure: "carried by E3 — median time to a booked slot under
+     90 s". -->
 
 ---
 
