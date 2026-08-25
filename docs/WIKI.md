@@ -75,3 +75,22 @@ first page) before that clone works.
 **Nothing in the wiki is a prerequisite for writing code.** If a
 newcomer needs a wiki page to run the project, that page is in the wrong
 place — move it to `docs/` and leave a link behind.
+
+## 🔴 The wiki is on `master`, and only `master`
+
+Every repository generated from this template defaults to `main`, so
+`git push origin main` in a wiki clone is the natural reflex — and it
+fails. Pushing `master` instead then reads as somebody forgetting the
+convention. It is not: **GitHub gives a wiki its own repository, and that
+one is fixed to `master`.**
+
+Verified on 25/08/2026 rather than assumed. A `main` branch pushed to a
+wiki **is** accepted, `HEAD` stays on `master`, and nothing written to
+`main` ever renders — so the failure is silent: the push succeeds and the
+page does not change.
+
+```bash
+git clone https://github.com/<org>/<repo>.wiki.git
+# edit
+git push origin master        # master, and it is not a mistake
+```

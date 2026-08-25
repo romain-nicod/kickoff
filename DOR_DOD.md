@@ -103,6 +103,17 @@ here it is, one line per destination.
 - [ ] `README.md`, `AGENTS.md` and `.env.example` are updated if a
       command, a variable or a URL changed. No key in the code:
       everything is read from the environment (rule 28).
+- [ ] **No section this template left blank is still blank.** The check
+      is a command, not a reading:
+
+      ```bash
+      python3 scripts/check_placeholders.py
+      ```
+
+      It names the file and the line. Fill it, or delete the section — a
+      heading with nothing under it is worse than no heading. 🔴 No
+      other gate can see this: a linter, a test suite and a security
+      scan are all silent on an empty stack table.
 
 ### The five that get skipped, and why they matter
 
