@@ -118,14 +118,46 @@ def restore_overwritten(path, dry_run):
 
 
 def fix_gitignore(dry_run):
+    """Add only the rules that are missing, and put the negation last.
+
+    Appending the whole block blindly duplicates whatever a previous run —
+    or a careful human — already wrote. Two identical rules are harmless
+    to git and confusing to read, and a .gitignore nobody can read is one
+    nobody corrects.
+    """
     path = ROOT / ".gitignore"
     text = path.read_text(encoding="utf-8")
-    if "/tmp/*" in text and text.rstrip().endswith("!.env.example"):
+    present = {line.strip() for line in text.splitlines()}
+
+    missing = [line.strip() for line in RAILS_IGNORE.splitlines()
+               if line.strip() and not line.strip().startswith("#")
+               and line.strip() not in present
+               and line.strip() != "!.env.example"]
+    # The negation has to be LAST whatever else is there: git keeps the
+    # final matching rule, and the boilerplate appends `.env*` above it.
+    negation_last = text.rstrip().endswith("!.env.example")
+
+    if not missing and negation_last:
         return None
     if dry_run:
-        return "  append the Rails block to .gitignore, negation last"
-    path.write_text(text.rstrip() + "\n" + RAILS_IGNORE, encoding="utf-8")
-    return "  .gitignore: Rails runtime ignored, !.env.example put back last"
+        what = f"add {len(missing)} rule(s)" if missing else "no rule to add"
+        tail = "" if negation_last else ", move !.env.example last"
+        return f"  .gitignore: {what}{tail}"
+
+    body = text.rstrip()
+    if missing:
+        body += ("\n\n# Rails runtime — regenerated on every boot, never "
+                 "versioned.\n# `rails new` does not write these when a "
+                 ".gitignore already exists.\n")
+        body += "\n".join(missing)
+    if not negation_last:
+        body += ("\n\n# LAST, on purpose: the boilerplate appends `.env*` "
+                 "above, and git\n# keeps the final matching rule. Without "
+                 "this line the example file\n# that golden rule 28 depends "
+                 "on is ignored.\n!.env.example")
+    path.write_text(body + "\n", encoding="utf-8")
+    return (f"  .gitignore: {len(missing)} rule(s) added, "
+            "!.env.example put last")
 
 
 def untrack_runtime(dry_run):

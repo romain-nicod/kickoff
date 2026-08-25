@@ -1,6 +1,31 @@
 # Omakase Ruby styling for Rails, plus this project's house rules.
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
+# What we do not lint, and why. Everything here is GENERATED — by Rails,
+# by a gem's installer, or by the boilerplate — and re-generated the day
+# it changes. Autocorrecting it produces a diff nobody wrote and a
+# conflict the next time the generator runs.
+#
+# 🔴 Nothing under app/ or lib/ belongs on this list. Code we write is
+# linted, without exception: an exclusion is how a rule dies.
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    # Written by `rails generate rspec:install`, replaced wholesale on
+    # the next run.
+    - 'spec/rails_helper.rb'
+    - 'spec/spec_helper.rb'
+    # 200 lines from simple_form's Bootstrap installer. On the project
+    # this list came from, it alone accounted for 217 of 243 offences —
+    # a lint report where 89 % of the noise is generated is a lint report
+    # nobody reads.
+    - 'config/initializers/simple_form_bootstrap.rb'
+
 # Omakase leaves LineLength off. We turn it on: the project starts from
 # an empty repository, so 80 columns costs nothing to hold from day one
 # and is impossible to retrofit later. See docs/CODE_HYGIENE.md for why
@@ -19,3 +44,8 @@ Layout/LineLength:
     - 'db/schema.rb'
     - 'db/*_schema.rb'
     - 'bin/**/*'
+    # Rails writes its own explanatory comments in these, over 80
+    # columns, and rewrites them on `rails app:update`. Reflowing them
+    # buys nothing and loses the next upgrade's diff.
+    - 'config/environments/*.rb'
+    - 'config/initializers/*.rb'
