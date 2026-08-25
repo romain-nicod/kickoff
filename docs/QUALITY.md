@@ -59,3 +59,16 @@ Every failure state offers a way out, not an apology:
 - [ ] No value shown without a source, when the source is what makes it
       credible
 - [ ] No hypothesis presented as a measurement
+
+## Demo data
+
+- [ ] The seeds are **plausible**: figures a real business could show,
+      dates in the past, months that differ, shares that are not all equal
+
+Implausible demo data does not merely look bad: **it makes a working
+feature look broken**, and no test ever asks whether a figure is
+plausible. On the first real project built from this template, four of
+the defects one QA pass caught were in the seeds — a business losing
+money every month, entries dated in the future, three identical months
+so every comparison read "unchanged", and five payment methods at
+exactly 20 % each.
