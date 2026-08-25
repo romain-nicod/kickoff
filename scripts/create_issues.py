@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Create the labels, milestones and 95 backlog issues on GitHub.
 
-Idempotent: a user story already present (title starting with its
-identifier) is not recreated, so re-running after a specification update
-produces no duplicate.
+Idempotent, and it UPDATES: a user story already present (title starting
+with its identifier) is not recreated — its body and its labels are
+brought back in line with the specification when they have drifted.
+
+That is what makes the promise in README.md true. "Change the criterion
+in the specification, then re-run the scripts" is worth nothing if the
+re-run skips every issue that already exists: the document and the board
+disagree, and the board is what people read.
 
     python3 scripts/build_backlog.py && python3 scripts/create_issues.py
     python3 scripts/create_issues.py --dry-run
@@ -127,27 +132,71 @@ def main():
                          f"{stories} stories, {points} points.", args.dry_run)
 
     print("Issues")
-    existing = set()
-    if not args.dry_run:
-        titles = json.loads(run(
-            ["gh", "issue", "list", "--repo", REPO, "--state", "all",
-             "--limit", "500", "--json", "title"]
-        ).stdout)
-        existing = {t["title"].split(" ")[0] for t in titles}
+    # Read the existing issues even on a dry run: reading changes nothing,
+    # and a preview that cannot tell you what it would UPDATE is a preview
+    # of half the work.
+    existing = {}
+    issues = json.loads(run(
+        ["gh", "issue", "list", "--repo", REPO, "--state", "all",
+         "--limit", "500", "--json", "number,title,body,labels"]
+    ).stdout)
+    for issue in issues:
+        key = issue["title"].split(" ")[0]
+        existing[key] = {
+            "number": issue["number"],
+            "title": issue["title"],
+            "body": issue["body"] or "",
+            "labels": {label["name"] for label in issue["labels"]},
+        }
 
-    created = skipped = 0
+    created = updated = unchanged = 0
     for story in backlog:
         if args.only and not story["id"].startswith(args.only):
             continue
-        if story["id"] in existing:
-            skipped += 1
-            continue
-
         title = f"{story['id']} — {story['feature']}"
         labels = [f"epic:{story['epic']}", f"prio:{story['priority']}",
                   f"pts:{story['points']}"]
         labels.append(f"batch:{story['batch']}" if story.get("batch")
                       else "batch:out-of-scope")
+
+        known = existing.get(story["id"])
+        if known:
+            # Only the labels this script owns are compared. A label a
+            # human added by hand — `blocked`, `needs-design` — is theirs,
+            # and re-running must not wipe it.
+            ours = {l for l in known["labels"]
+                    if l.split(":")[0] in ("epic", "prio", "pts", "batch")}
+            wanted_body = body_for(story)
+            drifted = [
+                name for name, same in (
+                    ("title", known["title"] == title),
+                    ("body", known["body"].strip() == wanted_body.strip()),
+                    ("labels", ours == set(labels)),
+                ) if not same
+            ]
+            if not drifted:
+                unchanged += 1
+                continue
+
+            print(f"  {title} — {', '.join(drifted)} out of date")
+            if args.dry_run:
+                updated += 1
+                continue
+
+            cmd = ["gh", "issue", "edit", str(known["number"]),
+                   "--repo", REPO, "--title", title, "--body", wanted_body]
+            for label in labels:
+                cmd += ["--add-label", label]
+            for stale in ours - set(labels):
+                cmd += ["--remove-label", stale]
+            result = run(cmd, check=False)
+            if result.returncode != 0:
+                print(f"  FAILED {title}: {result.stderr.strip()}",
+                      file=sys.stderr)
+                continue
+            updated += 1
+            time.sleep(0.7)
+            continue
 
         cmd = ["gh", "issue", "create", "--repo", REPO, "--title", title,
                "--body", body_for(story)]
@@ -170,7 +219,8 @@ def main():
         print(f"  {title} → {result.stdout.strip()}")
         time.sleep(0.7)   # GitHub secondary rate limit on content creation
 
-    print(f"\n{created} issues created, {skipped} already present.")
+    print(f"\n{created} issues created, {updated} updated, "
+          f"{unchanged} already in line with the specification.")
 
 
 if __name__ == "__main__":
