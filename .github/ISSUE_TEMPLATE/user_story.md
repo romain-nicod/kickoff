@@ -5,30 +5,9 @@ title: "US-nnn — "
 labels: ''
 ---
 
-<!-- Two legitimate ways a story exists, and both keep the specification
-     and the issues in sync:
-
-     1. It is already in the specification → it was created
-        by scripts/create_issues.py. Do not re-open it here.
-     2. It is new — found in review, in a demo rehearsal, in a user's
-        mouth. Open it here, then add it to the specification. The
-        specification stays the reference; this template is how a story
-        reaches it, not a way around it.
-
-     Numbering: take the next free number in its epic (if E1 runs to US-110,
-     the next one is US-111). Attach it as a sub-issue of its
-     epic, and give it the epic:Enn, prio:Pn, pts:n and batch:Bn
-     labels — docs/LABELS.md says what each family means. A story
-     carries no type: label; that is what the epic and the points say. -->
-
-> **Epic** Enn — … · **Priority** P1/P2/P3 · **Complexity** n pts ·
-> **Batch** Bn
-
 ### User story
 
 As a <who>, I want <what>, so that <why>.
-
-<!-- One sentence. If it needs two, it is two stories. -->
 
 ### Acceptance criteria
 
@@ -36,96 +15,57 @@ As a <who>, I want <what>, so that <why>.
 - [ ] 2.
 - [ ] 3.
 
-<!-- Does it do what was asked? Binary, functional, and testable by
-     someone who did not write them. "The screen is fast" is not a
-     criterion; "first proposal in under 3 s on 4G" is.
-     They are checked before the story is closed. -->
-
-### Success criterion
-
-<!-- Was it worth doing? One measurable outcome, with its threshold and
-     when it is read — not a restatement of the acceptance criteria.
-
-     An acceptance criterion is met on the day of the merge; a success
-     criterion is read afterwards, on the running product. "The upload
-     accepts a 10 MB file" is acceptance. "Fewer than 5% of uploads are
-     abandoned, measured over the first two weeks" is success.
-
-     If the outcome cannot be read at story level, name the measure the
-     epic carries and say so: "carried by E3 — median time to a booked
-     slot under 90 s". Every story states one; none is left blank. -->
-
--
-
-### Business rules touched
-
-<!-- BR-nn, or "none". A rule implemented in code cites its number in a
-     comment. If this story needs a rule that does not exist yet, say so:
-     a new BR is a product decision. -->
-
-### Why it was not in the specification
-
-<!-- One line. This is the interesting part: what we learned that we did
-     not know at kick-off. It is also what tells the team whether the
-     scope is growing or the plan was wrong. -->
-
 ### Definition of Ready
 
 <!-- Before the first line of code. -->
 
 - [ ] Acceptance criteria are testable by someone else
-- [ ] A success criterion is written, with its threshold and its reading date
+- [ ] The routes it adds or changes are named, verb and path
 - [ ] Dependencies are delivered, or explicitly stubbed
-- [ ] Complexity estimated on the shared scale (1 · 2 · 3 · 5 · 8 · 13)
-- [ ] Placed in a batch — including "out of scope", which is a decision
-- [ ] **Added to `the specification`**, so the specification
-      and the issues keep saying the same thing
 
-<!-- Complexity scale:
-     1 trivial · 2 simple CRUD · 3 standard · 5 custom JS, external API
-     or geospatial query · 8 an algorithm or a pipeline · 13 outside the
-     curriculum. -->
+### Deliverables to produce or update
+
+**Design**
+
+- [ ] **Wireframe** of every screen touched, with its four states: empty,
+      loading, error, full. Mobile first, since Bootstrap is. Link it here.
+- [ ] **Clickable prototype** — only when the interaction is not obvious:
+      several steps, drag and drop, a frame that updates without a reload.
+      A plain CRUD does not need one.
+- [ ] **Design system** — does Bootstrap already have the component? Card,
+      Modal, Navbar, Alert, Badge, Form. If it does, use it. A genuinely new
+      component is added to the design system **before** it is coded, named
+      in BEM, with its SCSS variable if the colour or the spacing is new.
+- [ ] **Data schema** — tables and columns with their types, associations,
+      an index on every foreign key and every searched field, constraints
+      (`null: false`, unique, default). Files go through Active Storage,
+      never a `photo_url` column. Say what happens to the child when the
+      parent is destroyed.
+
+**Prepare**
+
+- [ ] **RSpec specs**, one `it` per acceptance criterion, written before the
+      code and red for the right reason. The specs this story makes wrong are
+      updated in the same story, not later.
+- [ ] **`docs/SCENARIOS.md`** — each behaviour in Given / When / Then, naming
+      the example that verifies it by the example's description, never by a
+      line number.
+- [ ] **Pseudocode** — numbered steps as comments inside the method, before
+      any real code. They stay in the shipped code. A step that does not fit
+      on one line deserves its own method.
+- [ ] **Branch** from an up-to-date `main`, named from the story title:
+      `<type>/<entity>-<action>` — `feat/recipe-list`, `fix/recipe-validation`.
+      If the title yields no clear entity and action, the naming is not the
+      problem: the story is too vague or too big.
+
+**Code**
+
+- [ ] **One vertical slice at a time**: migration → model → route →
+      controller → view → Stimulus, checked in the browser before the next
+      slice. Not the four routes, then the four actions, then the four views:
+      at the first error, twelve pieces are suspect instead of three.
+      The idioms are in `GOLDEN_RULES.md`, not repeated here.
 
 ### Definition of Done
 
-<!-- Before the issue is closed. Merged is not done. The reference is
-     DOR_DOD.md; this copy is here so it gets ticked on the story
-     itself. A change to one is a change to both. -->
-
-**The story does what it promised**
-
-- [ ] Every acceptance criterion above is checked, one by one
-- [ ] CI is green
-- [ ] It respects the golden rules — no hard-coded value, business logic
-      in the right layer, no string outside the translation layer
-- [ ] `routes` lists exactly the paths the story needed, no more, and
-      every view uses the named helper rather than a string path
 - [ ] Its error and empty states exist and lead somewhere
-- [ ] Accessibility holds: touch targets, contrast, no information
-      carried by colour alone
-- [ ] The journey is walked **on the real target device** *and* **against
-      the deployed environment** — not only in a desktop browser, not
-      only on localhost
-- [ ] Nothing is left from writing it: no debugger breakpoint, no
-      console log, no commented-out attempt, no dead code the story
-      replaced
-- [ ] The **verification pass** was asked for and done: every acceptance
-      criterion walked through in the running app — plus a security
-      review if the story touched auth, input, uploads, money or a
-      third-party call
-
-**What the story leaves behind** — in the same commit as the code, never
-in a pass at the end
-
-- [ ] The success criterion is instrumented — whatever it is read from
-      exists and produces a number
-- [ ] Every decision taken along the way is written **with its reason**,
-      in `docs/decisions/`
-- [ ] Every trap paid is written in `AGENTS.md`, where the next person
-      will hit it
-- [ ] `docs/SCHEMA.md` and `docs/ARCHITECTURE.md` say what the code now
-      does, if the story moved the structure
-- [ ] `docs/SCENARIOS.md` covers what the story added, each scenario
-      naming the test that verifies it
-- [ ] `README.md`, `AGENTS.md` and `.env.example` are updated if a
-      command, a variable or a URL changed — and no key is in the code
