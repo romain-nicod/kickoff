@@ -54,6 +54,29 @@ you remove the `sprockets-rails` and `sassc-rails` gems **and** restore
 `propshaft` in the Gemfile. Half the change leaves an app that does not
 boot.
 
+## 🔴 Then run the repair script, in the same breath
+
+```bash
+python3 scripts/after_rails_new.py
+```
+
+`minimal.rb` is a good template that knows nothing about this repository.
+It does four things that are right for a bare `rails new` and wrong here,
+and **all four are silent**:
+
+| What it does | Where | What it costs |
+|---|---|---|
+| `remove_file ".github/workflows/ci.yml"` | line 136 | Our CI is gone. You find out when the first pull request has no checks |
+| Overwrites `.rubocop.yml` with its own | line 132 | The rules the golden rules point at are not the rules that run |
+| Appends `.env*` to `.gitignore` | line 92 | Git keeps the last matching rule, so it swallows the `!.env.example` above it — and rule 28 depends on that file |
+| `rails new` writes no `.gitignore` when one exists | — | `tmp/`, `log/` and `storage/` are tracked. Measured once: **1779 files** in the template's own commit |
+
+None of them is a bug in `minimal.rb`, and none of them can be avoided by
+being careful — they happen on every project. That is why the answer is a
+script and not a paragraph you are supposed to remember.
+
+The script is idempotent, and `--dry-run` says what it would do.
+
 ## Add `dotenv-rails` in the same move
 
 The template does not include it, and rule 28 requires it:

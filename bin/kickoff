@@ -238,6 +238,15 @@ def clean_up(dry_run):
             continue
         shutil.rmtree(path) if path.is_dir() else path.unlink()
 
+        # Deleting bin/kickoff leaves bin/ empty. Git does not track an
+        # empty directory, so it survives only on the machine that ran
+        # this — and then `rails new` writes its binstubs into a folder
+        # that exists here and not in the clone.
+        parent = path.parent
+        if parent != ROOT and parent.is_dir() and not any(parent.iterdir()):
+            print(f"  remove  {parent.relative_to(ROOT)}/ (now empty)")
+            parent.rmdir()
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -287,6 +296,15 @@ Done. What is left for you:
   2. Configure the repository itself — labels, wiki, protected branch:
 
      python3 scripts/setup_repo.py
+
+  2b. On the rails layer, AFTER `rails new` with the boilerplate:
+
+     python3 scripts/after_rails_new.py
+
+     The boilerplate deletes the CI workflow, overwrites .rubocop.yml,
+     and leaves tmp/ and log/ tracked. All three are silent. Skipping
+     this step is how a repository ends up with no checks on its pull
+     requests and 1700 runtime files in its history.
 
   3. Write the specification in docs/, then populate GitHub:
 
