@@ -70,17 +70,26 @@ def ensure_milestone(title, description, dry_run):
 # Reference: DOR_DOD.md. A change to one is a change to both — and to
 # .github/ISSUE_TEMPLATE/user_story.md, which carries the same list for
 # stories opened by hand.
-DEFINITION_OF_DONE = """- [ ] Every acceptance criterion above is checked, one by one
-- [ ] The success criterion is instrumented — whatever it is read from exists and produces a number
+DEFINITION_OF_DONE = """**The story does what it promised**
+
+- [ ] Every acceptance criterion above is checked, one by one
 - [ ] CI is green
 - [ ] It respects the golden rules — no hard-coded value, business logic in the right layer, no string outside the translation layer
 - [ ] `routes` lists exactly the paths the story needed, no more, and every view uses the named helper rather than a string path
-- [ ] It works **on the real target device**, not only in a desktop browser at the right width
-- [ ] Accessibility holds: touch targets, contrast, no information carried by colour alone
 - [ ] Its error and empty states exist and lead somewhere
-- [ ] No key in the code: everything is read from the environment, and any new variable is in `.env.example`
+- [ ] Accessibility holds: touch targets, contrast, no information carried by colour alone
+- [ ] The journey is walked **on the real target device** *and* **against the deployed environment** — not only in a desktop browser, not only on localhost
+- [ ] Nothing is left from writing it: no debugger breakpoint, no console log, no commented-out attempt, no dead code the story replaced
 - [ ] The **verification pass** was asked for and done: every acceptance criterion walked through in the running app — plus a security review if the story touched auth, input, uploads, money or a third-party call
-- [ ] The README or `AGENTS.md` is updated **in the same commit** if a command, a variable or a URL changed"""
+
+**What the story leaves behind** — in the same commit as the code, never in a pass at the end
+
+- [ ] The success criterion is instrumented — whatever it is read from exists and produces a number
+- [ ] Every decision taken along the way is written **with its reason**, in `docs/decisions/`
+- [ ] Every trap paid is written in `AGENTS.md`, where the next person will hit it
+- [ ] `docs/SCHEMA.md` and `docs/ARCHITECTURE.md` say what the code now does, if the story moved the structure
+- [ ] `docs/SCENARIOS.md` covers what the story added, each scenario naming the test that verifies it
+- [ ] `README.md`, `AGENTS.md` and `.env.example` are updated if a command, a variable or a URL changed — and no key is in the code"""
 
 
 def body_for(story):
