@@ -2,7 +2,7 @@
 name: Bug
 about: Something behaves differently from its acceptance criteria
 title: "Bug — "
-labels: bug
+labels: "type:bug"
 ---
 
 ## What happens

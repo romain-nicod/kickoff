@@ -1,74 +1,46 @@
-# The repository's label set. Created by scripts/create_issues.py; this
-# file is the readable reference of what exists and what it means.
+# The labels this repository declares by hand.
 #
-# Four families, and nothing else. A label that belongs to no family is a
-# label nobody filters on.
+# It is short on purpose, and it is NOT the whole label set. Read
+# docs/LABELS.md first — it states the naming convention, the six
+# families and the rule that decides whether a thing deserves a label at
+# all. This file is the machine-readable half of that document.
+#
+# ── What is here, and what is not ────────────────────────────────────────
+#
+# HERE: the labels a human applies. Nothing generates them, so they must
+# be declared, and they are the same on every project.
+#
+# NOT HERE: `epic:`, `prio:`, `pts:` and `batch:` — those are GENERATED
+# by scripts/create_issues.py from the specification, and only the values
+# the specification actually uses are created. Declaring them here too
+# produced empty labels on every project (a `batch:B5` on a three-batch
+# plan) and two descriptions for the same label. The specification is the
+# source; a label is its shadow.
+#
+# ── The convention, in one line ──────────────────────────────────────────
+#
+# `family:value`. Always. No bare label — a label with no family is a
+# label nobody filters on, and it is how GitHub's own stock set became
+# nine words nobody chose.
 
-# ── Epic — where the story comes from in the specification ───────────────
-# One per epic, created by scripts/create_issues.py from the
-# specification. Listed here only for reference.
-
-# ── Priority — the phasing from the specification ────────────────────────
-- name: "prio:P1"
-  color: "FF8A3D"
-  description: "Core journey, committed scope"
-- name: "prio:P2"
-  color: "A8410A"
-  description: "Second wave, committed if capacity allows"
-- name: "prio:P3"
-  color: "6E665B"
-  description: "Vision, not committed"
-
-# ── Batch — the delivery plan ────────────────────────────────────────────
-- name: "batch:B0"
-  color: "C9C0B4"
-  description: "Technical foundation"
-- name: "batch:B1"
-  color: "C9C0B4"
-  description: "The demo that works"
-- name: "batch:B2"
-  color: "C9C0B4"
-  description: "Third batch"
-- name: "batch:B3"
-  color: "C9C0B4"
-  description: "Fourth batch"
-- name: "batch:B4"
-  color: "C9C0B4"
-  description: "Fifth batch"
-- name: "batch:B5"
-  color: "C9C0B4"
-  description: "If time allows"
-- name: "batch:out-of-scope"
-  color: "6E665B"
-  description: "Out of the committed scope"
-
-# ── Complexity — the input of the velocity measurement ───────────────────
-- name: "pts:1"
-  color: "6E665B"
-  description: "Relative complexity 1"
-- name: "pts:2"
-  color: "6E665B"
-  description: "Relative complexity 2"
-- name: "pts:3"
-  color: "6E665B"
-  description: "Relative complexity 3"
-- name: "pts:4"
-  color: "6E665B"
-  description: "Relative complexity 4"
-- name: "pts:5"
-  color: "6E665B"
-  description: "Relative complexity 5"
-- name: "pts:8"
-  color: "6E665B"
-  description: "Relative complexity 8"
-- name: "pts:13"
-  color: "6E665B"
-  description: "Relative complexity 13 — outside the curriculum"
-
-# ── Nature — only for what the specification did not generate ────────────
-- name: "bug"
+# ── Type — what kind of work this issue is ───────────────────────────────
+# A user story carries no type: it is recognisable by its epic, priority,
+# points and batch. These three are for what the specification did not
+# generate.
+- name: "type:bug"
   color: "17130E"
   description: "Behaves differently from its acceptance criteria"
-- name: "chore"
+- name: "type:chore"
   color: "17130E"
   description: "Technical work carrying no user story"
+- name: "type:spike"
+  color: "17130E"
+  description: "Time-boxed investigation that answers one question"
+
+# ── Status — the one thing the board cannot say ──────────────────────────
+# The board's Status field has Backlog · Ready · In progress · In review ·
+# Done. None of them means "stopped, and not by us". Without this label a
+# blocked story sits in `In progress` looking exactly like work.
+- name: "status:blocked"
+  color: "FF8A3D"
+  description: "Stopped by something outside the story — say what, in a comment"

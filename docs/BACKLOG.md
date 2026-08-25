@@ -8,7 +8,7 @@ The GitHub issues are **generated from it**, never typed by hand:
 
 ```bash
 python3 scripts/build_backlog.py       # spec → scripts/backlog.json
-python3 scripts/create_issues.py       # labels, milestones, stories
+python3 scripts/create_issues.py       # labels, milestones, stories — see docs/LABELS.md
 python3 scripts/create_epic_issues.py  # epics + sub-issue links
 python3 scripts/setup_project.py       # board and its fields
 ```

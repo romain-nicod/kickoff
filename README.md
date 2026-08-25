@@ -85,10 +85,14 @@ host's secrets. See [`docs/SECRETS.md`](docs/SECRETS.md).
   Each is a sub-issue of its epic.
 - **[Milestones](https://github.com/{{REPO}}/milestones)** — the delivery
   batches.
-- **Board** — Status, Batch, Points, Priority.
+- **Board** — Status, Batch, Points, MoSCoW Priority, Route. Its fields
+  are filled from the labels, so the labels are the source.
+- **[Labels](docs/LABELS.md)** — six families, `family:value`, and the
+  rule that decides whether a thing deserves a label at all.
 
-The repository itself is configured by script too — labels, wiki,
-pull-request settings, protected default branch:
+The repository itself is configured by script too — labels (ours created,
+GitHub's stock set deleted), wiki, pull-request settings, protected
+default branch:
 
 ```bash
 python3 scripts/setup_repo.py

@@ -2,7 +2,7 @@
 name: Spike
 about: A time-boxed investigation that answers one question
 title: "Spike — "
-labels: chore
+labels: "type:spike"
 ---
 
 ## The question

@@ -18,7 +18,8 @@ labels: ''
      Numbering: take the next free number in its epic (if E1 runs to US-110,
      the next one is US-111). Attach it as a sub-issue of its
      epic, and give it the epic:Enn, prio:Pn, pts:n and batch:Bn
-     labels. -->
+     labels — docs/LABELS.md says what each family means. A story
+     carries no type: label; that is what the epic and the points say. -->
 
 > **Epic** Enn — … · **Priority** P1/P2/P3 · **Complexity** n pts ·
 > **Batch** Bn

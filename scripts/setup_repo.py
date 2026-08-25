@@ -8,13 +8,21 @@ repository where `main` accepts a direct push, is an intention.
     python3 scripts/setup_repo.py
     python3 scripts/setup_repo.py --dry-run
 
-Four things, in this order:
+Five things, in this order:
 
-  1. the labels of .github/labels.yml — including `bug` and `chore`,
-     which the issue templates apply and which nothing else creates;
-  2. the wiki, enabled;
-  3. the pull-request settings — squash only, branch deleted on merge;
-  4. `main` protected — no force-push, no deletion, and an approving
+  1. the labels of .github/labels.yml — the `type:` and `status:`
+     families, which the issue templates apply and which nothing else
+     creates. The `epic:`, `prio:`, `pts:` and `batch:` families are NOT
+     here: scripts/create_issues.py generates them from the
+     specification. See docs/LABELS.md;
+  2. GitHub's nine stock labels, deleted — `enhancement`, `question`,
+     `wontfix`, `good first issue`… A repository nobody cleaned carries
+     more labels it did not choose than labels it did. A stock label
+     still carried by an issue is KEPT, and the script says so: deleting
+     it would silently strip that issue;
+  3. the wiki, enabled;
+  4. the pull-request settings — squash only, branch deleted on merge;
+  5. `main` protected — no force-push, no deletion, and an approving
      review on every pull request.
 
 ON A SOLO PROJECT, requiring an approving review is theatre: GitHub
@@ -80,6 +88,61 @@ def unquote(value):
     if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
         return value[1:-1]
     return value
+
+
+# The labels GitHub creates with every repository. None of them is ours,
+# none of them is in labels.yml, and on a fresh repository they outnumber
+# the set the project actually chose. They are removed rather than left to
+# rot: a label that exists is a label someone will eventually apply.
+GITHUB_STOCK_LABELS = [
+    "bug", "documentation", "duplicate", "enhancement", "good first issue",
+    "help wanted", "invalid", "question", "wontfix",
+]
+
+
+def labels_in_use():
+    """Every label carried by at least one issue, open or closed."""
+    result = gh(["issue", "list", "--repo", REPO, "--state", "all",
+                 "--limit", "1000", "--json", "labels"], check=False)
+    if result.returncode != 0:
+        return None
+    return {label["name"]
+            for issue in json.loads(result.stdout)
+            for label in issue["labels"]}
+
+
+def remove_stock_labels(dry_run):
+    """Delete GitHub's defaults — except any an issue still carries.
+
+    `bug` is the one that matters: the template used to apply it, and this
+    template now applies `type:bug`. Deleting a label strips it from every
+    issue that has it, with no warning and no undo, so a stock label still
+    in use is reported and left alone. Rename it by hand, or keep it.
+    """
+    declared = {label["name"] for label in read_labels()}
+    in_use = labels_in_use()
+    if in_use is None:
+        print("  SKIP    stock labels — could not read the issues")
+        return
+
+    for name in GITHUB_STOCK_LABELS:
+        if name in declared:
+            continue
+        if name in in_use:
+            print(f"  KEPT    {name} — still carried by an issue; "
+                  f"relabel those issues first")
+            continue
+        if dry_run:
+            print(f"  delete  {name}")
+            continue
+        result = gh(["label", "delete", name, "--repo", REPO, "--yes"],
+                    check=False)
+        if result.returncode == 0:
+            print(f"  deleted {name}")
+        elif "not found" in result.stderr.lower():
+            print(f"  absent  {name}")
+        else:
+            print(f"  FAILED  {name} — {result.stderr.strip()}")
 
 
 def default_branch():
@@ -211,6 +274,8 @@ def main():
 
     print("Labels")
     apply_labels(args.dry_run)
+    print("GitHub's stock labels")
+    remove_stock_labels(args.dry_run)
     print("Wiki")
     enable_wiki(args.dry_run)
     print("Pull requests")

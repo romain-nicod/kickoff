@@ -41,7 +41,7 @@ is left for you to do.
 | **Prompts** | `docs/PROMPTS.md` — how to ask for each deliverable above, and what to check before accepting it |
 | **Boilerplate** | `docs/BOILERPLATE.md` (stack layer) — `minimal`, Le Wagon's Rails template, and what it decides for you |
 | **Skills** | `skills/` — three Claude skills; two are installed into the project's `.claude/skills/` |
-| **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` |
+| **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` + `docs/LABELS.md` — six label families, the naming convention, and GitHub's stock labels deleted |
 | **Automation** | `scripts/` — specification → issues, epics, milestones, board ; and `setup_repo.py`, which configures the repository itself |
 
 ## The two things that make it worth using

@@ -2,7 +2,7 @@
 name: Chore
 about: Technical work that carries no user story (setup, tooling, data)
 title: "Chore — "
-labels: chore
+labels: "type:chore"
 ---
 
 ## What needs doing

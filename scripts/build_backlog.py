@@ -106,6 +106,20 @@ missing = [s["id"] for s in backlog if "points" not in s]
 if missing:
     raise SystemExit(f"No complexity found for: {', '.join(missing)}")
 
+# The scale is Fibonacci and it is closed: every document in the template
+# says 1 · 2 · 3 · 5 · 8 · 13. A 4 slipped in is not a finer estimate, it
+# is a story nobody argued about — and it becomes a `pts:4` label that
+# exists on one project and nowhere else.
+SCALE = (1, 2, 3, 5, 8, 13)
+off_scale = [f"{s['id']} ({s['points']})" for s in backlog
+             if s["points"] not in SCALE]
+if off_scale:
+    raise SystemExit(
+        "Complexity off the scale for: " + ", ".join(off_scale) + "\n"
+        "The scale is " + " · ".join(str(n) for n in SCALE) + ". "
+        "Round to the nearest anchor rather than inventing a step."
+    )
+
 without_success = [s["id"] for s in backlog if not s["success"]]
 if without_success:
     raise SystemExit(

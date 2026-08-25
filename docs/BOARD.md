@@ -15,12 +15,20 @@ worked on directly, and it closes when its stories do.
 
 ## Fields
 
-| Field | Values | What it is for |
-|---|---|---|
-| **Status** | Todo · In Progress · Done | The board columns |
-| **Batch** | B0 … Bn · out of scope | The delivery plan |
-| **Points** | 1 · 2 · 3 · 5 · 8 · 13 | Relative complexity, the input of the velocity measurement |
-| **Priority** | P1 · P2 · P3 | The phasing from the specification |
+Every field but Status and Route is filled **from the issue's labels** by
+`scripts/setup_project.py`. The labels are the source, the board is the
+view — see [`LABELS.md`](LABELS.md).
+
+| Field | Values | Filled from | What it is for |
+|---|---|---|---|
+| **Status** | Backlog · Ready · In progress · In review · Done | — | The board columns |
+| **Batch** | B0 … Bn · out of scope | `batch:` | The delivery plan |
+| **Points** | 1 · 2 · 3 · 5 · 8 · 13 | `pts:` | Relative complexity, the input of the velocity measurement |
+| **MoSCoW Priority** | Must · Should · Can · Won't Have | `prio:` | The phasing from the specification, in the shared language |
+| **Route** | free text | — | The route the story is reached by, written before the code |
+
+A story in no batch becomes **Won't Have**: out of the committed scope is
+a decision, not an oversight.
 
 Group the board view by **Status**, filter by **Batch** — that is the
 view that answers "what are we shipping this week".
