@@ -17,7 +17,9 @@ the code. A wiki diverges within a week.
 | How we write code | `GOLDEN_RULES.md` |
 | Branches, review, what blocks a merge | `CONTRIBUTING.md` |
 | Ready / Done | `DOR_DOD.md` |
+<!-- team-only -->
 | Roles, charter, ceremonies | `ROLES.md`, `TEAM_CHARTER.md`, `CEREMONIES.md` |
+<!-- /team-only -->
 | Board, backlog, milestones, demo | `docs/` |
 | Structural decisions | `docs/decisions/` |
 | The specification | `docs/` |
@@ -38,8 +40,10 @@ needs to review them:
 3. **Demo notes** — questions asked and the answers given.
 4. **External resources** — links to design files, datasets, studies,
    with the date they were consulted.
+<!-- team-only -->
 5. **Onboarding transcripts** — the questions a newcomer actually asked.
    If the same one comes twice, its answer moves to `ONBOARDING.md`.
+<!-- /team-only -->
 
 ## Suggested pages
 

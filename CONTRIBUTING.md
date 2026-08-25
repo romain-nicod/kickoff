@@ -90,5 +90,7 @@ if the code is merged.
 - Product rules, constraints, traps: [`AGENTS.md`](AGENTS.md)
 - Naming: [`docs/NAMING.md`](docs/NAMING.md)
 - Board columns and their meaning: [`docs/BOARD.md`](docs/BOARD.md)
+<!-- team-only -->
 - Roles and ceremonies: [`ROLES.md`](ROLES.md),
   [`CEREMONIES.md`](CEREMONIES.md)
+<!-- /team-only -->

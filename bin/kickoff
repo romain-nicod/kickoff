@@ -31,6 +31,21 @@ TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
 # everyone on the team, not just whoever ran this script.
 PROJECT_SKILLS = ["methode-projet", "methode-wagon"]
 
+# Documents that only mean something to a team. On a solo project they
+# are not "a bit of overhead": a CEREMONIES.md nobody holds discredits
+# the documents next to it. Removed when team_size is 1 — the template
+# deletes, it never derives, so the wording of what stays is untouched.
+TEAM_ONLY = ["ROLES.md", "TEAM_CHARTER.md", "CEREMONIES.md",
+             "docs/STANDUP.md", "docs/ONBOARDING.md"]
+
+# The paragraphs pointing at them, marked in the files themselves.
+# Solo: the whole block goes. Otherwise only the two marker lines do —
+# template plumbing has no business in the project being created.
+TEAM_BLOCK = re.compile(
+    r"[ \t]*<!-- team-only -->\n.*?[ \t]*<!-- /team-only -->\n",
+    re.DOTALL)
+TEAM_MARKER = re.compile(r"[ \t]*<!-- /?team-only -->\n")
+
 # Text files we substitute into. Everything else is copied untouched.
 TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".py", ".erb", ".html", ".css",
                  ".js", ".rb", ".example", ".txt", ""}
@@ -174,6 +189,45 @@ def install_skills(dry_run):
         shutil.copytree(source, target)
 
 
+def apply_team_size(values, dry_run):
+    """Solo project: remove the team documents and the links to them.
+
+    Deleting is not deriving. The template still refuses to rewrite a
+    sentence according to a profile; it only declines to ship a document
+    whose subject does not exist here.
+    """
+    solo = str(values.get("TEAM_SIZE", "")).strip() in ("1", "1.0")
+
+    if solo:
+        print("Solo project — team documents removed")
+        for name in TEAM_ONLY:
+            path = ROOT / name
+            if not path.exists():
+                continue
+            print(f"  remove  {name}")
+            if not dry_run:
+                path.unlink()
+
+    template_paths = {ROOT / name for name in TEMPLATE_ONLY}
+    for path in files_to_process():
+        # bin/kickoff carries the marker in its own source; the stack
+        # layers and the skills are deleted right after. Neither is part
+        # of the project being created.
+        if any(path == q or q in path.parents for q in template_paths):
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, PermissionError):
+            continue
+        if "team-only" not in text:
+            continue
+        if solo:
+            print(f"  unlink  {path.relative_to(ROOT)}")
+        if not dry_run:
+            pattern = TEAM_BLOCK if solo else TEAM_MARKER
+            path.write_text(pattern.sub("", text), encoding="utf-8")
+
+
 def clean_up(dry_run):
     for name in TEMPLATE_ONLY:
         path = ROOT / name
@@ -197,12 +251,17 @@ def main():
     print(f"capacity: {values['DEV_DAYS']} days × {values['TEAM_SIZE']} people "
           f"× {values['VELOCITY']} = {values['CAPACITY']} points\n")
 
-    print("Substituting")
-    substitute(values, args.dry_run)
+    # The stack layer FIRST: its files land in the tree before the
+    # substitution walks it, so a {{PLACEHOLDER}} written in a layer is
+    # replaced like any other. The reverse order copied them untouched,
+    # and the failure was silent.
     print("Stack layer")
     apply_stack(values["STACK"], args.dry_run)
+    print("Substituting")
+    substitute(values, args.dry_run)
     print("Skills")
     install_skills(args.dry_run)
+    apply_team_size(values, args.dry_run)
     print("Cleaning up")
     clean_up(args.dry_run)
 
@@ -210,23 +269,33 @@ def main():
         print("\nDry run — nothing was written.")
         return
 
+    solo = str(values.get("TEAM_SIZE", "")).strip() in ("1", "1.0")
+    gaps = ("""     docs/MILESTONES.md  the dates, derived from the demo date
+     docs/GO_LIVE.md     where your host's rollback button is"""
+            if solo else
+            """     ROLES.md            the names behind each hat
+     TEAM_CHARTER.md     each person's real working hours
+     docs/MILESTONES.md  the dates, derived from the demo date
+     docs/GO_LIVE.md     where your host's rollback button is""")
+
     print(f"""
 Done. What is left for you:
 
-  1. Fill in the four gaps left on purpose:
-     ROLES.md            the names behind each hat
-     TEAM_CHARTER.md     each person's real working hours
-     docs/MILESTONES.md  the dates, derived from the demo date
-     docs/GO_LIVE.md     where your host's rollback button is
+  1. Fill in the gaps left on purpose:
+{gaps}
 
-  2. Write the specification in docs/, then populate GitHub:
+  2. Configure the repository itself — labels, wiki, protected branch:
+
+     python3 scripts/setup_repo.py
+
+  3. Write the specification in docs/, then populate GitHub:
 
      python3 scripts/build_backlog.py
      python3 scripts/create_issues.py
      python3 scripts/create_epic_issues.py
      python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 
-  3. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
+  4. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
 
 Two skills were installed in .claude/skills/ — methode-projet and
 methode-wagon. Any Claude Code session opened here picks them up with no
