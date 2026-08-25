@@ -13,8 +13,42 @@ us-102-reject-by-swipe
 us-201-time-rule
 ```
 
-Never work directly on `main`. Never reuse a branch after its pull
-request is merged.
+Never reuse a branch after its pull request is merged.
+
+### Where the line is: pull request, or commit on `main`
+
+<!-- Written 25/08/2026, on the first real application of this template.
+     The rule here used to be "never work directly on main" with no
+     exception — and a rule that has no room for a typo is a rule people
+     stop consulting. It was not consulted: forty stories went into that
+     project as local squash merges, with no pull request and no CI on
+     one. Triggers, not size: no line count would have caught that. -->
+
+**One question decides it: could a reviewer disagree with this on
+grounds other than taste?**
+
+🔴 **A pull request, always, if any one of these is true:**
+
+1. It changes what the application **does** — behaviour, a screen, a
+   business rule.
+2. It changes how the application is **built, configured or deployed** —
+   CI, the process file, an environment, a dependency.
+3. It **closes an issue**, or it should have one. The pull request takes
+   the issue's name, and the issue is where the acceptance criteria live.
+4. **A revert alone would not undo it** — a migration, a deleted file,
+   anything with an effect outside the repository.
+
+**Straight onto `main`, no ceremony:**
+
+- filling in a section this template left blank;
+- a typo, a comment, a rewording that changes no decision;
+- a link, a date, a version the lock file wrote.
+
+⚠️ **The grey zone, named so nobody has to guess:** *a document that
+**records** a decision is a pull request; a document that **explains** one
+already taken is a commit.* Amending an acceptance criterion changes what
+"done" means, so it goes through a pull request even though not one line
+of code moves — and that is precisely the case that got broken first.
 
 **Commit messages in English**, `Subject: detail` format, one intent per
 commit:
