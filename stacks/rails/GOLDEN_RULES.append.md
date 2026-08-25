@@ -172,3 +172,22 @@ children**: `dependent: :destroy`, or another choice made on purpose and
 commented. And seeds use `create!`: without the bang an invalid record
 is skipped without a word, and the recette runs on data that is not
 there.
+
+## Green in the suite, dead on the screen
+
+🔴 **Three things a running Rails server never picks up**, and they share
+one tell: the suite is green and the browser is broken, because the test
+process boots fresh on every run and the server does not.
+
+| What changed | What you see |
+|---|---|
+| A new directory under `app/` | every page 500 — autoload paths are computed at boot |
+| A file in `config/initializers/` | the feature silently does nothing; initializers run once |
+| A gem added to the `Gemfile` | `undefined method` on something the gem provides |
+
+**When something works in test and not in the browser, the first
+question is: how long has this server been running?** The same holds for
+the recette server.
+
+Found three times in two days on the first real project built from this
+template.
