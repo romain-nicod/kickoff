@@ -28,7 +28,7 @@ toujours en aval (une interface dessinée pour un besoin non formulé, des specs
 sait pas écrire faute de critères d'acceptation).
 
 ```text
- 1. US (As a / I can / So that) + critères d'acceptation, gelés avant les specs
+ 1. US (As a / I want / So that) + critères d'acceptation, gelés avant les specs
  2. Wireframe — états vide / chargement / erreur / plein, mobile d'abord
  3. Prototype cliquable — seulement si l'interaction est non évidente
  4. Design system — Bootstrap d'abord, composant nouveau ajouté AVANT d'être codé
@@ -94,8 +94,8 @@ qui porte deux stories, pas de story étalée sur deux branches. Le nom se **dé
 du titre de l'US** — `<type>/<entite>-<action>` — il ne s'invente pas :
 
 ```text
-« As a visitor, I can see the list of recipes »   →  feat/recipe-list
-« As a user, I can create a recipe »              →  feat/recipe-create
+« As a visitor, I want to see the list of recipes »   →  feat/recipe-list
+« As a user, I want to create a recipe »              →  feat/recipe-create
 « Corriger la validation du formulaire »          →  fix/recipe-validation
 ```
 
