@@ -42,7 +42,7 @@ is left for you to do.
 | **Boilerplate** | `docs/BOILERPLATE.md` (stack layer) — `minimal`, Le Wagon's Rails template, and what it decides for you |
 | **Skills** | `skills/` — three Claude skills; two are installed into the project's `.claude/skills/` |
 | **GitHub** | PR template, five issue templates, issue chooser, `labels.yml` |
-| **Automation** | `scripts/` — specification → issues, epics, milestones, board |
+| **Automation** | `scripts/` — specification → issues, epics, milestones, board ; and `setup_repo.py`, which configures the repository itself |
 
 ## The two things that make it worth using
 
@@ -114,7 +114,8 @@ follow.
 | The executable `template.rb` | **`amorce`** (`boilerplate` brick) | Derived from a project profile; a copy here would rot |
 | `docs/PROMPTS.md` | **`amorce`** (`bibliotheque_prompts` brick) | Generated there, committed here — the file says so in its first line |
 | Profile-derived wording of any document | **`amorce`** | This template substitutes values; it does not derive text |
-| Repository configuration by API (labels, branch protection, board, Pages) | **`amorce`** | Only lives there |
+| Repository configuration (labels, wiki, PR settings, branch protection, board) | **both** | Same decision, two runtimes — `gh` from a terminal here, Octokit from a server there. A kickoff repository is created without Amorce and needs the same settings. |
+| GitHub Pages, and the documentation site it serves | **`amorce`** | Unavailable on a private repository on a free plan; the wiki plays that role here |
 
 🔴 **Never apply both to the same repository.** They write the same
 subjects to different file names — you end up with `docs/MILESTONES.md`

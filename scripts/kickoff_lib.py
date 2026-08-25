@@ -29,8 +29,12 @@ def owner():
     return repo().split("/")[0]
 
 
-def gh(args, check=True):
-    result = subprocess.run(["gh"] + args, capture_output=True, text=True)
+def gh(args, check=True, stdin=None):
+    """Run `gh`. `stdin` feeds a body to the commands that read one —
+    `gh api --input -` is the only way to send a JSON payload without
+    quoting it through the shell."""
+    result = subprocess.run(["gh"] + args, capture_output=True, text=True,
+                            input=stdin)
     if check and result.returncode != 0:
         print(f"failed: gh {' '.join(args)}\n{result.stderr}", file=sys.stderr)
         sys.exit(1)

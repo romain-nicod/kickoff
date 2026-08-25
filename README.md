@@ -87,6 +87,13 @@ host's secrets. See [`docs/SECRETS.md`](docs/SECRETS.md).
   batches.
 - **Board** — Status, Batch, Points, Priority.
 
+The repository itself is configured by script too — labels, wiki,
+pull-request settings, protected default branch:
+
+```bash
+python3 scripts/setup_repo.py
+```
+
 Issues are **generated from the specification**, never typed by hand:
 
 ```bash
@@ -115,7 +122,9 @@ The method is set up before the code, not after.
 | **Engineering** | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`docs/ENVIRONMENTS.md`](docs/ENVIRONMENTS.md) · [`docs/CODE_HYGIENE.md`](docs/CODE_HYGIENE.md) · [`docs/TESTS.md`](docs/TESTS.md) · [`docs/SECRETS.md`](docs/SECRETS.md) |
 | **Delivery** | [`docs/BOARD.md`](docs/BOARD.md) · [`docs/BACKLOG.md`](docs/BACKLOG.md) · [`docs/MILESTONES.md`](docs/MILESTONES.md) · [`docs/DEMO.md`](docs/DEMO.md) |
 | **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`DOR_DOD.md`](DOR_DOD.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
+<!-- team-only -->
 | **Team** | [`ROLES.md`](ROLES.md) · [`TEAM_CHARTER.md`](TEAM_CHARTER.md) · [`CEREMONIES.md`](CEREMONIES.md) · [`docs/STANDUP.md`](docs/STANDUP.md) · [`docs/ONBOARDING.md`](docs/ONBOARDING.md) |
+<!-- /team-only -->
 | **Launch** | [`docs/GO_LIVE.md`](docs/GO_LIVE.md) |
 | **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/specification.md`](docs/specification.md) · [`docs/SCENARIOS.md`](docs/SCENARIOS.md) |
 | **Prompts** | [`docs/PROMPTS.md`](docs/PROMPTS.md) — one prompt per design deliverable, each with what to check in the answer |
