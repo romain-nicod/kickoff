@@ -14,7 +14,17 @@ Four things, in this order:
      which the issue templates apply and which nothing else creates;
   2. the wiki, enabled;
   3. the pull-request settings — squash only, branch deleted on merge;
-  4. `main` protected — one approving review, no force-push.
+  4. `main` protected — no force-push, no deletion, and an approving
+     review on every pull request.
+
+ON A SOLO PROJECT, requiring an approving review is theatre: GitHub
+never lets you approve your own pull request, so every merge becomes an
+administrator bypass, and a rule bypassed at every merge teaches that
+rules are bypassed. The script detects a solo repository — `ROLES.md` is
+absent, `bin/kickoff` having removed it — and requires zero reviews
+instead. What remains protected is what still means something alone: no
+force-push, no deletion of the branch. Override either way with
+`--reviews N`.
 
 Idempotent: run it as often as you like.
 
@@ -124,15 +134,31 @@ def pull_request_settings(dry_run):
         print(f"  FAILED  PR settings — {result.stderr.strip()}")
 
 
-def protect_default_branch(branch, dry_run):
+def required_reviews(asked):
+    """How many approving reviews a pull request needs.
+
+    `--reviews` wins. Otherwise: none if nobody else can review.
+    """
+    if asked is not None:
+        return asked
+    solo = not (ROOT / "ROLES.md").exists()
+    if solo:
+        print("  solo repository (no ROLES.md) — 0 review required, "
+              "since you cannot approve your own PR")
+    return 0 if solo else 1
+
+
+def protect_default_branch(branch, reviews, dry_run):
     if dry_run:
-        print(f"  branch  {branch} protected")
+        print(f"  branch  {branch} protected — {reviews} review(s), "
+              f"no force-push")
         return
 
     payload = json.dumps({
         "required_status_checks": None,
         "enforce_admins": False,
-        "required_pull_request_reviews": {"required_approving_review_count": 1},
+        "required_pull_request_reviews":
+            {"required_approving_review_count": reviews} if reviews else None,
         "restrictions": None,
         "allow_force_pushes": False,
         "allow_deletions": False,
@@ -142,7 +168,8 @@ def protect_default_branch(branch, dry_run):
                  "--input", "-"], check=False, stdin=payload)
 
     if result.returncode == 0:
-        print(f"  branch  {branch} protected — 1 review, no force-push")
+        print(f"  branch  {branch} protected — {reviews} review(s), "
+              f"no force-push, no deletion")
         return
 
     error = result.stderr.strip()
@@ -166,6 +193,9 @@ def protect_default_branch(branch, dry_run):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--reviews", type=int, default=None,
+                        help="approving reviews required on a pull request "
+                             "(default: 0 on a solo repository, 1 otherwise)")
     args = parser.parse_args()
 
     branch = default_branch()
@@ -186,7 +216,7 @@ def main():
     print("Pull requests")
     pull_request_settings(args.dry_run)
     print("Branch protection")
-    protect_default_branch(branch, args.dry_run)
+    protect_default_branch(branch, required_reviews(args.reviews), args.dry_run)
 
     if args.dry_run:
         print("\nDry run — nothing was written.")
