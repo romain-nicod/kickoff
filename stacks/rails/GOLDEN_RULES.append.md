@@ -175,3 +175,53 @@ question is: how long has this server been running?**
 
 Found three times in two days on the first real project built from this
 template.
+
+## The 44 px touch floor, held by one rule
+
+**60 — A design system that states a minimum touch size holds it in ONE
+CSS rule, never by picking `btn-lg` on the buttons somebody remembers.**
+
+```scss
+// @media (pointer: coarse) — a FINGER, not a narrow window. A tablet at
+// 900 px is touched; a laptop dragged down to 500 px is not.
+@media (pointer: coarse) {
+  .btn, .form-control, .form-select { min-height: 44px; }
+  .btn { min-width: 44px; }   // an icon-only button has no text to widen it
+}
+```
+
+⚠️ **Bootstrap's own default `.btn` is 38 px**, so a project that never
+writes `btn-sm` is still under a 44 px floor. Measured on the first real
+project: fourteen `btn-sm` across nine views at **31 px**, including the
+theme toggle in the bar of every single page — eleven months of "we
+respect the rule" and nothing anywhere enforced it.
+
+## A French — or any non-English — interface
+
+**61 — No I18n fallback to the source language.** A fallback turns a
+missing translation into a source-language string that looks deliberate
+and that nobody ever finds. Without one, the screen says
+`translation missing` in bold, and a guard makes sure it never has to.
+
+**62 — Count every locale against the source SCOPE BY SCOPE.** Comparing
+`fr.yml` to `en.yml` is not enough: gems ship their own
+`devise.en.yml`, `simple_form.en.yml`, `kaminari`'s
+`views.pagination.*`. Those keys exist in the source locale and in no
+other, so a naive count calls the translation complete while every
+reset-password subject line stays English.
+
+**63 — A key missing from BOTH locales passes every count.** The only
+thing that sees it is a spec that opens the screens and reads what is on
+them — paginated, and with a form submitted wrong.
+
+### Four traps, each certain, each on the first project that translated
+
+| Trap | Why it is invisible |
+|---|---|
+| **ERB escapes `'` to `&#39;` and `&` to `&amp;`** | `expect(response.body).to include(I18n.t(…))` stops matching. The diff prints the whole document and never points at the entity. Compare against an **unescaped** helper. ⚠️ This bites in English too: "Clients & prospects". |
+| **Rails keeps `errors.messages.*` inside its own gems, source language only** | Every validation on every form prints `Translation missing. Options considered were:` **to the reader**. `rails-i18n` supplies the rest. |
+| **`strftime("%B")` asks the C library** and answers in English whatever the locale | No locale file can change it. `I18n.l` is the only thing that translates a month or a day name. |
+| **A translated string written into a DATABASE column** | The column becomes bilingual by date and stays that way for ever. Store a **code**, translate on display. |
+
+🔴 **All four were found by opening something. None was found by a green
+suite.**

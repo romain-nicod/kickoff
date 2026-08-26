@@ -132,6 +132,19 @@ here it is, one line per destination.
       not merely look bad — **it makes a working feature look broken**,
       and no test ever asks whether a figure is plausible.
 
+      🔴 **Press the buttons. Opening a screen is not running a pass.**
+      One pass on that project opened the backup screen, counted its
+      eleven checkboxes, wrote them down — and never clicked Start. The
+      button had been answering **500 in production for two deploys**.
+      A screen that is only looked at is a screenshot, not a test.
+
+      🔴 **Submit at least one form WRONG.** A screen shows its error
+      messages only when something is refused, so a pass that fills
+      every field correctly never sees them. On a translated interface,
+      every single validation message was replaced by
+      `Translation missing. Options considered were:` — printed to the
+      reader, on every form, past a suite of a thousand green examples.
+
 - [ ] **No section this template left blank is still blank.** The check
       is a command, not a reading:
 

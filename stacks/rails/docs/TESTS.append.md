@@ -56,6 +56,39 @@ suite that reaches the internet is a suite that is red on the train.
 **`travel_to` for anything time-dependent**, never `sleep`. A test that
 sleeps is a test that is flaky on a slow machine and slow on a fast one.
 
+### The guards a suite cannot grow on its own
+
+A green suite tells you the code does what the tests ask. It says nothing
+about what nobody thought to ask. Three guards, each written after a
+defect walked past a green suite on the first real project:
+
+| Guard | The defect it was born from |
+|---|---|
+| **Every list folds to cards below `md`** | one list of ten scrolled sideways on a phone, and the guard then found an eleventh nobody had audited |
+| **Every locale carries the source's keys, scope by scope** | a translation sat at 56 % for a day and only a person counting could tell |
+| **No screen prints `translation missing`** | two lists printed it between their pagination controls, and every refused form printed it in place of an error |
+
+🔴 **A guard that cannot fail is not a guard.** Prove each one by breaking
+what it watches, watching it go red, then restoring. A guard written and
+never seen to fail is a comment with a `describe` around it.
+
+⚠️ **Walk, do not sample.** The cost of one more path in a guard is a
+line; the cost of a missing one is a broken screen in front of a client.
+And **paginate before you look**: a three-row list hides every defect
+that lives in the second page's controls.
+
+### The pass that finds what the suite cannot
+
+🔴 **Open the thing.** On the first real project, the three worst defects
+of a day — a 500 on a button, every validation message replaced by
+debug text, an English month name on a translated page — were all found
+by opening a screen, and none by a suite of a thousand green examples.
+
+A QA pass that opens a screen and does not **press the button on it** is
+a QA pass that has not run. That is not a hypothetical: a pass counted
+eleven checkboxes on a backup screen, never clicked Start, and the
+button had been returning a 500 in production for two deploys.
+
 ### The gate
 
 `bundle exec rspec` fully green, `bundle exec rubocop` with no offence,

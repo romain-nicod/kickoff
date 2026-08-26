@@ -44,6 +44,14 @@ TRACKED_GLOBS = ["docs/*.md"]
 # in pairs under a comment explaining what goes in them.
 EMPTY_ITEM = re.compile(r"^\s*(?:[-*+]|\d+\.)\s*(?:🔴|⚠️|✅)?\s*$")
 
+# A bare marker on a line of its own: "🔴". AGENTS.md §3 ships THREE of
+# them under "the absolute rules", with no list marker in front — so
+# EMPTY_ITEM, which needs one, walked straight past all three. Found on
+# 26/08/2026 on the first project built from this template, where the
+# script answered "Nothing left blank" to a file with three empty rules
+# and an empty stack table in it.
+BARE_MARKER = re.compile(r"^\s*(?:🔴|⚠️|✅)\s*$")
+
 # A table row whose cells are all blank: "| Application | |".
 EMPTY_ROW = re.compile(r"^\s*\|(?:[^|]*\|)+\s*$")
 
@@ -57,7 +65,13 @@ def is_empty_row(line):
     # A separator row (|---|---|) is not a hole.
     if all(set(cell) <= set("-: ") and cell for cell in cells):
         return False
-    # The first cell names the row; the hole is everything after it.
+    # A row with NOTHING in it at all — "| | |" — is the shape the stack
+    # table ships as, and the earlier version of this function missed it:
+    # it required the first cell to be filled, reading a row as "a name
+    # plus a hole". A row that is all hole is still a hole.
+    if not any(cells):
+        return True
+    # Otherwise the first cell names the row and the hole is after it.
     return bool(cells[0]) and not any(cells[1:])
 
 
@@ -85,6 +99,8 @@ def scan(path):
     for number, line in enumerate(lines, start=1):
         if EMPTY_ITEM.match(line) and line.strip():
             problems.append((number, f"empty list item: {line.strip()!r}"))
+        elif BARE_MARKER.match(line):
+            problems.append((number, f"a marker with no rule after it: {line.strip()!r}"))
         elif is_empty_row(line):
             problems.append((number, f"table row with nothing in it: {line.strip()!r}"))
     problems += empty_code_blocks(lines)

@@ -51,7 +51,7 @@ to it.
      🔴 Data with no source is not displayed.
      🔴 No hypothesis is presented as a measurement.
 
-     Two are already decided for every project and are not up for
+     Three are already decided for every project and are not up for
      debate here — keep them: -->
 
 🔴 **Every key lives in `.env`, and `.env` is never pushed.** One
@@ -65,6 +65,30 @@ template.** Not a bare `rails new`, not a hand-assembled stack: it is the
 base everyone here learnt on, and day one is not spent relearning where
 the CSS lives. Departing from it is allowed and gets written down in
 `README.md` — see `docs/BOILERPLATE.md`.
+
+🔴 **Nothing that costs money without the account owner's explicit
+approval, asked for and given BEFORE the command runs.** Name the owner
+here. The hosting account is billed to a person, and that person is
+usually the only one who can see what a command charges to it.
+
+**What is gated**, on Heroku and on every equivalent: `heroku run` (a
+one-off dyno, billed by the second, every time), `addons:create` (a
+recurring monthly line, immediately), `ps:scale` and `ps:type`,
+`pg:upgrade` and any plan change, and anything that adds a **worker
+dyno** or a **second database**.
+**What is not**: pushing a deploy, reading logs, releases and config.
+
+⚠️ **It applies to the agent as much as to the human.** An agent asked
+to "set that up", helpfully running `addons:create`, spends money
+belonging to somebody who was not consulted. Stop and ask, even when it
+interrupts the task — **especially** then.
+
+🔴 A cost approved once is approved for **that command, that time**.
+
+⚠️ **And a written rule binds only the agents that read this file.** If
+somebody outside the repository can spend on the account, the rule that
+actually holds is the collaborator list, not this paragraph. Say which
+one you chose, and why.
 
 🔴
 
