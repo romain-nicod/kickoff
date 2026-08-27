@@ -1,6 +1,6 @@
 ---
 name: methode-wagon
-description: Méthodologie de développement enseignée au bootcamp Le Wagon et niveau de code attendu de Romain — le parcours d'une user story en 12 étapes (US et critères, wireframe, design system, schéma, specs, pseudo-code, branche, code en silo, PR, déploiement, wiki), les idiomes Rails obligatoires (importmap jamais yarn, Stimulus jamais de script inline, simple_form, strong params, dependent: :destroy), le découpage MVC du boilerplate, du Ruby élémentaire, et l'interdiction de refactoriser ce qui marche. À déclencher pour tout code assisté sur ses projets — Ruby, Rails, JS — avant d'ouvrir le premier fichier, et dès qu'il demande comment attaquer une US.
+description: Méthodologie de développement enseignée au bootcamp Le Wagon et niveau de code attendu de Romain — le parcours d'une user story en 12 étapes (US et critères, wireframe, design system, schéma, specs, pseudo-code, branche, code en silo, PR, déploiement, wiki), les idiomes Rails obligatoires (importmap jamais yarn, Stimulus jamais de script inline, simple_form, strong params, dependent: :destroy), le découpage MVC du boilerplate, **les gems par défaut et celles qu'on écarte** (Solid Queue plutôt que Sidekiq, pg_search plutôt qu'Elasticsearch), du Ruby élémentaire, et l'interdiction de refactoriser ce qui marche. À déclencher pour tout code assisté sur ses projets — Ruby, Rails, JS — avant d'ouvrir le premier fichier, et dès qu'il demande comment attaquer une US.
 ---
 
 # Méthode Le Wagon
@@ -264,6 +264,53 @@ En Rails, c'est la même séparation, avec la *convention over configuration* :
 d'avoir à configurer quoi que ce soit.
 
 ---
+
+## 3 bis. 🔴 Les gems par défaut — ne pas rouvrir la question
+
+Le boilerplate est **`rails-ready`** (`ai-gmented-pm/rails-ready`), dérivé du
+`minimal.rb` de Le Wagon. Il tranche déjà le choix des outils. Quand un besoin
+apparaît, **prendre le défaut ci-dessous sans discuter** ; proposer autre chose
+demande une raison qu'on sait énoncer.
+
+| Besoin | Le défaut | Et surtout pas | Pourquoi |
+|---|---|---|---|
+| Tâches en arrière-plan | **`solid_queue`** | Sidekiq | Sidekiq exige **Redis** : un service de plus à lancer, déployer, surveiller et payer. La base est déjà là — et `solid_queue` est natif Rails 8 |
+| Temps réel, WebSockets | **`solid_cable`** | Redis, Valkey | même raisonnement, même économie |
+| Cache | **`solid_cache`** | Redis, Memcached | idem |
+| Recherche plein texte | **`pg_search`** | Elasticsearch, Algolia | ils sont meilleurs sur la pondération et les fautes de frappe, mais l'un impose une infra sur **chaque** poste et sur l'hébergeur, l'autre est un service payant. On ne bouge que quand on sait **nommer** ce qui manque |
+| Recherche par le sens | **`neighbor`** + `pgvector` | un service vectoriel externe | l'extension est livrée avec PostgreSQL 15+ |
+| Comptes, sessions | **`devise`** | rouler son authentification | jamais écrire soi-même de l'authentification |
+| Permissions | **`pundit`** | des `if current_user.admin?` dans les vues | 🔴 masquer un lien n'est pas une protection ; c'est le `authorize` du contrôleur qui protège |
+| Formulaires | **`simple_form`** | `form_with` et du balisage à la main | `f.input` choisit le type d'après la colonne, affiche les erreurs, et pose `aria-invalid` |
+| JavaScript | **importmap** | `yarn add`, jsbundling, Node | 🔴 `bin/importmap pin <package>`, jamais autre chose |
+| Fichiers envoyés par un utilisateur | **Active Storage** + `cloudinary` | écrire sur le disque du serveur | le système de fichiers d'un dyno est **éphémère** : tout disparaît au redémarrage |
+| Appeler un LLM | **`ruby_llm`** | un client HTTP écrit à la main | changer de fournisseur devient une chaîne de caractères, pas une réécriture |
+| Voir les appels HTTP sortants | **`httplog`** | des `puts` autour de l'appel | sans lui, on débogue un appel d'API à l'aveugle |
+| Points d'arrêt | **`pry-byebug`** | une avalanche de `puts` | déjà dit au §4, et c'est la même règle |
+| Données de démonstration | **`faker`** | des chaînes inventées à la main | et **`create!`**, jamais `create` : sans le point d'exclamation, une instance invalide est ignorée en silence |
+
+🔴 **Ce qui n'est pas dans la liste ne s'ajoute pas sans raison écrite.** Une
+gem qu'on ne sait pas justifier en une ligne ne rentre pas.
+
+⚠️ **`devise` et `pundit` se décommentent ensemble.** Une autorisation sans
+authentification n'a pas de sujet.
+
+⚠️ **Trois gems sont natives mais inutilisables sans configuration** :
+`solid_queue`, `solid_cache` et `solid_cable`. Ce qui leur manque n'est pas une
+ligne de `Gemfile`, ce sont quatre réglages — dont **la base unique**, sans
+laquelle un hébergeur facture quatre bases au lieu d'une. Détail dans
+`rails-ready/docs/CONFIGURATION.md`.
+
+💎 **Le réglage qui fait gagner le plus de temps au quotidien** : `plugin
+:solid_queue` dans `config/puma.rb`, en développement seulement. Un seul
+`rails s`, et les jobs tournent dans le même processus — plus de second
+terminal qu'on oublie de lancer. ⚠️ Rails 8.1 pose **déjà** sa propre ligne
+gardée par `SOLID_QUEUE_IN_PUMA` : il faut la **remplacer**, pas s'y ajouter.
+
+**Où est quoi** : la grille de décision est dans `kickoff`
+(`stacks/rails/docs/GEMS.md`), les étapes de mise en place dans `rails-ready`
+(`docs/CONFIGURATION.md`), et le `Gemfile` commenté dans `rails-ready`. Aucune
+copie : chaque sujet a un seul domicile.
 
 ## 4. Le niveau de code attendu
 
