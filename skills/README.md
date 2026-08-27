@@ -42,12 +42,16 @@ three must agree:
 |---|---|
 | **The skills** (here) | How Claude works with him |
 | **This template** | What a new project starts from |
-| **Amorce's generators** (`app/services/briques/`) | What a **team** using Amorce receives |
 
-A rule that lives only in the skills applies to him alone. A rule that
-lives only in Amorce does not drive Claude. **It is the third relay that
-gets forgotten** — checked on 20/08/2026: six rules decided, none of them
-in the generators.
+🔴 **Two relays since 27/08/2026, not three.** There used to be a third —
+Amorce's generators, which served a team — and it was dropped: he works alone,
+so serving a tool aimed at hypothetical teams cost something on every pass and
+never met a user. Amorce stays online and is not deleted; it simply receives no
+new rules. See `~/.claude/CLAUDE.md`, "Les deux relais".
+
+A rule that lives only in the skills applies to Claude alone; a rule that lives
+only in the template does not drive Claude. **Both are due, and a pass that
+stops before the second says so.**
 
 Which repository is authoritative for what: see
 [`KICKOFF.md`](../KICKOFF.md), section "Who is authoritative".

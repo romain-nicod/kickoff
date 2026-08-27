@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gems — kickoff</title>
+<style>
+:root{--bg:#fbfaf8;--fg:#1c1b19;--muted:#6b6862;--line:#e2ded6;--card:#fff;
+--code-bg:#f4f1eb;--accent:#b4501e;--accent-soft:#fdf0e8;--ok:#2f6f4e;
+--warn:#8a6d1f;--stop:#a33028;
+--mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#16150f;--fg:#eae6dd;--muted:#9d978a;
+--line:#2f2c24;--card:#1e1c16;--code-bg:#24211a;--accent:#e8834a;
+--accent-soft:#2a1d14;--ok:#7fbb96;--warn:#d9bc6a;--stop:#e08a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+h1{font-size:2rem;margin:0 0 1.25rem;letter-spacing:-.02em;
+border-bottom:2px solid var(--fg);padding-bottom:1rem}
+h2{font-size:1.3rem;margin:2.75rem 0 .6rem;padding-bottom:.35rem;
+border-bottom:1px solid var(--line);letter-spacing:-.01em;scroll-margin-top:1rem}
+h3{font-size:1.05rem;margin:1.75rem 0 .4rem;color:var(--accent)}
+h4{font-size:.95rem;margin:1.25rem 0 .3rem}
+p{margin:.6rem 0}
+code{font-family:var(--mono);font-size:.87em;background:var(--code-bg);
+padding:.12em .38em;border-radius:4px}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;
+padding:.9rem 1rem;overflow-x:auto;font-family:var(--mono);font-size:.83rem;
+line-height:1.55;margin:.75rem 0}
+pre code{background:none;padding:0;font-size:inherit}
+table{border-collapse:collapse;width:100%;margin:.9rem 0;font-size:.93rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:.5rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--card);font-weight:600}
+blockquote{border-left:3px solid var(--accent);margin:.9rem 0;padding:.15rem 0 .15rem .9rem;color:var(--muted)}
+blockquote p{margin:.25rem 0}
+.callout{border-left:3px solid var(--line);padding:.15rem 0 .15rem .9rem;margin:.9rem 0}
+.callout.stop{border-color:var(--stop)}
+.callout.warn{border-color:var(--warn)}
+.callout.tip{border-color:var(--ok)}
+.callout p{margin:.25rem 0}
+ul,ol{margin:.6rem 0;padding-left:1.4rem}
+li{margin:.25rem 0}
+a{color:var(--accent)}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:1rem 1.25rem;margin:1.5rem 0}
+nav.toc ul{margin:.4rem 0 0;padding-left:1.1rem;columns:2;column-gap:2rem}
+nav.toc li{margin:.2rem 0}
+footer{margin-top:4rem;padding-top:1rem;border-top:1px solid var(--line);
+text-align:center;color:var(--muted);font-size:.82rem;font-style:italic}
+@media (max-width:620px){nav.toc ul{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc"><strong>Sur cette page</strong><ul><li><a href="#the-three-tiers">The three tiers</a></li><li><a href="#active-installed-on-every-project">Active — installed on every project</a></li><li><a href="#optional-shipped-commented">Optional — shipped commented</a></li><li><a href="#not-picked-and-why">Not picked — and why</a></li><li><a href="#the-four-settings-that-matter-more-than-any-gem">The four settings that matter more than any gem</a></li><li><a href="#where-each-thing-lives">Where each thing lives</a></li></ul></nav>
+<h1>Gems — what we install, what we do not, and why</h1>
+<p>The decision grid. <strong>Not</strong> the setup steps: those live in <a href="https://github.com/ai-gmented-pm/rails-ready/blob/main/docs/CONFIGURATION.md"><code>rails-ready/docs/CONFIGURATION.md</code></a>, and the commented <code>Gemfile</code> that ships them is in the same repository.</p>
+<p>One rule governs the whole list:</p>
+<div class="callout stop"><p>🔴 <strong>A gem whose reason you cannot state is a gem you should not add.</strong></p></div>
+<h2 id="the-three-tiers">The three tiers</h2>
+<p>The tier *is* the decision.</p>
+<table><thead><tr><th>Tier</th><th>Meaning</th><th>Where it lives</th></tr></thead><tbody>
+<tr><td><strong>Active</strong></td><td>Every project wants it. Removing one is a choice, written in <code>README.md</code></td><td>uncommented in the <code>Gemfile</code></td></tr>
+<tr><td><strong>Optional</strong></td><td>Nothing is imposed. A project without accounts must not ship Devise</td><td>commented, with its steps</td></tr>
+<tr><td><strong>Not picked</strong></td><td>An alternative we weighed and declined, named <strong>with the reason</strong> so nobody re-opens the question</td><td>named here only</td></tr>
+</tbody></table>
+<h2 id="active-installed-on-every-project">Active — installed on every project</h2>
+<table><thead><tr><th>Gem</th><th>What it buys you</th></tr></thead><tbody>
+<tr><td><code>sprockets-rails</code> · <code>sassc-rails</code></td><td>The SCSS pipeline the <code>bootstrap</code> gem requires</td></tr>
+<tr><td><code>bootstrap ~&gt; 5.3</code></td><td>Grid, components, utilities</td></tr>
+<tr><td><code>autoprefixer-rails</code></td><td>Browser prefixes, from the Can I Use database</td></tr>
+<tr><td><code>font-awesome-sass ~&gt; 6.1</code></td><td>Icons callable from a view</td></tr>
+<tr><td><code>simple_form</code></td><td><code>f.input</code> picks the field type from the column and renders errors, with <code>aria-invalid</code> for screen readers</td></tr>
+<tr><td><code>solid_queue</code> · <code>solid_cache</code> · <code>solid_cable</code></td><td>Jobs, cache and WebSockets — <strong>in the database, no Redis</strong></td></tr>
+<tr><td><code>mission_control-jobs</code></td><td>A dashboard for jobs that fail. Without it, they fail silently</td></tr>
+<tr><td><code>dotenv-rails</code></td><td>Keys in <code>.env</code>, not in the code</td></tr>
+<tr><td><code>pry-byebug</code> · <code>pry-rails</code></td><td>Breakpoints, and a Rails console worth using</td></tr>
+<tr><td><code>httplog</code> (dev)</td><td>Every outgoing HTTP call, logged. The difference between debugging an API call and guessing</td></tr>
+<tr><td><code>hotwire-livereload</code> (dev)</td><td>The browser reloads itself. Pure comfort, missed the day it is gone</td></tr>
+<tr><td><code>faker</code> (dev/test)</td><td>Seed data somebody would believe</td></tr>
+<tr><td><code>rubocop-rails-omakase</code> · <code>brakeman</code> · <code>bundler-audit</code></td><td>Style, static security scan, dependency audit</td></tr>
+</tbody></table>
+<h2 id="optional-shipped-commented">Optional — shipped commented</h2>
+<table><thead><tr><th>Gem</th><th>Switch it on when</th><th>Cost of switching it on by default</th></tr></thead><tbody>
+<tr><td><code>devise</code></td><td>The product has accounts</td><td>Forces an authentication flow on a project that may not want one</td></tr>
+<tr><td><code>pundit</code></td><td>Some users may do what others may not</td><td>Meaningless without <code>devise</code></td></tr>
+<tr><td><code>pg_search</code></td><td>Users search text</td><td>An index to rebuild and keep in sync</td></tr>
+<tr><td><code>cloudinary</code></td><td>Users upload files</td><td>An external account, and a paid one past the free tier</td></tr>
+<tr><td><code>ruby_llm</code></td><td>The product calls a language model</td><td>An API key, a budget, and authentication in front of it</td></tr>
+<tr><td><code>neighbor</code></td><td>Search must work on meaning, not words</td><td>A PostgreSQL extension, and a vector column tied to one embedding model</td></tr>
+</tbody></table>
+<div class="callout stop"><p>🔴 <code>devise</code> and <code>pundit</code> are uncommented <strong>together</strong>. Authorization without authentication has no subject.</p></div>
+<h2 id="not-picked-and-why">Not picked — and why</h2>
+<table><thead><tr><th>Instead of</th><th>We use</th><th>Reason</th></tr></thead><tbody>
+<tr><td><strong>Sidekiq</strong></td><td><code>solid_queue</code></td><td>Sidekiq is a good library. It needs <strong>Redis</strong>: one more service to run locally, deploy, monitor and pay for. The database is already there</td></tr>
+<tr><td><strong>Redis / Valkey</strong> for Action Cable</td><td><code>solid_cable</code></td><td>Same reasoning, same saving</td></tr>
+<tr><td><strong>Elasticsearch + <code>searchkick</code></strong></td><td><code>pg_search</code></td><td>Better at scoring, typos and suggestions — and it must run on <strong>every</strong> developer&#x27;s machine and on the host. Move only when you can name what you are missing</td></tr>
+<tr><td><strong>Algolia</strong></td><td><code>pg_search</code></td><td>Excellent and fast, especially on short text. It is a paid external service, and weaker on large documents</td></tr>
+<tr><td><strong>Propshaft</strong></td><td>Sprockets</td><td>Rails 8&#x27;s default, but the <code>bootstrap</code> gem needs Sprockets. 🔴 They do not coexist</td></tr>
+<tr><td><strong>Yarn / a Node toolchain</strong></td><td>Importmap</td><td>🔴 A library is added with <code>bin/importmap pin</code>, never <code>yarn add</code>. One package does not justify a build chain to maintain</td></tr>
+<tr><td><strong><code>scaffold</code></strong></td><td>Writing the actions you need</td><td>The course that teaches it says so itself: demonstrations only. No real project needs all seven CRUD actions at once</td></tr>
+</tbody></table>
+<h2 id="the-four-settings-that-matter-more-than-any-gem">The four settings that matter more than any gem</h2>
+<p>Full steps in <code>rails-ready/docs/CONFIGURATION.md</code>. Listed here because each one fails <strong>silently</strong> when missed.</p>
+<table><thead><tr><th>Setting</th><th>What it prevents</th></tr></thead><tbody>
+<tr><td><code>config.active_job.queue_adapter = :solid_queue</code></td><td>Jobs running <strong>synchronously without warning</strong> — everything looks fine and nothing is asynchronous</td></tr>
+<tr><td>Single database for the three <code>solid_*</code> gems</td><td>Four databases billed where one would do. And the step everyone forgets: removing <code>config.solid_queue.connects_to</code> from <code>production.rb</code></td></tr>
+<tr><td>Solid Queue inside Puma, in development only</td><td>A second terminal you must remember to start, and notice you forgot when no job runs</td></tr>
+<tr><td>The <code>!.env.example</code> negation placed <strong>last</strong> in <code>.gitignore</code></td><td>Git keeps the last matching rule — Rails 8.1 writes its own <code>/.env*</code> partway down, which kills a negation placed above it</td></tr>
+</tbody></table>
+<h2 id="where-each-thing-lives">Where each thing lives</h2>
+<table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+<tr><td>Which gem, and why this one</td><td><strong>here</strong></td></tr>
+<tr><td>How to switch it on</td><td><code>rails-ready/docs/CONFIGURATION.md</code></td></tr>
+<tr><td>The <code>Gemfile</code> that ships it</td><td><code>rails-ready/Gemfile</code></td></tr>
+<tr><td>The generator that installs it</td><td><code>rails-ready/template.rb</code></td></tr>
+</tbody></table>
+<div class="callout stop"><p>🔴 <strong>No copies.</strong> Each subject has one home; the others point at it.</p></div>
+<footer>Généré depuis <code>GEMS.md</code> — ne pas éditer cette page,
+éditer le Markdown et relancer <code>scripts/build_docs.py</code>.</footer>
+</div>
+</body>
+</html>

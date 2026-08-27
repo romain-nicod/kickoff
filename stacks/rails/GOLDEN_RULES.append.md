@@ -12,7 +12,7 @@ Turbo integration, the escaping and the path helpers in one go.
 ```
 
 **32 — Use the helpers the boilerplate already installed**, before you
-write a tag or a URL by hand. `minimal` ships them and the answer is
+write a tag or a URL by hand. `rails-ready` ships them and the answer is
 usually yes:
 
 | Instead of writing | Use | From |

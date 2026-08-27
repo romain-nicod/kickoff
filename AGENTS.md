@@ -60,11 +60,12 @@ mechanism, no exception, no "just for this test". Read through
 A key in the history is compromised even in a private repository — see
 golden rule 28.
 
-🔴 **The application skeleton comes from `minimal`, Le Wagon's Rails
-template.** Not a bare `rails new`, not a hand-assembled stack: it is the
-base everyone here learnt on, and day one is not spent relearning where
-the CSS lives. Departing from it is allowed and gets written down in
-`README.md` — see `docs/BOILERPLATE.md`.
+🔴 **The application skeleton comes from `rails-ready`**, our Rails
+template derived from Le Wagon's `minimal.rb`. Not a bare `rails new`, not a
+hand-assembled stack: it is the base everyone here learnt on, plus what every
+project installs by hand anyway, minus four defects. Day one is not spent
+relearning where the CSS lives. Departing from it is allowed and gets written
+down in `README.md` — see `docs/BOILERPLATE.md`.
 
 🔴
 

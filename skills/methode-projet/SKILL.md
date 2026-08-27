@@ -225,8 +225,7 @@ vérifiable en revue.
 
 Le dépôt porte **un prompt écrit par livrable de conception** : PRD, wireframes,
 charte graphique, schéma de données, diagramme d'architecture, stories, tests,
-revue de code, revue de sécurité. Il vient du template `kickoff`, et Amorce le
-génère pour les équipes.
+revue de code, revue de sécurité. Il vient du template `kickoff`.
 
 **La règle : on ne rédige pas un prompt de conception de tête.** On ouvre
 `docs/PROMPTS.md`, on prend celui du livrable, on remplace ce qui est entre
@@ -251,11 +250,13 @@ présente**, avec ses critères d'acceptation. Un prompt sans critères
 d'acceptation est un vœu : c'est la liste de vérification qui le rend
 réutilisable, pas sa formulation.
 
-🔴 **Trois relais, comme toujours** : la bibliothèque vit dans le template
-`ai-gmented-pm/kickoff` (`docs/PROMPTS.md`), dans le générateur d'Amorce
-(`BibliothequePromptsGenerator`, qui la personnalise par profil) et ici. Une
-règle de prompt qui change se change dans le générateur d'abord — le template
-en est le rendu.
+🔴 **Deux relais** : la bibliothèque vit dans le template
+`ai-gmented-pm/kickoff` (`docs/PROMPTS.md`) et ici. Une règle de prompt qui
+change se change dans le template d'abord.
+
+⚠️ Il y avait un troisième relais — le `BibliothequePromptsGenerator` d'Amorce,
+qui personnalisait la bibliothèque par profil. Amorce est sorti du circuit le
+27/08/2026 ; `docs/PROMPTS.md` est désormais maintenu directement.
 
 ---
 
@@ -318,11 +319,14 @@ elle, existe. La liste des critères est dans `docs/QUALITY.md` du dépôt.
 
 ---
 
-## 🔴 Qui fait foi, quand `kickoff` et `amorce` disent deux choses
+## 🔴 Qui fait foi
 
-Les deux produisent les mêmes documents de méthode par deux routes. Chaque
-sujet a **un seul domicile** ; le tableau complet est dans `KICKOFF.md`, section
-« Who is authoritative », et la comparaison détaillée dans
+Chaque sujet a **un seul domicile** ; le tableau complet est dans `KICKOFF.md`,
+section « Who is authoritative ».
+
+⚠️ **Amorce produisait les mêmes documents par une autre route.** Il est sorti
+du circuit de la méthode le 27/08/2026 : toujours en ligne, plus servi, et
+autorité sur rien. La comparaison historique reste dans
 `ObsiClaud/dev/Kickoff et Amorce - recouvrement et arbitrage.md`.
 
 | Sujet | Fait foi |
@@ -330,15 +334,16 @@ sujet a **un seul domicile** ; le tableau complet est dans `KICKOFF.md`, section
 | Documents de méthode, règles d'or, couches de stack | **`kickoff`** |
 | Spécification → issues, épiques, jalons, board | **`kickoff`** |
 | **Les trois skills** (dont celle-ci) | **`kickoff`** (`skills/`) — depuis le 24/08/2026 |
-| Le défaut de boilerplate (`minimal`) et ses raisons | **`kickoff`** (`docs/BOILERPLATE.md`) |
-| Le `template.rb` exécutable | **`amorce`** (brique `boilerplate`) |
-| `docs/PROMPTS.md` | **`amorce`** (brique `bibliotheque_prompts`) |
-| Le texte d'un document dérivé d'un profil | **`amorce`** |
-| La configuration du dépôt par API (labels, protection, board, Pages) | **`amorce`** |
+| Le défaut de boilerplate (`rails-ready`) et ses raisons | **`kickoff`** (`docs/BOILERPLATE.md`) |
+| Le `template.rb` exécutable | **`rails-ready`** |
+| `docs/PROMPTS.md` | **`kickoff`** — produit par Amorce jusqu'au 27/08/2026, maintenu ici depuis |
+| L'activation de chaque gem optionnelle | **`rails-ready`** (`docs/CONFIGURATION.md`) |
+| La configuration du dépôt (labels, protection, board) | **`kickoff`** — `gh` depuis un terminal |
 
-🔴 **Ne jamais appliquer les deux au même dépôt.** Ils écrivent les mêmes sujets
-sous des noms de fichiers différents — `docs/MILESTONES.md` contre
-`docs/JALONS.md`, et deux DoD qui ne disent pas la même chose sur l'estimation.
+⚠️ **Note historique — ne jamais appliquer Amorce à un dépôt `kickoff`.** Ils
+écrivaient les mêmes sujets sous des noms de fichiers différents —
+`docs/MILESTONES.md` contre `docs/JALONS.md`, et deux DoD qui ne disaient pas la
+même chose sur l'estimation.
 
 ⚠️ **`~/.claude/skills/` est une installation, jamais un lieu d'édition.** Une
 skill se modifie dans `kickoff/skills/`, puis se réinstalle par copie. L'oubli
@@ -409,14 +414,14 @@ Ne pas le redire ici, l'appeler.
 
 ## Le stack par défaut
 
-🔴 **Le squelette d'application vient de `minimal`, le template Rails de
-Le Wagon** — `minimal.rb` dans `lewagon/rails-templates`. C'est le défaut, il ne
+🔴 **Le squelette d'application vient de `rails-ready`**, notre template Rails
+dérivé du `minimal.rb` de Le Wagon. C'est le défaut, il ne
 se discute pas ; s'en écarter est légitime et **s'écrit dans le `README.md`**,
 section « Décisions structurantes », dans le même commit.
 
 ```bash
 rails new -d postgresql \
-  -m https://raw.githubusercontent.com/lewagon/rails-templates/master/minimal.rb \
+  -m https://raw.githubusercontent.com/ai-gmented-pm/rails-ready/main/template.rb \
   --skip \
   .
 ```
@@ -453,8 +458,9 @@ hébergeurs est éphémère), `neighbor` (vecteurs, RAG).
 🔴 **Une gem jamais vue en cours n'entre pas sans qu'il l'ait demandée.** Le
 critère n'est pas la qualité de la gem, c'est sa capacité à la défendre.
 
-Le détail — ce que chacune apporte, les étapes, le piège — est produit par
-Amorce dans `docs/ACTIVER.md` du dépôt généré.
+Le détail — ce que chacune apporte, les étapes, le piège — est dans
+`docs/CONFIGURATION.md` de **`rails-ready`**, et les gems y sont déjà présentes
+en option commentée.
 
 ---
 

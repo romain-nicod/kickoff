@@ -15,8 +15,8 @@ Reminders that are expensive to forget:
 - 🔴 **Every key lives in `.env`, and `.env` is never pushed** (rule 28).
   `ENV.fetch(...)` in the code, the variable name in `.env.example`, in
   the same commit. No exception for a test or a demo.
-- 🔴 **The skeleton comes from `minimal`, Le Wagon's Rails template** —
-  see `docs/BOILERPLATE.md`. Departing from it is written down in
+- 🔴 **The skeleton comes from `rails-ready`**, our Rails template derived
+  from Le Wagon's `minimal.rb` — see `docs/BOILERPLATE.md`. Departing from it is written down in
   `README.md`.
 - 🔴
 - 🔴

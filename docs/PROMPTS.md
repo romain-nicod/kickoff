@@ -1,6 +1,8 @@
 # Prompt library
 
-_Generated from the Amorce prompt-library brick, then committed here. One prompt per design deliverable. They are versioned like the rest: a prompt that produced a bad output gets amended here, not rewritten from memory next time._
+_One prompt per design deliverable. They are versioned like the rest: a prompt that produced a bad output gets amended here, not rewritten from memory next time._
+
+_Until 27/08/2026 this file was generated from Amorce's prompt-library brick. Amorce is out of the method circuit; this file is now maintained directly here._
 
 ## How to use this file
 
