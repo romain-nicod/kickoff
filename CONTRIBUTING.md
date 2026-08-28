@@ -60,6 +60,27 @@ git rebase origin/main
 Everything in the right-hand column is a comment, not a request for
 changes. **A blocked PR must state which rule it breaks**, by number.
 
+### 🔴 The deliverable is the diff, not the file
+
+Aim for **the smallest diff that does the job**. The reviewer must see
+the change, not go looking for it.
+
+- **Never touch the indentation of a line you are not changing.** A
+  shift makes ten lines look changed when one of them is.
+- **An addition is described as "add after line N"**, with the two or
+  three surrounding lines for context — never as "replace this block".
+- **A fix quotes the offending line and the corrected line**, nothing
+  else.
+- **Never retype a block to change one word in it.** The risk of losing
+  a closing tag is real, and the diff becomes unreadable.
+
+The test before pushing: *if the reviewer opens this diff, how many
+changed lines for how many useful ones?* Past two for one, split it
+differently.
+
+⚠️ **Check the diff, not the file**: run `git diff <file>` before saying
+it is done. A correct file can still produce an unreadable diff.
+
 ## Before opening a PR
 
 <!-- The two commands CI will run. Filled in with the stack. -->
