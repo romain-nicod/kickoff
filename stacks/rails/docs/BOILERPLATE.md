@@ -22,10 +22,13 @@ day one relearning where the CSS lives.
 Run it in the freshly cloned repository, **after** `bin/kickoff`:
 
 ```bash
-rails new -d postgresql \
-  -m https://raw.githubusercontent.com/ai-gmented-pm/rails-ready/main/template.rb \
-  --skip \
-  .
+# rails-ready is a PRIVATE repository: the raw.githubusercontent.com URL
+# returns 404 for everyone, including you. Fetch it through the API, which
+# uses your gh credentials, then point rails new at the local file.
+gh api repos/ai-gmented-pm/rails-ready/contents/template.rb \
+  -H "Accept: application/vnd.github.raw" > /tmp/rails-ready.rb
+
+rails new -d postgresql -m /tmp/rails-ready.rb --skip .
 ```
 
 `--skip` matters: the clone already holds `README.md`, `.github/` and the
@@ -38,6 +41,48 @@ Then:
 bin/rails db:migrate
 bin/dev
 ```
+
+## Two failures paid on 31/08/2026 — PEF Blog
+
+Both were observed, both stop you dead, and neither says why.
+
+### The template aborts on `config/importmap.rb`
+
+```
+Thor::Error: The file config/importmap.rb does not appear to exist
+```
+
+The template appends importmap pins near its end. On the run that produced
+this note, that file did not exist and everything after the abort was skipped —
+`.env.example`, the `.gitignore` rules, the platform lock, the initial commit.
+The cause was not established; the fix was:
+
+```bash
+bin/rails importmap:install
+bin/rails app:template LOCATION=/tmp/rails-ready.rb   # re-run, it resumes
+```
+
+**Check before you move on:** `ls config/importmap.rb app/javascript/application.js`.
+
+### `rails s` starts, then exits by itself
+
+```
+Detected Solid Queue has gone away, stopping Puma...
+```
+
+`config/puma.rb` loads `plugin :solid_queue`, and the Solid tables do not
+exist until you do the single-database setup. The server therefore **exits a
+few seconds after booting**, and a `curl` sent too early can even hit another
+app on the same port and report a misleading 200.
+
+The setup is described in rails-ready's `docs/CONFIGURATION.md` and is **not
+optional to get a running server** — it is not just a hosting cost question.
+Run `bin/rails solid_queue:install solid_cache:install solid_cable:install`
+first: the `db/*_schema.rb` files it writes are what you copy into the
+migrations.
+
+**Check before you move on:** `grep "Listening on" your server log`, and read
+the `<title>` the server actually returns.
 
 ## What it decides for you
 

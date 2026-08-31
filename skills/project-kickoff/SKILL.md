@@ -55,10 +55,13 @@ purpose.
 Then generate the application skeleton, in the cloned repository:
 
 ```bash
-rails new -d postgresql \
-  -m https://raw.githubusercontent.com/ai-gmented-pm/rails-ready/main/template.rb \
-  --skip \
-  .
+# rails-ready is a PRIVATE repository: the raw.githubusercontent.com URL
+# returns 404 for everyone, including you. Fetch it through the API, which
+# uses your gh credentials, then point rails new at the local file.
+gh api repos/ai-gmented-pm/rails-ready/contents/template.rb \
+  -H "Accept: application/vnd.github.raw" > /tmp/rails-ready.rb
+
+rails new -d postgresql -m /tmp/rails-ready.rb --skip .
 ```
 
 🔴 **`rails-ready` is the default and needs no discussion** — it derives from Le Wagon's
