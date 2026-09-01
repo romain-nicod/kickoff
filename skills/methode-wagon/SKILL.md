@@ -457,6 +457,73 @@ appliquer DRY, c'est **en écrivant** le troisième cas, pas en rouvrant les deu
 
 ---
 
+### 🔴 Le livrable, c'est le diff — pas le fichier
+
+Quand je lui donne du code à modifier, je vise **le plus petit diff qui fait le
+travail**. Le relecteur de la PR doit voir le changement, pas le chercher.
+
+- **Ne jamais toucher à l'indentation d'une ligne qu'on ne modifie pas.** Un
+  décalage fait apparaître dix lignes comme changées alors qu'une seule l'est.
+- **Un ajout se dit « ajoute après la ligne N »**, avec les deux ou trois lignes
+  de contexte autour pour qu'il sache où — jamais « remplace ce bloc ».
+- **Une correction cite la ligne fautive et la ligne corrigée**, rien d'autre.
+- **Ne jamais faire retaper un bloc pour y changer un mot** : le risque d'y
+  perdre une balise fermante est réel, et le diff devient illisible.
+
+Le test avant d'envoyer : *si le relecteur ouvre ce diff, combien de lignes
+changées pour combien de lignes utiles ?* Au-delà de deux pour une, je découpe
+autrement.
+
+⚠️ Vérifier le diff, pas le fichier : `git diff <fichier>` avant de dire que
+c'est bon. Un fichier correct peut produire un diff illisible.
+
+Né le 28/08/2026 sur la PR de l'itinéraire Go Meal : trois fichiers dont
+l'indentation avait glissé, et deux balises fermantes perdues en recopiant un
+bloc — pour un changement réel de quatre lignes.
+
+---
+
+### 🔴 Un livrable visuel se regarde avant d'être livré
+
+Né le 01/09/2026, après **trois livraisons illisibles de suite** : des
+maquettes Figma dont les textes se superposaient, une page HTML dont les
+blocs se chevauchaient, un schéma SVG dont la moitié débordait de ses
+cadres. À chaque fois j'avais « vérifié » — en regardant le haut de la
+page, là où rien ne clochait.
+
+**Regarder, ce n'est pas prendre une capture du titre.** Un défaut de mise
+en page se loge dans les zones denses : les blocs de notes, les tableaux à
+quatre colonnes, les encadrés en bas à droite. Ce sont eux qu'il faut
+ouvrir.
+
+🔴 **Quand le livrable est GÉNÉRÉ, le générateur refuse de produire un
+fichier invalide.** Pas un avertissement qu'on lira peut-être : une erreur
+qui interrompt. Un contrôle qui n'empêche rien n'empêche rien.
+
+Pour un visuel, deux contrôles suffisent à attraper l'essentiel :
+
+| Contrôle | Ce qu'il attrape |
+|---|---|
+| **Chevauchement** — deux textes dont les boîtes se recouvrent | le texte superposé, illisible |
+| **Débordement** — un texte plus large que le cadre qui le contient | la phrase qui sort de son encadré |
+
+*(Sur PEF Blog : `docs/wireframes/svg/_lib.py`, méthode `lint()`, appelée
+par `save()` qui lève une exception. Elle a rattrapé six défauts sur trois
+fichiers du premier coup.)*
+
+**Quand le livrable n'est pas généré** — une maquette dessinée à la main,
+une page produite par un outil — la vérification reste due : ouvrir le
+fichier, aller aux zones denses, et le dire dans le compte rendu. « Je
+n'ai pas pu vérifier » est une phrase acceptable ; livrer sans regarder ne
+l'est pas.
+
+⚠️ **C'est la même règle que « le livrable, c'est le diff ».** Dans les deux
+cas on vérifie **ce qu'on livre**, pas ce qu'on croit avoir écrit. Un
+fichier correct peut produire un diff illisible ; un script correct peut
+produire une image illisible.
+
+---
+
 ## 7. Le Référentiel
 
 Sa bibliothèque de syntaxe personnelle — Ruby, regex, parsing, Terminal/Bash, Git :
