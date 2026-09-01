@@ -39,8 +39,11 @@ sait pas écrire faute de critères d'acceptation).
  7. Pseudo-code en commentaires numérotés
  8. Branche depuis un `main` à jour — UNE story = UNE branche, nommée d'après elle
  9. Code en silo : migration → model → route → controller → view → Stimulus
-10. Pull request — description, DoD cochée, CI verte, capture
+10. Pull request — description, DoD cochée, CI verte, capture, et
+    **`Closes #n`** dans le corps : c'est ce qui ferme l'issue au merge
 10 bis. **Proposer les revues** — `/code-review` et `/security-review`. Romain décide
+10 ter. **Après le merge, remettre le tableau à l'état réel** —
+    `python3 scripts/setup_project.py`. Il ne se relance pas tout seul
 11. Déploiement vérifié EN PRODUCTION, migrations comprises
 12. Wiki / mémoire : décisions et pièges, avec leur raison
 ```
@@ -103,6 +106,25 @@ Si le titre de la story ne donne ni entité ni action claires, ce n'est pas le
 nommage qui coince : **la story est trop vague ou trop grosse.** Le nom de
 branche est le premier révélateur d'une US mal découpée — le dire à ce
 moment-là, pas après avoir codé.
+
+🔴 **Une US livrée doit se voir sur le tableau, le jour même.** Deux gestes,
+aucun des deux automatique : la PR ferme son issue (`Closes #n`), et
+`setup_project.py` se relance après le merge pour passer l'item en `Done`.
+
+⚠️ **Constaté le 01/09/2026** : huit US livrées, huit issues encore
+ouvertes, tous les items encore en `Backlog`. Le tableau annonçait zéro
+avancement pour trois jours de travail — et c'est Romain qui l'a vu, pas
+moi. Un tableau faux est pire qu'un tableau absent : on cesse de le lire,
+puis on cesse d'y écrire.
+
+🔴 **La qualité est un lot d'US, pas une intention.** Le gabarit `kickoff`
+livre l'épic **E0 — Quality and acceptance** dans `docs/specification.md` :
+balayage QA du front, audits d'accessibilité et de sécurité, recette par
+les vrais utilisateurs, comportement en conditions réelles, exercice de
+restauration, revue des données personnelles. Sept US, avec leurs points,
+dans un lot. Le DoD dit déjà tout ça par US — et sur ce même projet, aucune
+de ces cases n'avait été cochée en huit US. **Une règle qui ne vit que dans
+un document que personne n'ouvre n'est pas une règle.**
 
 🔴 **Les critères d'acceptation se gèlent avant l'étape 6.** Après le gel, un critère qui
 change n'est pas une correction : c'est une nouvelle US.

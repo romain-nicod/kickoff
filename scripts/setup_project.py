@@ -179,6 +179,67 @@ def option_id(field, name):
     return None
 
 
+# The four views of Le Wagon's project template. `createProjectV2View` is
+# in the public GraphQL schema — an earlier note in this file claimed the
+# API could not create a view, and it sent every project off with a single
+# unnamed table. Checked against the live schema on 01/09/2026.
+#
+# ⚠️ What the API still cannot do: set the *grouping*. Neither
+# createProjectV2View nor updateProjectV2View takes a groupBy argument. A
+# BOARD_LAYOUT view falls back to grouping by Status, which is the one we
+# want anyway — but nothing here guarantees it, so look once.
+VIEWS = [
+    ("Kanban", "BOARD_LAYOUT", None),
+    ("Prioritized backlog", "TABLE_LAYOUT", "-status:Done"),
+    ("My items", "TABLE_LAYOUT", "assignee:@me"),
+    ("All items", "TABLE_LAYOUT", None),
+]
+
+
+def ensure_views(project_id):
+    """Create the missing views, and rename a lone default table.
+
+    Idempotent: a view is matched by name, never recreated.
+    """
+    q = ('query($p:ID!){node(id:$p){... on ProjectV2'
+         '{views(first:20){nodes{id name layout}}}}}')
+    existing = json.loads(gh(["api", "graphql", "-f", f"query={q}",
+                              "-f", f"p={project_id}"]).stdout)
+    nodes = existing["data"]["node"]["views"]["nodes"]
+    by_name = {v["name"]: v for v in nodes}
+
+    # GitHub names the first view "View 1". It is the All items view under
+    # another name, so rename it rather than leaving a duplicate behind.
+    if "View 1" in by_name and "All items" not in by_name:
+        m = ('mutation($v:ID!,$n:String!){updateProjectV2View'
+             '(input:{viewId:$v,name:$n}){projectV2View{id name}}}')
+        gh(["api", "graphql", "-f", f"query={m}",
+            "-f", f"v={by_name['View 1']['id']}", "-f", "n=All items"],
+           check=False)
+        by_name["All items"] = by_name.pop("View 1")
+        print("  renamed View 1 → All items")
+
+    for name, layout, view_filter in VIEWS:
+        view = by_name.get(name)
+        if not view:
+            m = ('mutation($p:ID!,$n:String!,$l:ProjectV2ViewLayout!)'
+                 '{createProjectV2View(input:{projectId:$p,name:$n,'
+                 'layout:$l}){projectV2View{id name}}}')
+            out = gh(["api", "graphql", "-f", f"query={m}",
+                      "-f", f"p={project_id}", "-f", f"n={name}",
+                      "-f", f"l={layout}"], check=False)
+            if not out.stdout:
+                continue
+            view = json.loads(out.stdout)["data"]["createProjectV2View"]["projectV2View"]
+            print(f"  view: {name} [{layout}]")
+
+        if view_filter:
+            m = ('mutation($v:ID!,$f:String!){updateProjectV2View'
+                 '(input:{viewId:$v,filter:$f}){projectV2View{id}}}')
+            gh(["api", "graphql", "-f", f"query={m}", "-f", f"v={view['id']}",
+                "-f", f"f={view_filter}"], check=False)
+
+
 def main():
     check_scope()
     number, project_id = find_or_create_project()
@@ -221,9 +282,17 @@ def main():
             None if current_status.get(issue["url"]) else "Backlog"
         )
 
+        # An epic is a container, never a story: it carries no priority of
+        # its own, and giving it one puts every epic in the same column.
+        # Seen on 01/09/2026 — seven epics filed under "Won't Have", which
+        # reads as "we decided against the whole product".
+        is_epic = not any(l.startswith("prio:") for l in labels)
+
         # A story outside every batch is out of the committed scope, which
         # is exactly what "Won't Have" says.
-        moscow = MOSCOW_OF.get(priority) if batch else "Won't Have"
+        moscow = None if is_epic else (
+            MOSCOW_OF.get(priority) if batch else "Won't Have"
+        )
 
         base = ["project", "item-edit", "--id", item_id, "--project-id", project_id]
         for field_name, value in (("Batch", batch), ("MoSCoW Priority", moscow),
@@ -236,9 +305,11 @@ def main():
             gh(base + ["--field-id", field_map["Points"]["id"],
                        "--number", points], check=False)
 
+    ensure_views(project_id)
+
     print(f"\nboard ready: https://github.com/users/{OWNER}/projects/{number}")
-    print("Add a Board view in the UI (+ next to the view tabs → Board, "
-          "group by Status): creating a view is not exposed by the API.")
+    print("Views: " + " · ".join(name for name, _, _ in VIEWS))
+    print("Check once that Kanban groups by Status — the API cannot set it.")
 
 
 if __name__ == "__main__":
