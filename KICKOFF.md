@@ -38,6 +38,7 @@ is left for you to do.
 | **Product** | `docs/PRD.md` (intent, outcomes, non-goals), `docs/specification.md` (stories), `docs/SCENARIOS.md` (Given/When/Then, mapped to the RSpec examples) |
 | **Architecture** | `docs/ARCHITECTURE.md` and `docs/SCHEMA.md` — **living documents**, updated in the same commit as the change they describe |
 | **Documentation** | `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/SYSTEM_DESIGN.md`, `docs/decisions/`, `docs/WIKI.md` |
+| **Design** | `docs/DESIGN_CHECKLIST.md` — everything a system design must produce, visual half and technical half, each line to be marked. **A blank line is a question nobody asked** |
 | **Prompts** | `docs/PROMPTS.md` — how to ask for each deliverable above, and what to check before accepting it |
 | **Boilerplate** | `docs/BOILERPLATE.md` (stack layer) — `rails-ready`, our Rails template, and what it decides for you |
 | **Skills** | `skills/` — three Claude skills; two are installed into the project's `.claude/skills/` |
