@@ -65,10 +65,10 @@ RAILS_IGNORE = """
 """
 
 GENERATORS = """
-    # RSpec and FactoryBot, never test_unit — see docs/TESTS.md. Without
-    # this every generator quietly writes into test/, and nothing runs it.
-    config.generators do |g|
-      g.test_framework :rspec, fixture: false
+    # Minitest, the Rails default -- see docs/TESTS.md. We only turn
+    # fixtures off for generated scaffolds; the framework itself is
+    # already Minitest and needs no block.
+      g.test_framework :test_unit, fixture: false
       g.factory_bot dir: "spec/factories"
     end
 """
@@ -174,23 +174,23 @@ def untrack_runtime(dry_run):
     return f"  untracked {len(junk)} runtime files (the .keep files stay)"
 
 
-def point_generators_at_rspec(dry_run):
+def point_generators_at_minitest(dry_run):
     path = ROOT / "config" / "application.rb"
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8")
-    if "g.test_framework :rspec" in text:
+    if "g.test_framework :test_unit" in text:
         return None
 
     anchor = "    config.autoload_lib(ignore: %w[assets tasks])"
     if anchor not in text:
         return ("  WARNING  could not find where to declare the generators "
-                "in config/application.rb — add the RSpec block by hand")
+                "in config/application.rb — add the generators block by hand")
     if dry_run:
-        return "  point the generators at RSpec in config/application.rb"
+        return "  point the generators at Minitest in config/application.rb"
     path.write_text(text.replace(anchor, anchor + "\n" + GENERATORS, 1),
                     encoding="utf-8")
-    return "  config/application.rb: generators point at RSpec"
+    return "  config/application.rb: generators point at Minitest"
 
 
 def main():
@@ -207,7 +207,7 @@ def main():
         restore_overwritten(".rubocop.yml", args.dry_run),
         fix_gitignore(args.dry_run),
         untrack_runtime(args.dry_run),
-        point_generators_at_rspec(args.dry_run),
+        point_generators_at_minitest(args.dry_run),
     ]
     reported = [line for line in done if line]
     print("\n".join(reported) if reported else "  nothing to do")
@@ -219,9 +219,9 @@ def main():
     print("""
 Left for you, because they need a decision rather than a default:
 
-  1. Add the gems the specification needs — at minimum rspec-rails and
-     factory_bot_rails, then whatever the stories call for.
-  2. bundle install && bin/rails generate rspec:install && rm -rf test
+  1. Add the gems the specification needs. Minitest is already there —
+     it is the Rails default — so this is only what the stories call for.
+  2. bundle install, then write your first test under test/
   3. Commit. Read the diff first: the boilerplate's own commit is large,
      and this script has just changed what is in it.
 """)

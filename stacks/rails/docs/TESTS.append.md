@@ -1,26 +1,31 @@
 ---
 
-## On Rails: RSpec
+## On Rails: Minitest
 
-RSpec, FactoryBot and Capybara. Not Minitest — RSpec is what the team
-learnt, and its `describe`/`context`/`it` reads back as the story it
-came from.
+Minitest and fixtures — the Rails default. Rails itself is tested with
+it, most gems too, and the official documentation speaks the same
+language as the code.
 
 ```bash
-bundle exec rspec              # the suite
-bundle exec rspec spec/models  # while you work
-bundle exec rspec spec/models/venue_spec.rb:42
+bin/rails test                        # the suite
+bin/rails test test/models            # while you work
+bin/rails test test/models/venue_test.rb:42
+bin/rails test -n /refuses a second/  # by test name
 ```
+
+⚠️ **RSpec is the majority framework in the wider ecosystem, and it is what
+the bootcamp teaches.** Choosing Minitest is a deliberate exception: plain
+Ruby instead of a DSL, a suite two to three times faster, no gem to add.
 
 ### Where a story's tests land
 
 | The story changes | It gets |
 |---|---|
-| A business rule, a validation, a scope | `spec/models/` — exhaustively, every boundary |
-| A computation extracted from a view | `spec/helpers/` |
-| A service, a generator, a parser | `spec/services/` |
-| A route's behaviour, a redirect, a status | `spec/requests/` |
-| The demo journey, once it exists | `spec/features/` — one, not ten |
+| A business rule, a validation, a scope | `test/models/` — exhaustively, every boundary |
+| A computation extracted from a view | `test/helpers/` |
+| A service, a generator, a parser | `test/services/` |
+| A route's behaviour, a redirect, a status | `test/integration/` |
+| The demo journey, once it exists | `test/system/` — one, not ten |
 
 ⚠️ **Request and feature specs need the routes to exist.** They ask for a
 path and click a named helper. That is why routes are written before the

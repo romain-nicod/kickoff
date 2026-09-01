@@ -148,7 +148,7 @@ précisément le décalage qui fait coder une interface périmée.
 
 **Un document vivant de plus**, et le seul qu'on puisse mettre entre les mains de
 quelqu'un qui ne lit pas Ruby : chaque comportement attendu y est écrit en
-**Given / When / Then**, en anglais intelligible, et pointe l'exemple RSpec qui
+**Given / When / Then**, en anglais intelligible, et pointe le test Minitest qui
 le vérifie.
 
 🔴 **Le mapping se fait par la description du `it`, jamais par un numéro de
@@ -157,7 +157,7 @@ au-dessus, et personne ne s'en aperçoit. La description, elle, survit aux
 éditions et se retrouve :
 
 ```bash
-bundle exec rspec spec/system/recipes_spec.rb -e "shows every published recipe"
+bin/rails test test/system/recipes_test.rb -n "/shows every published recipe/"
 ```
 
 **La règle qui garde le document honnête :** la clause `Then` et la description
@@ -167,7 +167,7 @@ l'autre l'est dans le même commit — sinon le document devient décoratif.
 **La chaîne de traçabilité, de bout en bout :**
 
 ```text
-FR-n (PRD)  →  user story  →  S-n (SCENARIOS.md)  →  exemple RSpec
+FR-n (PRD)  →  user story  →  S-n (SCENARIOS.md)  →  test Minitest
 ```
 
 Un `FR-n` sans scénario n'est pas vérifié. Un scénario sans spec est une
@@ -390,7 +390,7 @@ explicitement listées (« 1-N ou N-N entre X et Y ? », « on héberge où ? »
 | Livrable | Où il vit | Qui valide |
 |---|---|---|
 | **Specs** — un test par critère d'acceptation, écrites AVANT le code, **et les specs existantes mises à jour** | `spec/` | CI |
-| **Scénarios** — Given / When / Then en anglais lisible, mappés aux exemples RSpec | `docs/SCENARIOS.md` *(template fourni)* | 🔴 **Romain** |
+| **Scénarios** — Given / When / Then en anglais lisible, mappés aux tests Minitest | `docs/SCENARIOS.md` *(template fourni)* | 🔴 **Romain** |
 | **Pseudo-code** — étapes numérotées en commentaires, dans la méthode | Dans le code livré | — |
 | **Une branche par story**, nommée d'après elle (`<type>/<entite>-<action>`) | Le dépôt | — |
 | **Code commenté** — commentaires en français, identifiants en anglais | Le dépôt | 🔴 **Romain (PR)** |
@@ -443,7 +443,7 @@ Sauf décision contraire pour CE projet :
 | Assets | **Sprockets** (pas Propshaft — les feuilles du bootcamp sont en SCSS) |
 | JavaScript | **importmap**. 🔴 Jamais `yarn add`, jamais jsbundling |
 | Formulaires | **simple_form** |
-| Tests | **RSpec** + FactoryBot + Capybara |
+| Tests | **Minitest** + fixtures + Capybara (défaut Rails) |
 | Secrets | 🔴 **Toutes les clés dans `.env`**, jamais poussé — `dotenv-rails` en local, secrets de l'hébergeur en prod (règle d'or 28) |
 
 ### Les gems, par famille

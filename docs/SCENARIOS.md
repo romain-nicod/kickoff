@@ -13,7 +13,7 @@
 
 ## How to read this
 
-Each scenario is written **Given / When / Then** and maps to the RSpec example
+Each scenario is written **Given / When / Then** and maps to the Minitest test
 that verifies it.
 
 🔴 **The mapping is by `it` description, never by line number.** A line number is
@@ -21,7 +21,7 @@ wrong the moment someone inserts a line above it, and nobody notices — the `it
 description survives edits and is greppable:
 
 ```bash
-bundle exec rspec spec/system/recipes_spec.rb -e "shows every published recipe"
+bin/rails test test/system/recipes_test.rb -n "/shows every published recipe/"
 ```
 
 **The rule that keeps this honest:** the `Then` clause below and the `it`
@@ -29,7 +29,7 @@ description in the spec say **the same thing, in the same words**. When they
 drift, the document becomes decoration. If you reword one, reword the other in
 the same commit.
 
-**Traceability:** `FR-n` ([`PRD.md`](PRD.md)) → user story → `S-n` here → RSpec
+**Traceability:** `FR-n` ([`PRD.md`](PRD.md)) → user story → `S-n` here → Minitest
 example. Any `FR-n` with no scenario is unverified; any scenario with no spec is
 a promise.
 

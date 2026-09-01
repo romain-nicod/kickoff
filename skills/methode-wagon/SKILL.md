@@ -34,8 +34,8 @@ sait pas écrire faute de critères d'acceptation).
  4. Design system — Bootstrap d'abord, composant nouveau ajouté AVANT d'être codé
  5. Schéma de données — types, associations, index, contraintes, dependent:
  5 bis. **Routes** — écrites dans `routes.rb` AVANT de coder, vérifiées au `bin/rails routes`
- 6. Specs RSpec — un `it` par critère ; les specs EXISTANTES aussi sont mises à jour
- 6 bis. Scénarios Given/When/Then dans `docs/SCENARIOS.md`, mappés par la description du `it`
+ 6. Tests Minitest — une méthode `test` par critère ; les tests EXISTANTS aussi sont mis à jour
+ 6 bis. Scénarios Given/When/Then dans `docs/SCENARIOS.md`, mappés par le nom du test
  7. Pseudo-code en commentaires numérotés
  8. Branche depuis un `main` à jour — UNE story = UNE branche, nommée d'après elle
  9. Code en silo : migration → model → route → controller → view → Stimulus
@@ -60,16 +60,16 @@ Les deux portes (a-t-on le droit de commencer / de dire que c'est fini) :
 Le gabarit d'issue de référence :
 `~/Documents/Claude/ObsiClaud/le-wagon/methode/Wagon - Template US.md`
 
-🔴 **La description du `it` est un livrable, pas un commentaire.** Elle est
-recopiée telle quelle dans `docs/SCENARIOS.md`, où elle sert de clé de mapping —
-on ne référence jamais un numéro de ligne, qui serait faux dès la ligne suivante
-insérée. Écrire `it "refuse un second vote du même membre"` plutôt que
-`it "works"` n'est donc pas de la coquetterie : c'est ce qui rend le scénario
-retrouvable avec `rspec -e`.
+🔴 **Le nom du test est un livrable, pas un commentaire.** Il est recopié tel
+quel dans `docs/SCENARIOS.md`, où il sert de clé de mapping — on ne référence
+jamais un numéro de ligne, qui serait faux dès la ligne suivante insérée.
+Écrire `test "refuse un second vote du même membre"` plutôt que `test "works"`
+n'est donc pas de la coquetterie : c'est ce qui rend le scénario retrouvable
+avec `bin/rails test -n /second vote/`.
 
-🔴 **Le TDD porte aussi sur les specs DÉJÀ écrites.** Une US qui touche du code
-déjà couvert change ce que ce code doit faire : la spec qui décrivait l'ancien
-comportement devient fausse. La mettre à jour fait partie de l'US, pas d'une
+🔴 **Le TDD porte aussi sur les tests DÉJÀ écrits.** Une US qui touche du code
+déjà couvert change ce que ce code doit faire : le test qui décrivait l'ancien
+comportement devient faux. Le mettre à jour fait partie de l'US, pas d'une
 passe de nettoyage. **La suite est verte avant la PR** — pas verte « sauf trois
 qu'on regardera plus tard ».
 
@@ -174,9 +174,9 @@ Les plus coûteuses à violer :
   ⚠️ **On ne reformate pas du code qui marche** pour tenir la limite — ce serait
   une refactorisation que personne n'a demandée, et c'est interdit ici. Ça vaut
   pour ce qu'on écrit maintenant.
-- 🔴 **Le test d'abord, à chaque US.** On écrit la spec RSpec depuis le critère
-  d'acceptation, **on la regarde échouer**, puis on écrit le minimum qui la fait
-  passer. Un test écrit après teste le code ; un test écrit avant teste l'US —
+- 🔴 **Le test d'abord, à chaque US.** On écrit le test Minitest depuis le
+  critère d'acceptation, **on le regarde échouer**, puis on écrit le minimum qui
+  le fait passer. Un test écrit après teste le code ; un test écrit avant teste l'US —
   ils se ressemblent dans le diff et ce n'est pas le même objet. Et un critère
   qu'on n'arrive pas à transformer en test qui échoue est un critère qui n'était
   pas assez précis : le découvrir avant de coder coûte une heure, le découvrir à
@@ -185,6 +185,40 @@ Les plus coûteuses à violer :
 Quand tu écris une forme hors de cette liste alors qu'une forme idiomatique existe,
 **dis-le et propose l'idiomatique** — ne tranche pas en silence.
 
+### 🔴 Minitest, pas RSpec — tranché le 01/09/2026
+
+**Le framework de test est Minitest**, lancé par `bin/rails test`. C'est le
+défaut de Rails : Rails lui-même est testé avec, la plupart des gems aussi, et
+la documentation officielle le suppose.
+
+⚠️ **Ce que ce choix coûte, et qu'on accepte.** RSpec est majoritaire dans
+l'écosystème (~60 % des développeurs Ruby), **et c'est ce que Le Wagon
+enseigne**. Le code produit ici ne ressemblera donc pas, sur ce point précis,
+à celui des exercices du bootcamp. C'est une exception assumée à la règle
+d'ouverture de cette skill, et la seule.
+
+**Ce qu'on gagne :** du Ruby ordinaire au lieu d'un DSL, une suite deux à trois
+fois plus rapide, aucune gem à ajouter, et la documentation Rails qui parle la
+même langue que le code.
+
+**Les équivalences utiles :**
+
+| RSpec | Minitest |
+|---|---|
+| `describe` / `context` | une classe `XTest < ActiveSupport::TestCase` |
+| `it "…" do` | `test "…" do` |
+| `expect(x).to eq(y)` | `assert_equal y, x` |
+| `expect(x).to be_nil` | `assert_nil x` |
+| `expect(x).to include(y)` | `assert_includes x, y` |
+| `expect { … }.to change { … }` | `assert_difference "X.count" do … end` |
+| `let(:x) { … }` | une méthode privée, ou `setup` |
+| factory `create(:user)` | une **fixture** dans `test/fixtures/users.yml` |
+| `bundle exec rspec` | `bin/rails test` |
+| `rspec path:12` | `bin/rails test path:12` |
+
+**Les fixtures remplacent FactoryBot.** Elles sont chargées une fois pour toute
+la suite, ce qui est plus rapide — mais elles sont **globales** : un test ne
+doit jamais supposer que la base ne contient que ce qu'il vient de créer.
 ---
 
 ## 1. Décomposer AVANT d'écrire

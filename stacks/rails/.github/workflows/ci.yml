@@ -55,4 +55,4 @@ jobs:
       - name: Prepare the database
         run: bin/rails db:prepare
       - name: Test
-        run: bundle exec rspec
+        run: bin/rails test

@@ -44,7 +44,7 @@ As a <who>, I want <what>, so that <why>.
 
 **Prepare**
 
-- [ ] **RSpec specs**, one `it` per acceptance criterion, written before the
+- [ ] **Minitest tests**, one `test` per acceptance criterion, written before the
       code and red for the right reason. The specs this story makes wrong are
       updated in the same story, not later.
 - [ ] **`docs/SCENARIOS.md`** — each behaviour in Given / When / Then, naming
