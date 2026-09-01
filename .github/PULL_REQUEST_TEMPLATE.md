@@ -1,5 +1,17 @@
 Closes #
 
+## ⚠️ After pulling this branch
+
+<!-- Tick what the reviewer must run before the app works for them.
+     Delete the whole section if nothing applies — an empty checklist trains
+     people to skip it. Whoever merges relays this to the team channel. -->
+
+- [ ] `bundle install` — the Gemfile changed
+- [ ] `bin/rails db:migrate` — there is a new migration
+- [ ] `bin/rails db:seed` — the seed data changed
+- [ ] a new key in `.env` — the name is in `.env.example`, say where to get it
+- [ ] something else:
+
 ## What this changes
 
 <!-- What the reviewer will see working — not the list of files. Three lines. -->
