@@ -12,7 +12,7 @@ Source files are small because they push the work onto the reader: JPEG 2000
 with JBIG2 masks, or 2000 px JPEGs rescaled by a CSS transform. Output is often
 LARGER on disk and far cheaper to render. That trade is the whole point.
 """
-import argparse, io, json, os, re, shutil, sys, tempfile, unicodedata, uuid, zipfile
+import argparse, io, os, re, shutil, sys, tempfile, unicodedata, uuid, zipfile
 from html import escape
 
 # --- Device profiles -------------------------------------------------------
