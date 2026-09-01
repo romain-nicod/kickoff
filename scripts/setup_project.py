@@ -301,6 +301,12 @@ def main():
             if oid:
                 gh(base + ["--field-id", field_map[field_name]["id"],
                            "--single-select-option-id", oid], check=False)
+            elif is_epic and field_name == "MoSCoW Priority":
+                # ⚠️ Not writing a value does not remove the one already
+                # there. Re-running a fixed script left every epic on the
+                # wrong column until the field was cleared explicitly.
+                gh(base + ["--field-id", field_map[field_name]["id"],
+                           "--clear"], check=False)
         if points:
             gh(base + ["--field-id", field_map["Points"]["id"],
                        "--number", points], check=False)
