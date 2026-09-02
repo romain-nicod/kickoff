@@ -23,6 +23,11 @@ HTML, their ERB **and** their CSS, on Bootstrap.
 They are not redrawn — they are **cited**, and only the project-specific
 variant gets designed.
 
+> **Attribution.** The UI Kit is Le Wagon's work, and so are the component and
+> class names in the table below. What this document adds is the third column
+> and everything after it: which component to reach for, and what the kit does
+> not cover. No HTML or CSS from the kit is reproduced here.
+
 | UI Kit component | Its classes | What you do with it |
 |---|---|---|
 | `button` | `btn btn-flat` · `btn-ghost` · `btn-gradient` | 🔴 `btn-flat` = primary, `btn-ghost` = secondary. `btn-gradient` only if the design admits gradients |

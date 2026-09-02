@@ -8,7 +8,7 @@ description: Start a project from the kickoff template — create the repository
 Turn a product idea into a repository whose method is already decided
 and whose board is already populated.
 
-The template `ai-gmented-pm/kickoff` carries everything that does not
+The template `romain-nicod/kickoff` carries everything that does not
 change from one project to the next. **This skill carries what does**:
 reading a brief, deriving a backlog from it, sizing it against a real
 capacity, and naming the rules that are specific to this product.
@@ -38,7 +38,7 @@ is a hundred issues nobody trusts.**
 ## 2. Create the repository from the template
 
 ```bash
-gh repo create <owner>/<name> --template ai-gmented-pm/kickoff --private --clone
+gh repo create <owner>/<name> --template romain-nicod/kickoff --private --clone
 ```
 
 Then fill `kickoff.yml` with the eight values and run:
@@ -48,20 +48,16 @@ bin/kickoff
 ```
 
 It substitutes everywhere, merges the stack layer, installs
-`methode-projet` and `methode-wagon` into the project's `.claude/skills/`,
+`methode-projet` and `methode-livraison` into the project's `.claude/skills/`,
 and deletes itself. Read its output: it lists the four gaps left on
 purpose.
 
 Then generate the application skeleton, in the cloned repository:
 
 ```bash
-# rails-ready is a PRIVATE repository: the raw.githubusercontent.com URL
-# returns 404 for everyone, including you. Fetch it through the API, which
-# uses your gh credentials, then point rails new at the local file.
-gh api repos/ai-gmented-pm/rails-ready/contents/template.rb \
-  -H "Accept: application/vnd.github.raw" > /tmp/rails-ready.rb
-
-rails new -d postgresql -m /tmp/rails-ready.rb --skip .
+rails new -d postgresql \
+  -m https://raw.githubusercontent.com/romain-nicod/rails-ready/main/template.rb \
+  --skip .
 ```
 
 🔴 **`rails-ready` is the default and needs no discussion** — it derives from Le Wagon's
@@ -191,7 +187,7 @@ repository on the account. Three edits, in the same commit as the creation:
 1. **A row in the overview table** (§1), in the right family: name,
    visibility, whether a local clone exists, one line on what it is.
 2. **A paragraph in §2**: what it holds, its state, its live URL if it has
-   one, its GitHub account if it is not `ai-gmented-pm`.
+   one, its GitHub account if it is not `romain-nicod`.
 3. **An overlap entry in §3** — *only if it applies, and it usually does*.
    Does this repository carry material that already lives elsewhere: content,
    a method document, a skill, shared site code? Then say so, and **name

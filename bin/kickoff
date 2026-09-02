@@ -29,7 +29,7 @@ TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
 # Skills copied into the project's own .claude/skills/, so that every
 # session opened in the repository picks them up with no setup — for
 # everyone on the team, not just whoever ran this script.
-PROJECT_SKILLS = ["methode-projet", "methode-wagon"]
+PROJECT_SKILLS = ["methode-projet", "methode-livraison"]
 
 # Documents that only mean something to a team. On a solo project they
 # are not "a bit of overhead": a CEREMONIES.md nobody holds discredits
@@ -316,7 +316,7 @@ Done. What is left for you:
   4. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
 
 Two skills were installed in .claude/skills/ — methode-projet and
-methode-wagon. Any Claude Code session opened here picks them up with no
+methode-livraison. Any Claude Code session opened here picks them up with no
 setup. They are versioned with the project: commit them.
 """)
 

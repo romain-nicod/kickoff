@@ -1,13 +1,12 @@
 ---
-name: methode-wagon
-description: Méthodologie de développement enseignée au bootcamp Le Wagon et niveau de code attendu de Romain — le parcours d'une user story en 12 étapes (US et critères, wireframe, design system, schéma, specs, pseudo-code, branche, code en silo, PR, déploiement, wiki), les idiomes Rails obligatoires (importmap jamais yarn, Stimulus jamais de script inline, simple_form, strong params, dependent: :destroy), le découpage MVC du boilerplate, **les gems par défaut et celles qu'on écarte** (Solid Queue plutôt que Sidekiq, pg_search plutôt qu'Elasticsearch), du Ruby élémentaire, et l'interdiction de refactoriser ce qui marche. À déclencher pour tout code assisté sur ses projets — Ruby, Rails, JS — avant d'ouvrir le premier fichier, et dès qu'il demande comment attaquer une US.
+name: methode-livraison
+description: La méthode de livraison appliquée sur les projets de ce dépôt — le parcours d'une user story en 12 étapes (US et critères, wireframe, design system, schéma, specs, pseudo-code, branche, code en silo, PR, déploiement, wiki), les idiomes Rails obligatoires (importmap jamais yarn, Stimulus jamais de script inline, simple_form, strong params, dependent: :destroy), le découpage MVC du boilerplate, **les gems par défaut et celles qu'on écarte** (Solid Queue plutôt que Sidekiq, pg_search plutôt qu'Elasticsearch), du Ruby élémentaire, et l'interdiction de refactoriser ce qui marche. À déclencher pour tout code assisté sur ses projets — Ruby, Rails, JS — avant d'ouvrir le premier fichier, et dès qu'il demande comment attaquer une US.
 ---
 
-# Méthode Le Wagon
+# Méthode de livraison
 
-Romain est en reconversion, bootcamp Le Wagon **AI Software Development** (batch #2319,
-démarré le 6 juillet 2026). Il code des projets réels, avec un vocabulaire technique encore
-en construction.
+Cette méthode encadre du code écrit par quelqu'un dont le vocabulaire technique est
+encore en construction, sur des projets réels.
 
 **Le code produit doit ressembler à celui qu'on lui enseigne.** Un code plus court, plus
 malin ou plus « pro » que le sien est un mauvais code : il ne pourra ni le relire, ni le
@@ -323,7 +322,7 @@ d'avoir à configurer quoi que ce soit.
 
 ## 3 bis. 🔴 Les gems par défaut — ne pas rouvrir la question
 
-Le boilerplate est **`rails-ready`** (`ai-gmented-pm/rails-ready`), dérivé du
+Le boilerplate est **`rails-ready`** (`romain-nicod/rails-ready`), dérivé du
 `minimal.rb` de Le Wagon. Il tranche déjà le choix des outils. Quand un besoin
 apparaît, **prendre le défaut ci-dessous sans discuter** ; proposer autre chose
 demande une raison qu'on sait énoncer.
@@ -584,9 +583,15 @@ produire une image illisible.
 
 Sa bibliothèque de syntaxe personnelle — Ruby, regex, parsing, Terminal/Bash, Git :
 
-- En ligne : https://ai-gmented-pm.github.io/le_wagon_learning/content/reference/referentiel.html
+- En ligne : https://romain-nicod.github.io/le_wagon_learning/content/reference/referentiel.html
 - Source : `~/Documents/Claude/code/le_wagon_learning/content/reference/referentiel.html`
 
 **Aligne tes explications sur ses formulations** : mêmes mots, mêmes exemples, pour qu'il
 y retrouve la trace. Quand tu lui apprends quelque chose de réutilisable (commande, piège,
 snippet), **propose de l'ajouter au Référentiel** — jamais sans son accord.
+
+---
+
+*Cette méthode formule, avec les mots de son auteur, une pratique de livraison
+apprise en bootcamp et éprouvée sur des projets réels. Les outils tiers qu'elle
+cite restent la propriété de leurs auteurs.*

@@ -1,6 +1,6 @@
 ---
 name: methode-projet
-description: Le cycle complet d'un projet de Romain, de l'initialisation à la livraison — les phases, les LIVRABLES à produire à chacune et qui les valide (PRD, wireframe, prototype, design system, schéma de base de données, diagramme d'architecture, specs, code commenté), le stack et les gems par défaut, et la règle de MISE À JOUR des documents vivants. À déclencher au démarrage d'un projet, à chaque changement de structure de données ou d'architecture, avant de produire un livrable de conception, et dès qu'il demande « où on en est » ou « qu'est-ce qu'il me reste à valider ». Complète `project-kickoff` (créer le dépôt) et `methode-wagon` (écrire le code).
+description: Le cycle complet d'un projet de Romain, de l'initialisation à la livraison — les phases, les LIVRABLES à produire à chacune et qui les valide (PRD, wireframe, prototype, design system, schéma de base de données, diagramme d'architecture, specs, code commenté), le stack et les gems par défaut, et la règle de MISE À JOUR des documents vivants. À déclencher au démarrage d'un projet, à chaque changement de structure de données ou d'architecture, avant de produire un livrable de conception, et dès qu'il demande « où on en est » ou « qu'est-ce qu'il me reste à valider ». Complète `project-kickoff` (créer le dépôt) et `methode-livraison` (écrire le code).
 ---
 
 # Méthode projet — de l'initialisation à la livraison
@@ -11,7 +11,7 @@ Trois skills, trois moments. Ne pas les confondre :
 |---|---|
 | `project-kickoff` | « Comment je crée le dépôt et le board ? » |
 | **`methode-projet`** (celle-ci) | **« Où on en est, quel livrable maintenant, qui le valide ? »** |
-| `methode-wagon` | « Comment j'écris cette ligne de code ? » |
+| `methode-livraison` | « Comment j'écris cette ligne de code ? » |
 
 **Ce que cette skill garantit :** aucun livrable n'est oublié, aucun n'est produit
 au mauvais moment, et **aucun ne se périme en silence**.
@@ -69,7 +69,7 @@ Le dire dans le message de commit.
 
 ## Remplir les trois documents structurants
 
-Le dépôt généré depuis le template `ai-gmented-pm/kickoff` porte trois fichiers
+Le dépôt généré depuis le template `romain-nicod/kickoff` porte trois fichiers
 déjà charpentés. **Ils se remplissent, ils ne se réécrivent pas** — et surtout
 ils ne se laissent pas vides.
 
@@ -251,7 +251,7 @@ d'acceptation est un vœu : c'est la liste de vérification qui le rend
 réutilisable, pas sa formulation.
 
 🔴 **Deux relais** : la bibliothèque vit dans le template
-`ai-gmented-pm/kickoff` (`docs/PROMPTS.md`) et ici. Une règle de prompt qui
+`romain-nicod/kickoff` (`docs/PROMPTS.md`) et ici. Une règle de prompt qui
 change se change dans le template d'abord.
 
 ⚠️ Il y avait un troisième relais — le `BibliothequePromptsGenerator` d'Amorce,
@@ -399,7 +399,7 @@ explicitement listées (« 1-N ou N-N entre X et Y ? », « on héberge où ? »
 | **Revues proposées** — `/code-review` et `/security-review` | Avant le push | 🔴 **Romain décide, à chaque US** |
 
 Le détail du geste de code — décomposer, coder en silo, MVC, niveau de code
-attendu, ce qu'on ne refactorise pas — est dans la skill **`methode-wagon`**.
+attendu, ce qu'on ne refactorise pas — est dans la skill **`methode-livraison`**.
 Ne pas le redire ici, l'appeler.
 
 ### Phase 3 — Livrer
@@ -420,13 +420,9 @@ se discute pas ; s'en écarter est légitime et **s'écrit dans le `README.md`**
 section « Décisions structurantes », dans le même commit.
 
 ```bash
-# rails-ready is a PRIVATE repository: the raw.githubusercontent.com URL
-# returns 404 for everyone, including you. Fetch it through the API, which
-# uses your gh credentials, then point rails new at the local file.
-gh api repos/ai-gmented-pm/rails-ready/contents/template.rb \
-  -H "Accept: application/vnd.github.raw" > /tmp/rails-ready.rb
-
-rails new -d postgresql -m /tmp/rails-ready.rb --skip .
+rails new -d postgresql \
+  -m https://raw.githubusercontent.com/romain-nicod/rails-ready/main/template.rb \
+  --skip .
 ```
 
 `--skip` parce que le dépôt cloné porte déjà son README, son `.github/` et ses

@@ -42,7 +42,7 @@ by its number (`US-nnn`), a business rule by its own (`BR-nn`).
 
 Two skills are installed in `.claude/skills/` and load on their own:
 `methode-projet` (which deliverable now, who validates it) and
-`methode-wagon` (how the code is written here). They come from the
+`methode-livraison` (how the code is written here). They come from the
 `kickoff` template, which is authoritative for them — edit them there,
 not here.
 

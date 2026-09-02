@@ -1,7 +1,7 @@
 # Gems — what we install, what we do not, and why
 
 The decision grid. **Not** the setup steps: those live in
-[`rails-ready/docs/CONFIGURATION.md`](https://github.com/ai-gmented-pm/rails-ready/blob/main/docs/CONFIGURATION.md),
+[`rails-ready/docs/CONFIGURATION.md`](https://github.com/romain-nicod/rails-ready/blob/main/docs/CONFIGURATION.md),
 and the commented `Gemfile` that ships them is in the same repository.
 
 One rule governs the whole list:

@@ -4,7 +4,7 @@
 # The product's name, as a human says it. Example: Go Meal
 project_name: My Project
 
-# owner/repo on GitHub. Example: ai-gmented-pm/go-meal
+# owner/repo on GitHub. Example: romain-nicod/go-meal
 repo: owner/repo
 
 # One sentence: what the product does, for whom. It lands in the README

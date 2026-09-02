@@ -8,7 +8,7 @@ follows the same method the template writes into the repository.
 |---|---|---|
 | **`project-kickoff`** | "Create the repository and populate the board." | Starting a project, turning a brief into issues |
 | **`methode-projet`** | "Where are we, which deliverable now, who validates it?" | Before a design deliverable, on any change of structure |
-| **`methode-wagon`** | "How do I write this line?" | Before opening the first code file |
+| **`methode-livraison`** | "How do I write this line?" | Before opening the first code file |
 
 🔴 **This repository is the source of truth for all three.** They used to
 live in two places — `kickoff/skill/` and `amorce/skills/` — and drifted:
@@ -19,11 +19,11 @@ live in two places — `kickoff/skill/` and `amorce/skills/` — and drifted:
 **For you, everywhere** — copy them into your personal skill directory:
 
 ```bash
-cp -R skills/methode-projet skills/methode-wagon skills/project-kickoff ~/.claude/skills/
+cp -R skills/methode-projet skills/methode-livraison skills/project-kickoff ~/.claude/skills/
 ```
 
 **For a project** — `bin/kickoff` does it for you. It installs
-`methode-projet` and `methode-wagon` into the new repository's
+`methode-projet` and `methode-livraison` into the new repository's
 `.claude/skills/`, so every session opened in that project picks them up
 with no setup, for every person on the team. `project-kickoff` is not
 installed there: it has done its job by then.
