@@ -19,15 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Third-party material referenced by this repository:
-
-- The Rails stack layer describes a boilerplate derived from `minimal.rb` in
-  lewagon/rails-templates (MIT, Copyright 2017 Le Wagon). No code from it is
-  contained here; it lives in romain-nicod/rails-ready.
-- `docs/DESIGN_CHECKLIST.md` maps the components of the Le Wagon UI Kit
-  (https://uikit.lewagon.com/documentation), which is Le Wagon's work. Only
-  the component and class names are cited; no HTML or CSS is reproduced, and
-  the guidance around them is our own.

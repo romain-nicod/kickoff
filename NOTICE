@@ -1,0 +1,16 @@
+kickoff
+Copyright (c) 2026 Romain Nicod
+
+Third-party material referenced by this repository. None of it is reproduced
+here; each item is cited and linked.
+
+- The Rails stack layer describes a boilerplate derived from `minimal.rb` in
+  lewagon/rails-templates (MIT, Copyright 2017 Le Wagon). No code from it is
+  contained in this repository; the boilerplate itself lives in
+  romain-nicod/rails-ready.
+
+- `docs/DESIGN_CHECKLIST.md` maps the components of the Le Wagon UI Kit
+  (https://uikit.lewagon.com/documentation), which is Le Wagon's work, as are
+  the component and class names in that table. No HTML or CSS from the kit is
+  reproduced. The guidance around it, and the section listing what the kit does
+  not cover, are this repository's own work.
