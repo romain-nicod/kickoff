@@ -1,13 +1,14 @@
 # {{PROJECT_NAME}} — working instructions
 
-> ⚙️ Règles de travail communes à tout ce dossier : `~/Documents/Claude/CLAUDE.md`.
-
-> 🔴 **La mémoire de ce projet vit dans le vault**, pas ici :
-> `~/Documents/Claude/ObsiClaud/<domaine>/{{REPO_NAME}}/`
-> — remplacer `<domaine>` par `perso`, `le-wagon`, `ai-gmented` ou `dev`,
-> et créer le dossier avec sa carte (`{{PROJECT_NAME}}.md`) et son
-> `CLAUDE.md` **le jour où le dépôt naît**, pas plus tard.
-> Ce fichier-ci ne porte que les règles de travail sur ce dépôt.
+> 🔴 **The long memory of this project lives outside the repository.**
+> Decisions and the reasons behind them, traps already paid for, state
+> of play: they belong in a notes folder that survives the code, and it
+> is created the day the repository is born. Name its location on the
+> line below, so that anyone arriving here can find it.
+>
+> **Long memory:** <!-- where the project notes live -->
+>
+> This file carries only the rules for working on this repository.
 
 This file is the substance for any agent (Claude Code, Copilot, Cursor…)
 and for any human picking the project up. `CLAUDE.md` is only a pointer
