@@ -40,12 +40,6 @@ Reminders that are expensive to forget:
 The reference specification is `docs/`. A story cited in code is cited
 by its number (`US-nnn`), a business rule by its own (`BR-nn`).
 
-Two skills are installed in `.claude/skills/` and load on their own:
-`methode-projet` (which deliverable now, who validates it) and
-`methode-livraison` (how the code is written here). They come from the
-`kickoff` template, which is authoritative for them — edit them there,
-not here.
-
 🔴 **The long memory of this project lives in the vault**, not in this
 repository: the folder named at the top of `AGENTS.md`. Decisions and
 their reasons, traps already paid for, state of play. A decision that

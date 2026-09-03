@@ -47,10 +47,8 @@ Then fill `kickoff.yml` with the eight values and run:
 bin/kickoff
 ```
 
-It substitutes everywhere, merges the stack layer, installs
-`methode-projet` and `methode-livraison` into the project's `.claude/skills/`,
-and deletes itself. Read its output: it lists the four gaps left on
-purpose.
+It substitutes everywhere, merges the stack layer, and deletes itself.
+Read its output: it lists the four gaps left on purpose.
 
 Then generate the application skeleton, in the cloned repository:
 

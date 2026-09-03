@@ -1,60 +1,35 @@
-# Skills — the method, made executable
+# Skills
 
-Three Claude skills. **They live here because this is where a project
-starts**: the day you kick one off, they are already at hand, and Claude
-follows the same method the template writes into the repository.
+One Claude skill, `project-kickoff`. **It lives here because this is
+where a project starts**: the day you kick one off, it is already at
+hand, and Claude follows the method the template writes into the
+repository.
 
 | Skill | Answers | Fires |
 |---|---|---|
 | **`project-kickoff`** | "Create the repository and populate the board." | Starting a project, turning a brief into issues |
-| **`methode-projet`** | "Where are we, which deliverable now, who validates it?" | Before a design deliverable, on any change of structure |
-| **`methode-livraison`** | "How do I write this line?" | Before opening the first code file |
 
-🔴 **This repository is the source of truth for all three.** They used to
-live in two places — `kickoff/skill/` and `amorce/skills/` — and drifted:
-38 lines apart on 24/08/2026, 66 lines on 20/08/2026. One home, one truth.
+## Installing it
 
-## Two ways to install, and they do different jobs
-
-**For you, everywhere** — copy them into your personal skill directory:
+Copy it into your personal skill directory:
 
 ```bash
-cp -R skills/methode-projet skills/methode-livraison skills/project-kickoff ~/.claude/skills/
+cp -R skills/project-kickoff ~/.claude/skills/
 ```
 
-**For a project** — `bin/kickoff` does it for you. It installs
-`methode-projet` and `methode-livraison` into the new repository's
-`.claude/skills/`, so every session opened in that project picks them up
-with no setup, for every person on the team. `project-kickoff` is not
-installed there: it has done its job by then.
-
 🔴 **A skill only runs from a `.claude/skills/` directory.** This
-repository holds the version, `~/.claude/skills/` holds the executable:
-editing one without the other creates a silent divergence. Re-copy after
-every change here.
+repository holds the version, `~/.claude/skills/` holds the executable.
+Editing one without the other creates a silent divergence, so re-copy
+after every change made here.
 
-## The three relays
+`project-kickoff` is not installed into the project it creates: it has
+done its job by then.
 
-A method rule decided with Romain is written in **three places**, and the
-three must agree:
+## Why there is only one
 
-| Where | What it drives |
-|---|---|
-| **The skills** (here) | How Claude works with him |
-| **This template** | What a new project starts from |
-
-🔴 **Two relays since 27/08/2026, not three.** There used to be a third —
-Amorce's generators, which served a team — and it was dropped: he works alone,
-so serving a tool aimed at hypothetical teams cost something on every pass and
-never met a user. Amorce stays online and is not deleted; it simply receives no
-new rules. See `~/.claude/CLAUDE.md`, "Les deux relais".
-
-A rule that lives only in the skills applies to Claude alone; a rule that lives
-only in the template does not drive Claude. **Both are due, and a pass that
-stops before the second says so.**
-
-Which repository is authoritative for what: see
-[`KICKOFF.md`](../KICKOFF.md), section "Who is authoritative".
-
-The substance stays in the vault (`ObsiClaud/le-wagon/methode/`): the
-skills are its executable form, not a second copy to maintain.
+Two method skills sat beside it until 03/09/2026 and were removed. They
+restated what this repository's own documents already say, and a rule
+written in two places becomes two rules that disagree. The method is in
+[`GOLDEN_RULES.md`](../GOLDEN_RULES.md), [`DOR_DOD.md`](../DOR_DOD.md),
+[`CONTRIBUTING.md`](../CONTRIBUTING.md) and [`docs/`](../docs/), which is
+where a human reads it and where Claude reads it too.

@@ -22,14 +22,9 @@ ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "kickoff.yml"
 
 # Files and directories that belong to the template, not to a project.
-# `skills` goes too: the two a project needs are installed into
-# .claude/skills/ first, and project-kickoff has done its job by then.
+# `skills` goes too: project-kickoff has done its job by the time this
+# script runs, and the project it creates has no use for it.
 TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
-
-# Skills copied into the project's own .claude/skills/, so that every
-# session opened in the repository picks them up with no setup — for
-# everyone on the team, not just whoever ran this script.
-PROJECT_SKILLS = ["methode-projet", "methode-livraison"]
 
 # Documents that only mean something to a team. On a solo project they
 # are not "a bit of overhead": a CEREMONIES.md nobody holds discredits
@@ -172,23 +167,6 @@ def apply_stack(stack, dry_run):
             shutil.copy2(source, target)
 
 
-def install_skills(dry_run):
-    target_root = ROOT / ".claude" / "skills"
-    for name in PROJECT_SKILLS:
-        source = ROOT / "skills" / name
-        if not source.is_dir():
-            print(f"  ⚠️  skills/{name} is missing — skipped")
-            continue
-        print(f"  install .claude/skills/{name}")
-        if dry_run:
-            continue
-        target = target_root / name
-        if target.exists():
-            shutil.rmtree(target)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(source, target)
-
-
 def apply_team_size(values, dry_run):
     """Solo project: remove the team documents and the links to them.
 
@@ -211,8 +189,8 @@ def apply_team_size(values, dry_run):
     template_paths = {ROOT / name for name in TEMPLATE_ONLY}
     for path in files_to_process():
         # bin/kickoff carries the marker in its own source; the stack
-        # layers and the skills are deleted right after. Neither is part
-        # of the project being created.
+        # layers and the skills directory are deleted right after. None
+        # of them is part of the project being created.
         if any(path == q or q in path.parents for q in template_paths):
             continue
         try:
@@ -268,8 +246,6 @@ def main():
     apply_stack(values["STACK"], args.dry_run)
     print("Substituting")
     substitute(values, args.dry_run)
-    print("Skills")
-    install_skills(args.dry_run)
     apply_team_size(values, args.dry_run)
     print("Cleaning up")
     clean_up(args.dry_run)
@@ -314,10 +290,6 @@ Done. What is left for you:
      python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 
   4. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
-
-Two skills were installed in .claude/skills/ — methode-projet and
-methode-livraison. Any Claude Code session opened here picks them up with no
-setup. They are versioned with the project: commit them.
 """)
 
 

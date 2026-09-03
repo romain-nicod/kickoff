@@ -140,12 +140,6 @@ Four before writing a line of code: `GOLDEN_RULES.md` for how we write,
 `AGENTS.md` for what this product forbids, `DOR_DOD.md` for when a story
 starts and ends, `CONTRIBUTING.md` for how a change reaches `main`.
 
-Two Claude skills are installed in `.claude/skills/` — `methode-projet`
-(which deliverable now, who validates it) and `methode-livraison` (how the
-code is written here). Any session opened in this repository picks them
-up with no setup. They are versioned with the project; they come from
-the `kickoff` template, which is authoritative for them.
-
 ## 11. Licence
 
 <!-- State it explicitly. "All rights reserved", MIT, dual — implicit is
