@@ -1,8 +1,26 @@
 kickoff
 Copyright (c) 2026 Romain Nicod
 
-Third-party material referenced by this repository. None of it is reproduced
-here; each item is cited and linked.
+This work is licensed under the Creative Commons Attribution 4.0
+International License. The full text is in LICENSE, and a summary is at
+https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt this material, including commercially,
+provided you give credit. Credit is satisfied by keeping a line such as:
+
+  Based on kickoff by Romain Nicod
+  (https://github.com/romain-nicod/kickoff), licensed under CC BY 4.0.
+
+Keep it where a reader will see it: in the README of the work that reuses
+this one, or in the file itself. A credit buried in a commit message does
+not satisfy the licence.
+
+If you modify this work, say so, so that nobody attributes your changes to
+the original.
+
+THIRD-PARTY MATERIAL
+--------------------
+None of it is reproduced here; each item is cited and linked.
 
 - The Rails stack layer describes a boilerplate derived from `minimal.rb` in
   lewagon/rails-templates (MIT, Copyright 2017 Le Wagon). No code from it is
@@ -12,5 +30,5 @@ here; each item is cited and linked.
 - `docs/DESIGN_CHECKLIST.md` maps the components of the Le Wagon UI Kit
   (https://uikit.lewagon.com/documentation), which is Le Wagon's work, as are
   the component and class names in that table. No HTML or CSS from the kit is
-  reproduced. The guidance around it, and the section listing what the kit does
-  not cover, are this repository's own work.
+  reproduced. The guidance around it, and the section listing what the kit
+  does not cover, are this repository's own work.

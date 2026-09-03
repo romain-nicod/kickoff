@@ -24,7 +24,7 @@ CONFIG = ROOT / "kickoff.yml"
 # Files and directories that belong to the template, not to a project.
 # `skills` goes too: project-kickoff has done its job by the time this
 # script runs, and the project it creates has no use for it.
-TEMPLATE_ONLY = ["KICKOFF.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
+TEMPLATE_ONLY = ["README.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
 
 # Documents that only mean something to a team. On a solo project they
 # are not "a bit of overhead": a CEREMONIES.md nobody holds discredits
@@ -127,8 +127,8 @@ def substitute(values, dry_run):
 
     print(f"  {touched} files rewritten")
     if not touched:
-        print("  ⚠️  nothing was substituted — expected at least README.md. "
-              "Are you at the root of the repository?")
+        print("  ⚠️  nothing was substituted — expected at least "
+              "README.template.md. Are you at the root of the repository?")
     if unknown:
         print(f"  ⚠️  unknown placeholders left as-is: {', '.join(sorted(unknown))}")
 
@@ -206,6 +206,24 @@ def apply_team_size(values, dry_run):
             path.write_text(pattern.sub("", text), encoding="utf-8")
 
 
+def promote_template_readme(dry_run):
+    """The project's README, after the template's own has been deleted.
+
+    This repository's README.md describes the template itself, so it is
+    listed in TEMPLATE_ONLY and removed above. The one a new project
+    starts from lives in README.template.md, and takes its place here.
+    Order matters: renaming before the cleanup would delete the file we
+    just put there.
+    """
+    source = ROOT / "README.template.md"
+    if not source.is_file():
+        print("  ⚠️  README.template.md is missing — the project has no README")
+        return
+    print("  rename  README.template.md -> README.md")
+    if not dry_run:
+        source.rename(ROOT / "README.md")
+
+
 def clean_up(dry_run):
     for name in TEMPLATE_ONLY:
         path = ROOT / name
@@ -249,6 +267,7 @@ def main():
     apply_team_size(values, args.dry_run)
     print("Cleaning up")
     clean_up(args.dry_run)
+    promote_template_readme(args.dry_run)
 
     if args.dry_run:
         print("\nDry run — nothing was written.")

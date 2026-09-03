@@ -160,7 +160,3 @@ on a hunch.
 
 🔴 **`rails-ready` is authoritative for the template.** This document carries
 the default and the reasons; it never carries a copy of the generator.
-
-⚠️ Until 27/08/2026 this document named **Amorce** as authoritative for the
-`template.rb`. That is void: Amorce has been taken out of the method circuit
-entirely. See `~/.claude/CLAUDE.md`, "Les deux relais".
