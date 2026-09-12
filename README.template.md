@@ -36,7 +36,7 @@ needs; it does not belong at the bottom of the page.
 
 <!-- The choices you would not guess by reading the code and would risk
      breaking. Each one in a line, with its reason. The detail goes in
-     docs/decisions/ as ADRs. -->
+     docs/wiki/ as ADR pages. -->
 
 -
 -
