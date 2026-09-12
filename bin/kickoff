@@ -78,6 +78,9 @@ def read_config():
         "REPO_NAME": name,
         "TAGLINE": values.get("tagline", ""),
         "STACK": values["stack"],
+        # Left visible when empty: AGENTS.md must not read as if the
+        # project had no long memory.
+        "VAULT_FOLDER": values.get("vault_folder") or "TO FILL IN: vault folder",
         "DEV_DAYS": values.get("dev_days", "10"),
         "TEAM_SIZE": values.get("team_size", "4"),
         "VELOCITY": values.get("velocity", "2.5"),

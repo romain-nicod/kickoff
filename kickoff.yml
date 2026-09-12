@@ -14,6 +14,11 @@ tagline: One sentence saying what this does and for whom.
 # Stack layer: rails, static, or none.
 stack: rails
 
+# Absolute path of the project's folder in the vault. It lands on the
+# first line of AGENTS.md. Example:
+# /Users/albert/Documents/Claude/ObsiClaud/perso/pef/blog/
+vault_folder:
+
 # Development days actually available, once framing, pitch preparation
 # and the final presentation are removed.
 dev_days: 10
