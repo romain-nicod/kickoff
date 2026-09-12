@@ -77,30 +77,29 @@ Be specific and quote the document. "It could be clearer" is not an answer.
 
 **When:** Once the PRD holds. Before the board gets populated.
 
-**Have ready:** `docs/PRD.md`, `DOR_DOD.md`, `docs/BACKLOG.md`.
+**Have ready:** `docs/PRD.md`, `.github/ISSUE_TEMPLATE/user_story.md`.
 
 ```text
-Read docs/PRD.md and DOR_DOD.md.
+Read docs/PRD.md and .github/ISSUE_TEMPLATE/user_story.md.
 
-Write one user story per functional requirement, in this format:
-  As a <role>, I can <action>, so that <outcome>.
-Then, for each story:
-- Acceptance criteria, in Given / When / Then, testable by someone who
+Write one user story per functional requirement, as the body of an
+issue on that template, in French, titled `[US] <need or journey>`:
+- The story: « En tant que <qui>, je veux <quoi>, afin de <pourquoi> ».
+- Acceptance criteria numbered CA-01, CA-02…, testable by someone who
   did not write the story.
 - The `FR-n` it satisfies, quoted with the exact wording of the PRD.
-  Do not rephrase it — nobody will make the connection afterwards.
-- The entities it touches, among: the project entities.
-- A size: S, M or L. Anything L gets split now, not later.
-
-Then check every story against the Definition of Ready and tell me
-which ones fail it, and on which criterion.
+- The impacts — wireframe, documents, migration, dependency on another
+  story — each filled in, or written « aucun ».
+- What is out of scope.
+A requirement too big for one story becomes several stories now, not
+later.
 ```
 
 **Check before accepting:**
 - Every `FR-n` in the PRD is covered by at least one story, and no story invents a requirement that is not in it.
 - The acceptance criteria say what is observable, not how it is implemented.
-- No L remains. An L that survives is a story nobody sized honestly.
-- The stories that fail the Definition of Ready are named, not silently fixed.
+- No impact line is left blank: « aucun » is an answer, an empty cell is not.
+- The stories are created with the labels `type:user-story` and `à revoir par Romain`, in Backlog — Romain moves them to Ready.
 
 ## Design
 
@@ -281,7 +280,7 @@ Then give me the commit message, mentioning the document update.
 
 ### Implement one story
 
-**When:** Once the story meets the Definition of Ready, and its tests are written.
+**When:** Once Romain has moved the story to Ready, and its tests are written.
 
 **Have ready:** The story, `AGENTS.md`, `CONTRIBUTING.md`.
 
@@ -319,10 +318,11 @@ before touching it.
 
 **When:** Once the story is done and the checks are green locally.
 
-**Have ready:** The diff, the story, `DOR_DOD.md`.
+**Have ready:** The diff, the story, `.github/PULL_REQUEST_TEMPLATE.md`.
 
 ```text
-Read DOR_DOD.md.
+Read .github/PULL_REQUEST_TEMPLATE.md and the Definition of Done in the
+story's issue.
 Here is the diff:
 <paste the diff or the branch name>
 
@@ -360,11 +360,12 @@ The entities in play: the project entities.
 Write the tests for it, and only the tests. Do not write the
 implementation, do not stub it, do not tell me how you would build it.
 
-- One test per acceptance criterion, named after the behaviour rather
-  than the method.
+- One Minitest test per acceptance criterion, its name starting with
+  the criterion's identifier and describing the behaviour:
+  `test "CA-01 refuses a second vote from the same member"`.
 - Cover the failure paths too, not only the happy one.
-- Use the project's existing factories and helpers; do not invent new
-  fixtures where one already exists.
+- Use the project's existing fixtures and helpers; do not invent new
+  ones where one already exists.
 
 Then run them and show me the failures. They must fail for the right
 reason — a test that passes before the feature exists is testing
@@ -376,31 +377,6 @@ nothing.
 - Every acceptance criterion has its test, and the mapping is obvious from the names.
 - No implementation arrived alongside. If it did, the discipline is already gone.
 - Failure paths are covered, not just the happy one.
-
-### Document the scenarios, mapped to the tests
-
-**When:** Once a story's tests are green, before the pull request.
-
-**Have ready:** `docs/SCENARIOS.md` and the test file.
-
-```text
-Read docs/SCENARIOS.md and the test file for this story.
-
-Add this story's scenarios to the document, in readable English — the
-kind someone who does not read code can follow:
-- One line per scenario: the situation, the action, the expected result.
-- Next to each, the reference of the test that covers it: file and
-  example name, exactly as they are written.
-- At the end of the section, list any scenario that has no test, and
-  any test that covers a scenario not written down.
-
-Do not rewrite the scenarios that are already there.
-```
-
-**Check before accepting:**
-- Every reference resolves to a test that actually exists — check one or two by hand.
-- The gaps in both directions are listed rather than quietly closed.
-- It reads as English prose. A scenario document written in test jargon is a duplicate of the test file, and will be maintained like one: not at all.
 
 ### Review the change before pushing
 

@@ -10,11 +10,10 @@ repository where `main` accepts a direct push, is an intention.
 
 Five things, in this order:
 
-  1. the labels of .github/labels.yml — the `type:` and `status:`
-     families, which the issue templates apply and which nothing else
-     creates. The `epic:`, `prio:`, `pts:` and `batch:` families are NOT
-     here: scripts/create_issues.py generates them from the
-     specification. See docs/LABELS.md;
+  1. the labels of .github/labels.yml — `type:user-story`, `Task`,
+     `type:bug`, `à revoir par Romain` and `status:blocked`, which the
+     issue templates apply and which GitHub silently drops when they do
+     not exist. See docs/LABELS.md;
   2. GitHub's nine stock labels, deleted — `enhancement`, `question`,
      `wontfix`, `good first issue`… A repository nobody cleaned carries
      more labels it did not choose than labels it did. A stock label

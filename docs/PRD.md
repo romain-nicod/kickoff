@@ -128,6 +128,6 @@
 
 ---
 
-**Downstream:** stories and business rules in [`specification.md`](specification.md) ·
+**Downstream:** stories as `[US]` issues on the project board ·
 technical shape in [`ARCHITECTURE.md`](ARCHITECTURE.md) ·
 data structure in [`SCHEMA.md`](SCHEMA.md)
