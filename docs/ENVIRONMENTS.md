@@ -1,48 +1,30 @@
-# Environments
+# Environnements
 
-Three environments, one rule: **nothing reaches production that has not
-run on the real target device first.**
+Quatre environnements, et pas de préproduction partagée : la recette locale en tient lieu.
 
-| Environment | Where | Who deploys | Data |
-|---|---|---|---|
-| **Development** | localhost | everyone, all the time | fixtures |
-| **Staging** | _to choose_ | automatic on `main` | the same fixtures |
-| **Production** | _to choose_ | manual, from `main` | the same fixtures |
+| Environnement | Où | Port | Données | Qui y met du code |
+|---|---|---|---|---|
+| Développement | `code/{{REPO_NAME}}/` et un worktree par US, `code/{{REPO_NAME}}-worktrees/us-NNN-slug/` | `3000` (un autre port par worktree lancé en même temps) | fixtures et seeds | la session de l'US, sur sa branche |
+| Test | la base `test` du worktree, puis la CI | — | fixtures | `bin/rails test`, `bin/rails test:system` |
+| Recette | `code/{{REPO_NAME}}-recette/`, branche locale `recette` | `3100` | synthétiques uniquement | l'agent y merge les US *En recette* ; Romain y teste — [RECETTE.md](RECETTE.md) |
+| Production | <!-- hôte et URL --> | — | réelles | le script de déploiement, sur le commit de merge de la PR `[Déploiement]` — [DEPLOIEMENT.md](DEPLOIEMENT.md) |
 
-<!-- Pick the host early. A deployment done in the last week is a
-     deployment that fails in the last week. -->
-
-## Development
+## Développement
 
 ```bash
+bin/setup
+bin/rails server    # http://127.0.0.1:3000
 ```
 
-<!-- The exact commands, plus the traps of this machine: the service
-     that must be running, the version that must match, the tool that
-     needs a flag. -->
+<!-- Les pièges de cette machine : le service qui doit tourner, la version qui doit correspondre,
+     l'outil qui demande une option. -->
 
-**Testing on a real device from your machine**: same network, bind the
-server to `0.0.0.0`, open the machine's local IP on the device. Some
-things — gestures, safe areas, viewport height — cannot be validated
-anywhere else.
+## Variables qui changent d'un environnement à l'autre
 
-## Staging
-
-Deployed automatically from `main`, so that "it works on my machine" is
-never the last word. Same data as production: with a small fixture set,
-there is no reason for the two to diverge.
-
-## Production
-
-Deployed manually, from `main`, by the tech lead. Never on demo day
-morning: the freeze is the day before.
-
-Checklist: [`GO_LIVE.md`](GO_LIVE.md).
-
-## Environment variables
-
-| Variable | Dev | Staging | Prod |
+| Variable | Développement | Recette | Production |
 |---|---|---|---|
-| | | | |
+| `SENTRY_DSN` | vide | retirée par `bin/recette` | secret de l'hôte |
+| `SMTP_*` | vide : emails en mémoire | Mailpit sur `127.0.0.1`, dans `.env.recette.local` | relais Infomaniak, secrets de l'hôte |
+| `DATABASE_URL` | — | fixée par `bin/recette`, propre au worktree | secret de l'hôte |
 
-See [`SECRETS.md`](SECRETS.md).
+Les noms et leur usage : `.env.example`. Où vivent les valeurs : [SECRETS.md](SECRETS.md).
