@@ -1,4 +1,4 @@
-# 000X — Title in one line
+# ADR-000X — Title in one line
 
 **Status** Proposed · Accepted · Superseded by 000X
 **Date** YYYY-MM-DD

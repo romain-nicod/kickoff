@@ -1,6 +1,8 @@
 # Architecture Decision Records
 
-One file per structural decision, numbered, never deleted. A decision
+One wiki page per structural decision, `ADR-NNNN-<slug>.md`, numbered,
+never deleted, written in `docs/wiki/` in the pull request that takes
+the decision. A decision
 that is reversed gets a new record saying so — the old one stays, with
 its status changed to `Superseded by 000X`.
 
@@ -9,7 +11,7 @@ the code, that would be expensive to reverse, or that two of you
 disagreed about. Not "we used the framework's default" — everybody does.
 Yes to "we replaced the ingestion pipeline with a hand-curated dataset".
 
-**Format**: copy [`0000-template.md`](0000-template.md), fill it in,
+**Format**: copy [`ADR-0000-template.md`](ADR-0000-template.md), fill it in,
 keep it under a page. An ADR nobody reads is a paragraph nobody wrote.
 
 | # | Decision | Status |

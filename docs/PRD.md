@@ -129,5 +129,5 @@
 ---
 
 **Downstream:** stories as `[US]` issues on the project board ·
-technical shape in [`ARCHITECTURE.md`](ARCHITECTURE.md) ·
+technical shape in [`wiki/Architecture.md`](wiki/Architecture.md) ·
 data structure in [`SCHEMA.md`](SCHEMA.md)
