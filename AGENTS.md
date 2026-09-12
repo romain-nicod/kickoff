@@ -7,6 +7,7 @@
 - Ports : dev `3000` dans `code/{{REPO_NAME}}` ; recette `3100` dans `code/{{REPO_NAME}}-recette` (branche locale `recette`, `bin/recette prepare|start`). Voir [docs/RECETTE.md](docs/RECETTE.md).
 - Issues sur les gabarits de `.github/ISSUE_TEMPLATE/` : `[US]` et `[BUG]`, revus par Romain qui les passe en *Ready* ; `[Task]`, sous-issues tenues par l'agent.
 - Une US = un worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, une branche `us-NNN-slug`, une PR.
+- Hygiène des branches : après merge constaté, supprimer branche locale et worktree ; branche fermée ou remplacée supprimée partout après bundle ; aucune `worktree-agent-*` après sa session ; contrôle mensuel ([CONTRIBUTING.md](CONTRIBUTING.md)).
 - Production : <!-- URL publique --> · déploiement : <!-- script du projet --> puis `python3 scripts/publish_release.py` ([docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
 - Emails : note vault `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · erreurs : Sentry (`SENTRY_DSN`).
 

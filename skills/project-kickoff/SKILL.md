@@ -120,6 +120,12 @@ gh project item-add <n> --owner <propriétaire> --url <URL de l'issue>
 - Recette : création, reconstruction à chaque lot et `bin/recette prepare` dans `docs/RECETTE.md`.
 - **Jamais de merge vers `main`** : Romain seul merge. Seule la branche locale `recette` reçoit des
   merges de l'agent.
+- **Hygiène des branches, automatique** : `setup_repo.py` active la suppression des branches au
+  merge. Après chaque merge constaté par l'API (`gh api repos/<propriétaire>/<nom>/pulls/<n> --jq
+  .merged_at`), supprimer le worktree et la branche locale de l'US. Une branche fermée sans merge ou
+  remplacée est sauvegardée en bundle (`git bundle verify` doit répondre « okay »), puis supprimée en
+  local et sur GitHub. Aucune branche `worktree-agent-*` ne survit à sa session. Contrôle mensuel
+  des branches restantes. Commandes : `CONTRIBUTING.md`, « Hygiène des branches ».
 
 ## 7. Déployer un lot
 
