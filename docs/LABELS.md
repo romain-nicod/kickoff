@@ -9,10 +9,10 @@ qu'une issue porte encore).
 
 | Label | Posé par | Quand |
 |---|---|---|
-| `type:user-story` | gabarit `[US]` | toute user story ; Romain ne lit que celles-ci |
-| `Task` | gabarit `[Task]` | action concrète d'une US, en sous-issue de celle-ci |
-| `type:bug` | gabarit de défaut | un comportement s'écarte d'un critère d'acceptation |
-| `à revoir par Romain` | gabarits `[US]` et défaut | création par l'agent ; **retiré par l'agent** quand Romain a passé l'US en *Ready* |
+| `type:user-story` | gabarit `[US]` | toute user story ; Romain lit les US et les bugs |
+| `Task` | gabarit `[Task]` | action concrète d'une US, en sous-issue de celle-ci ; tenue par l'agent |
+| `type:bug` | gabarit `[BUG]` | un défaut constaté en recette, en production, en revue QA, ou un test instable ; même cycle qu'une US |
+| `à revoir par Romain` | gabarits `[US]` et `[BUG]` | création par l'agent ; **retiré par l'agent** quand Romain a passé l'issue en *Ready* |
 | `status:blocked` | à la main | arrêté par quelque chose d'extérieur à l'US — dire quoi en commentaire |
 
 Dans une organisation qui expose les types natifs d'issue, le type `User story` ou `Task` peut

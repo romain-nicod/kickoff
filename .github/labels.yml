@@ -8,7 +8,7 @@
 
 - name: "type:user-story"
   color: "1D76DB"
-  description: "User story [US] — the only issues Romain reviews"
+  description: "User story [US] — reviewed by Romain before Ready"
 - name: "Task"
   color: "C5DEF5"
   description: "Concrete action of a user story, filed as its sub-issue"

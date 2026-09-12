@@ -5,6 +5,7 @@
 - Dépôt : https://github.com/{{REPO}} · board : <!-- URL du Project, affichée par scripts/setup_project.py --> · wiki : https://github.com/{{REPO}}/wiki (source : `docs/wiki/`).
 - Stack : Rails, PostgreSQL, Minitest, Capybara/Selenium. Commandes : `bin/setup`, `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`, `bundle exec bundler-audit --update`, `bin/importmap audit`.
 - Ports : dev `3000` dans `code/{{REPO_NAME}}` ; recette `3100` dans `code/{{REPO_NAME}}-recette` (branche locale `recette`, `bin/recette prepare|start`). Voir [docs/RECETTE.md](docs/RECETTE.md).
+- Issues sur les gabarits de `.github/ISSUE_TEMPLATE/` : `[US]` et `[BUG]`, revus par Romain qui les passe en *Ready* ; `[Task]`, sous-issues tenues par l'agent.
 - Une US = un worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, une branche `us-NNN-slug`, une PR.
 - Production : <!-- URL publique --> · déploiement : <!-- script du projet --> puis `python3 scripts/publish_release.py` ([docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
 - Emails : note vault `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · erreurs : Sentry (`SENTRY_DSN`).

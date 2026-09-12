@@ -11,7 +11,7 @@ qui attend qui. Les règles du cycle font foi dans la méthode
 
 | Statut | Posé par |
 |---|---|
-| Backlog | l'agent, à la création de l'US (label `à revoir par Romain`) |
+| Backlog | l'agent, à la création d'une `[US]` ou d'un `[BUG]` (label `à revoir par Romain`) |
 | Ready | **Romain** |
 | In progress | l'agent, à l'ouverture du worktree |
 | En recette | l'agent, branche intégrée à la recette, tous les tests verts |
