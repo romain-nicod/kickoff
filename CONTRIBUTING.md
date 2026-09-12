@@ -5,7 +5,19 @@ Ce dépôt applique la méthode « Livraison applicative par user story » :
 Branches, commits, tests, recette, PR, revue et déploiement y font foi ; les spécificités du dépôt
 sont dans [AGENTS.md](AGENTS.md), les règles de code dans [GOLDEN_RULES.md](GOLDEN_RULES.md).
 
-Cette page n'ajoute qu'une règle d'écriture.
+Cette page n'ajoute que l'identité des commits et une règle d'écriture.
+
+## Identité des commits
+
+Aucune ligne `Co-authored-by:` (ni `Co-Authored-By:`), dans un commit comme dans une PR. Chaque clone
+porte, avant son premier commit, l'identité du compte qui merge ; ses worktrees la partagent :
+
+```bash
+git config --local user.name "Romain Nicod"
+git config --local user.email 296897605+romain-nicod@users.noreply.github.com
+```
+
+Une autre adresse fait ajouter un co-auteur par GitHub à chaque merge en squash.
 
 ## Le livrable, c'est le diff
 

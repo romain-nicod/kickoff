@@ -11,7 +11,8 @@ La lire une fois, en commençant par le résumé en 8 lignes et le § 10 bis ; r
 question se pose. Cette skill ne la recopie pas : elle dit **quels gestes font, avec le gabarit
 `romain-nicod/kickoff`, ce que la méthode demande.**
 
-Aucune mention de l'assistant ni de son éditeur dans le dépôt, les issues, les PR et les commits.
+Aucune mention de l'assistant ni de son éditeur dans le dépôt, les issues, les PR et les commits, et
+aucune ligne `Co-authored-by:` (ni `Co-Authored-By:`) dans un commit ou une PR.
 
 ---
 
@@ -38,6 +39,10 @@ gh repo create <propriétaire>/<nom> --template romain-nicod/kickoff --private -
 Le clone vit dans `~/Documents/Claude/code/<nom>`. Remplir les cinq valeurs de `kickoff.yml`, puis :
 
 ```bash
+# L'identité du compte qui merge, avant le premier commit ; les worktrees du clone la
+# partagent. Une autre adresse fait ajouter un co-auteur par GitHub à chaque merge en squash.
+git config --local user.name "Romain Nicod"
+git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 bin/kickoff --dry-run
 bin/kickoff
 rails new -d postgresql \

@@ -13,7 +13,8 @@
 ## Interdits
 
 - Romain seul merge : jamais de merge, d'auto-merge ni de merge programmé par un agent (seule la branche locale `recette` fait exception).
-- Aucun secret dans Git ; aucune mention de l'assistant ou de son éditeur, nulle part.
+- Aucun secret dans Git ; aucune mention de l'assistant ou de son éditeur, nulle part ; aucune ligne `Co-authored-by:` dans un commit ou une PR.
+- Identité Git du clone, avant tout commit : `git config --local user.name "Romain Nicod"` et `git config --local user.email 296897605+romain-nicod@users.noreply.github.com`.
 - Code, commentaires et noms de tests en anglais ; commits, issues, PR et interface en français.
 
 ## Pièges
