@@ -3,7 +3,11 @@
        gh pr create --base main --head deploy/vX.Y.Z --title "[Déploiement] vX.Y.Z" \
          --body-file .github/PULL_REQUEST_TEMPLATE/deploiement.md
      ou ouvrir https://github.com/<propriétaire>/<dépôt>/compare/main...deploy/vX.Y.Z?expand=1&template=deploiement.md
-     Mode d'emploi complet : docs/DEPLOIEMENT.md. -->
+     Mode d'emploi complet : docs/DEPLOIEMENT.md.
+
+     ⚠️ Cette PR s'ouvre APRÈS le merge de tout le lot et se merge EN DERNIER. Une PR de
+     fonctionnalité mergée après elle partirait en production sans figurer dans la
+     release note. -->
 
 ## Version
 
@@ -19,10 +23,22 @@ La section `## vX.Y.Z — JJ/MM/AAAA` de `CHANGELOG.md`, visible dans le diff de
 - [ ] *Corrections, outillage et documentation*
 - [ ] *À savoir* — ce qui est livré mais inactif, migrations, actions attendues
 
+## Migrations qui partent en production
+
+<!-- Le garde de déploiement se met à jour DANS cette PR : Romain y voit et approuve
+     chaque migration avant qu'elle parte. Une ligne par migration nouvelle, ou
+     « aucune ». -->
+
+| Migration | Empreinte SHA-256 | Relue : réversible sans toucher la base ? |
+|---|---|---|
+| aucune | | |
+
 ## Avant le merge — Romain
 
+- [ ] Plus aucune PR du lot n'attend son merge : celle-ci est la dernière
 - [ ] CI verte sur le dernier commit de `deploy/vX.Y.Z`
-- [ ] Le diff ne touche que `VERSION` et `CHANGELOG.md`
+- [ ] Le diff ne touche que `VERSION`, `CHANGELOG.md` et le garde des migrations
+- [ ] Chaque migration du tableau ci-dessus est relue et approuvée
 - [ ] Rien dans « À savoir » ne demande une action préalable qui n'a pas été faite
 
 ## Après le merge — agent
