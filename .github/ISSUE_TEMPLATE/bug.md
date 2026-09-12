@@ -1,37 +1,38 @@
 ---
-name: Bug
-about: Something behaves differently from its acceptance criteria
-title: "Bug — "
-labels: "type:bug"
+name: Défaut
+about: Un comportement qui s'écarte d'un critère d'acceptation, en production ou en recette
+title: "[Bug] "
+labels: "type:bug, à revoir par Romain"
 ---
 
-## What happens
+## Ce qui se passe
 
-<!-- One sentence. -->
+<!-- Une phrase. -->
 
-## What should happen
+## Ce qui devrait se passer
 
-<!-- Quote the acceptance criterion or the business rule: "US-102.4, the
-     24 px dead zone", "BR-05, times are rounded to 5 min". -->
+<!-- Citer le critère : « #12 CA-03 ». Sans critère à citer, c'est peut-être une
+     nouvelle US plutôt qu'un défaut. -->
 
-## Reproduce
+## Reproduire
 
 1.
 2.
 3.
 
-**Device and browser:** <!-- the real target first -->
-A bug that only appears on the target device is still a bug; a bug that
-only appears somewhere the product does not target may not be one.
+- Environnement : production · recette · dev
+- Version (`VERSION`) et commit :
+- Largeur d'écran et navigateur :
+- Compte utilisé (fictif en recette, jamais un vrai mot de passe ici) :
 
-## Severity
+## Gravité
 
-- [ ] **Blocker** — the core journey is broken (proposal, swipe, route).
-      Fixed before anything else, whatever the batch in progress.
-- [ ] **Major** — a story does not meet its criteria, but the journey
-      survives. Fixed within the current batch.
-- [ ] **Minor** — cosmetic or an edge case outside the demo path. Fixed
-      if time allows; it is never a reason to delay a batch.
+- [ ] **Bloquant** — un parcours principal est cassé ou des données sont en jeu
+- [ ] **Majeur** — un critère d'acceptation n'est pas tenu, le parcours survit
+- [ ] **Mineur** — cosmétique ou cas limite
 
-The demonstration path is the arbiter: anything the jury will see is at
-least Major.
+## Correction
+
+- [ ] Test de non-régression écrit et vu rouge avant la correction
+- [ ] PR qui ferme ce défaut (`Closes #n`), mergée par Romain
+- [ ] Livrée dans la version : `vX.Y.Z` (rubrique « Corrections » du `CHANGELOG.md`)
