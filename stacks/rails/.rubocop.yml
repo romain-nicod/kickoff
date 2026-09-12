@@ -16,10 +16,6 @@ AllCops:
     - 'node_modules/**/*'
     - 'tmp/**/*'
     - 'vendor/**/*'
-    # Written by Rails, replaced wholesale on
-    # the next run.
-    - 'spec/rails_helper.rb'
-    - 'spec/spec_helper.rb'
     # 200 lines from simple_form's Bootstrap installer. On the project
     # this list came from, it alone accounted for 217 of 243 offences —
     # a lint report where 89 % of the noise is generated is a lint report

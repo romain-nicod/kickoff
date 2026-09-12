@@ -1,69 +1,61 @@
----
+## Rails : Minitest et Capybara
 
-## On Rails: Minitest
-
-Minitest and fixtures — the Rails default. Rails itself is tested with
-it, most gems too, and the official documentation speaks the same
-language as the code.
+Minitest et les fixtures, le défaut de Rails. Un projet trouvé sous RSpec bascule sur Minitest.
 
 ```bash
-bin/rails test                        # the suite
-bin/rails test test/models            # while you work
-bin/rails test test/models/venue_test.rb:42
-bin/rails test -n /refuses a second/  # by test name
+bin/rails test                               # unitaires et intégration
+bin/rails test:system                        # navigateur : bin/rails test ne le lance pas
+bin/rails test test/models/vote_test.rb:42   # pendant le développement
+bin/rails test -n "/CA-01/"                  # les tests d'un critère
 ```
 
-⚠️ **RSpec is the majority framework in the wider ecosystem, and it is what
-the bootcamp teaches.** Choosing Minitest is a deliberate exception: plain
-Ruby instead of a DSL, a suite two to three times faster, no gem to add.
+### Où vont les tests d'une US
 
-### Where a story's tests land
-
-| The story changes | It gets |
+| L'US change | Elle reçoit |
 |---|---|
-| A business rule, a validation, a scope | `test/models/` — exhaustively, every boundary |
-| A computation extracted from a view | `test/helpers/` |
-| A service, a generator, a parser | `test/services/` |
-| A route's behaviour, a redirect, a status | `test/integration/` |
-| The demo journey, once it exists | `test/system/` — one, not ten |
+| une règle métier, une validation, un scope | `test/models/`, chaque borne |
+| un calcul sorti d'une vue | `test/helpers/` |
+| un service, un analyseur | `test/services/` |
+| une route : statut, redirection, droits par rôle, HTML et JSON | `test/integration/` |
+| une page | `test/system/`, aux trois largeurs |
 
-⚠️ **Request and feature specs need the routes to exist.** They ask for a
-path and click a named helper. That is why routes are written before the
-tests, not while you code — see rule 35.
+### Tests système
 
-### The name is the acceptance criterion
+`test/application_system_test_case.rb` pilote Chrome sans interface par Selenium, et fournit :
 
-Written before the code, in the words of the issue. Someone who did not
-write the story should recognise it:
+- `WIDTHS` et `resize_viewport(width)` : les largeurs CSS exactes de la passe UI/UX, 1512, 1280
+  et 390 px ;
+- `assert_no_horizontal_overflow(width)` : aucun défilement horizontal, ni sur la page ni dans un
+  élément ;
+- `assert_reachable_targets(width, selector)` : chaque contrôle est visible et mesure au moins
+  44 px.
 
 ```ruby
-# no
-it "works" do
-
-# yes
-it "refuses a booking that starts before the venue opens" do
+test "CA-02 the vote list fits every screen" do
+  WIDTHS.each do |width|
+    resize_viewport(width)
+    visit votes_path
+    assert_no_horizontal_overflow(width)
+    assert_reachable_targets(width, "main a.btn, main button")
+  end
+end
 ```
 
-### Four traps already paid for
+Les gems `capybara` et `selenium-webdriver` sont dans le groupe `:test` du `Gemfile` ;
+`python3 scripts/after_rails_new.py` signale celle qui manque.
 
-**`rack_test` does not run Turbo.** A `POST` that returns 200 without
-redirecting, or that redirects to the form's own URL, is rejected in the
-browser and passes in the suite. Redirect to a **different** URL, and
-check the real thing in a real browser.
+### Pièges déjà payés
 
-**FactoryBot, never fixtures**, and a factory carries the **minimum** to
-be valid. A factory that sets every attribute makes every test depend on
-values it does not care about.
+- **`rack_test` n'exécute pas Turbo.** Un `POST` qui répond 200 sans rediriger passe dans un test
+  d'intégration et échoue dans le navigateur : rediriger, et le vérifier en test système.
+- **Fixtures, pas FactoryBot** : une fixture porte le minimum pour être valide.
+- **Aucun appel réseau réel** dans la suite : bouchonner le client HTTP.
+- **`travel_to`** pour tout ce qui dépend du temps, jamais `sleep`.
+- Si la suite parallèle est instable ou lente sur une machine, `PARALLEL_WORKERS=1`, et la raison
+  dans `AGENTS.md`.
 
-**No real network call.** WebMock is in place; stub REST and GraphQL. A
-suite that reaches the internet is a suite that is red on the train.
+### La barrière
 
-**`travel_to` for anything time-dependent**, never `sleep`. A test that
-sleeps is a test that is flaky on a slow machine and slow on a fast one.
-
-### The gate
-
-`bundle exec rspec` fully green, `bundle exec rubocop` with no offence,
-`bundle exec brakeman -q` with no warning. All three before a push, and
-all three in CI. A project at zero on the three stays there — the day one
-offence is tolerated, the count never comes back down.
+`bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`,
+`bundle exec bundler-audit --update` et `bin/importmap audit` : verts en local, puis en CI, avant
+d'ouvrir la PR.

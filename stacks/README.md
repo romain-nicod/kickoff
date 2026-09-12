@@ -25,7 +25,7 @@ That is the whole contract. A layer is a directory and two files.
 
 | Layer | What it adds |
 |---|---|
-| `rails` | Rules 31 to 59 (Rails idioms and boilerplate helpers, CSS components and tokens, Hotwire), a CI workflow with PostgreSQL, RuboCop and Brakeman |
+| `rails` | Rules 31 to 61 (Rails idioms and boilerplate helpers, CSS components and tokens, Hotwire, importmap), a CI workflow with PostgreSQL — RuboCop, Brakeman, bundler-audit, importmap audit, Minitest and system tests in Chrome —, the Capybara base class, the local recette (`bin/recette`), the Sentry initializer and the migration guard of the deployment |
 | `static` | Rules 31 to 40 (structure, assets, no framework), a CI workflow that lints and checks links |
 | `none` | Nothing. The method only. |
 
