@@ -9,7 +9,7 @@ a fixture, not "temporarily to test the deploy".
 a token, a password, a connection string, a webhook URL: all of them, the
 same way, with no exception for "this one is not really a secret".
 
-| | Development | Staging / production |
+| | Development | Production |
 |---|---|---|
 | Where the value is | `.env`, gitignored | the host's secrets |
 | How the code reads it | `ENV.fetch("NAME")` | `ENV.fetch("NAME")` |
