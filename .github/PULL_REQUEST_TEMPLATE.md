@@ -3,6 +3,10 @@
 
 Closes #<!-- US -->
 Closes #<!-- chaque [Task] de l'US, une ligne par tâche -->
+Dépend de : #<!-- une seule ligne, seulement si l'US dépend d'une autre issue ; sinon la supprimer -->
+
+<!-- Le corps ne cite que son US, ses [Task] et, le cas échéant, sa dépendance.
+     Aucune liste d'autres PR ou issues pour le contexte. -->
 
 ## ⚠️ Après avoir récupéré cette branche
 
