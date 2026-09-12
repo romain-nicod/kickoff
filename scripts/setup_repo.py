@@ -24,14 +24,13 @@ Five things, in this order:
   5. `main` protected — no force-push, no deletion, and an approving
      review on every pull request.
 
-ON A SOLO PROJECT, requiring an approving review is theatre: GitHub
-never lets you approve your own pull request, so every merge becomes an
-administrator bypass, and a rule bypassed at every merge teaches that
-rules are bypassed. The script detects a solo repository — `ROLES.md` is
-absent, `bin/kickoff` having removed it — and requires zero reviews
-instead. What remains protected is what still means something alone: no
-force-push, no deletion of the branch. Override either way with
-`--reviews N`.
+NO APPROVING REVIEW IS REQUIRED by default. Romain merges alone, and
+GitHub never lets the author of a pull request approve it: a required
+review would turn every merge into an administrator bypass, and a rule
+bypassed at every merge teaches that rules are bypassed. What stays
+protected is what still means something: no force-push, no deletion of
+the branch. `--reviews N` requires reviews on a repository where someone
+else can give them.
 
 Idempotent: run it as often as you like.
 
@@ -199,15 +198,10 @@ def pull_request_settings(dry_run):
 def required_reviews(asked):
     """How many approving reviews a pull request needs.
 
-    `--reviews` wins. Otherwise: none if nobody else can review.
+    `--reviews` wins. Otherwise none: Romain merges alone and cannot
+    approve his own pull requests.
     """
-    if asked is not None:
-        return asked
-    solo = not (ROOT / "ROLES.md").exists()
-    if solo:
-        print("  solo repository (no ROLES.md) — 0 review required, "
-              "since you cannot approve your own PR")
-    return 0 if solo else 1
+    return 0 if asked is None else asked
 
 
 def protect_default_branch(branch, reviews, dry_run):
