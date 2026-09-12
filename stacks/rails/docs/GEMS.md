@@ -39,6 +39,8 @@ The tier *is* the decision.
 | `hotwire-livereload` (dev) | The browser reloads itself. Pure comfort, missed the day it is gone |
 | `faker` (dev/test) | Seed data somebody would believe |
 | `rubocop-rails-omakase` · `brakeman` · `bundler-audit` | Style, static security scan, dependency audit |
+| `capybara` · `selenium-webdriver` (test) | Browser tests in headless Chrome, `bin/rails test:system` — required by the delivery method whenever a story touches a page |
+| `sentry-rails` | Server errors reported to Sentry, silent without `SENTRY_DSN` — see the Sentry section below |
 
 ## Optional — shipped commented
 
@@ -79,6 +81,42 @@ fails **silently** when missed.
 | Single database for the three `solid_*` gems | Four databases billed where one would do. And the step everyone forgets: removing `config.solid_queue.connects_to` from `production.rb` |
 | Solid Queue inside Puma, in development only | A second terminal you must remember to start, and notice you forgot when no job runs |
 | The `!.env.example` negation placed **last** in `.gitignore` | Git keeps the last matching rule — Rails 8.1 writes its own `/.env*` partway down, which kills a negation placed above it |
+
+---
+
+## Sentry — server and browser
+
+`sentry-rails` reports server errors, configured by
+`config/initializers/sentry.rb`: nothing is sent without `SENTRY_DSN`,
+the release is the `VERSION` file, and no personal data goes out.
+
+⚠️ **It never sees a JavaScript error in the browser.** That half is the
+browser SDK, pinned with importmap like any other library (rule 60):
+
+```bash
+bin/importmap pin @sentry/browser
+```
+
+The layout renders the DSN only when it is set — a Sentry DSN is meant
+to be public, the auth token is not and never reaches a view:
+
+```erb
+<%= tag.meta name: "sentry-dsn", content: ENV["SENTRY_DSN"] if ENV["SENTRY_DSN"].present? %>
+```
+
+And `app/javascript/application.js` starts the SDK once:
+
+```js
+import * as Sentry from "@sentry/browser"
+
+const dsn = document.querySelector('meta[name="sentry-dsn"]')?.content
+if (dsn) Sentry.init({ dsn, sendDefaultPii: false })
+```
+
+⚠️ Not verified in this template: `@sentry/browser` ships as many ES
+modules. On the first project, check that `bin/importmap pin` vendored
+them all, that `bin/importmap audit` is clean, and that an error thrown
+from the browser console reaches Sentry.
 
 ---
 
