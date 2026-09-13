@@ -20,9 +20,9 @@ Five things, in this order:
      still carried by an issue is KEPT, and the script says so: deleting
      it would silently strip that issue;
   3. the wiki, enabled;
-  4. the pull-request settings, through the REST API — squash only,
-     and `delete_branch_on_merge: true` (« Automatically delete head
-     branches »);
+  4. the pull-request settings, through the REST API — merge commit
+     only, never squash, and `delete_branch_on_merge: true`
+     (« Automatically delete head branches »);
   5. `main` protected — no force-push, no deletion, and an approving
      review on every pull request.
 
@@ -180,35 +180,39 @@ def enable_wiki(dry_run):
 
 
 def pull_request_settings(dry_run):
-    """Squash only, and the head branch deleted once merged.
+    """Merge commit only — never squash — and the head branch deleted once
+    merged.
 
-    One commit per story on `main` keeps the history readable as a list
-    of stories; a merge commit per story does not. Deleting the head
-    branch on merge is the automatic half of branch hygiene (delivery
-    method § 6); the local half is in CONTRIBUTING.md.
+    A pull request keeps every commit, with its message, so it can still
+    be read commit by commit after the merge; a squash throws that away.
+    Deleting the head branch on merge is the automatic half of branch
+    hygiene (delivery method § 6); the local half is in CONTRIBUTING.md.
 
     Through the REST API, and read back afterwards: an exit code of 0
-    only proves the request was accepted, not that the setting holds.
+    only proves the request was accepted, not that the settings hold.
     """
     if dry_run:
-        print("  PRs     squash only, delete_branch_on_merge: true")
+        print("  PRs     merge commit only, delete_branch_on_merge: true")
         return
     result = gh(["api", "-X", "PATCH", f"repos/{REPO}",
-                 "-F", "allow_squash_merge=true",
-                 "-F", "allow_merge_commit=false",
+                 "-F", "allow_merge_commit=true",
+                 "-F", "allow_squash_merge=false",
                  "-F", "allow_rebase_merge=false",
                  "-F", "delete_branch_on_merge=true"], check=False)
     if result.returncode != 0:
         print(f"  FAILED  PR settings — {result.stderr.strip()}")
         return
-    check = gh(["api", f"repos/{REPO}", "--jq", ".delete_branch_on_merge"],
+    check = gh(["api", f"repos/{REPO}", "--jq",
+                "[.allow_merge_commit, .allow_squash_merge, "
+                ".allow_rebase_merge, .delete_branch_on_merge] | @csv"],
                check=False)
-    if check.stdout.strip() == "true":
-        print("  PRs     squash only, delete_branch_on_merge: true")
+    if check.stdout.strip() == "true,false,false,true":
+        print("  PRs     merge commit only, delete_branch_on_merge: true")
     else:
-        print("  FAILED  delete_branch_on_merge reads "
-              f"{check.stdout.strip() or check.stderr.strip()!r} — set it "
-              "by hand: Settings → General → Automatically delete head "
+        print("  FAILED  PR settings read back as "
+              f"{check.stdout.strip() or check.stderr.strip()!r} (merge commit, "
+              "squash, rebase, delete branch) — set them by hand: Settings → "
+              "General → Pull Requests, then Automatically delete head "
               "branches")
 
 

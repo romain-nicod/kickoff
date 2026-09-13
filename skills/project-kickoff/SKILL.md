@@ -40,7 +40,7 @@ Le clone vit dans `~/Documents/Claude/code/<nom>`. Remplir les cinq valeurs de `
 
 ```bash
 # L'identité du compte qui merge, avant le premier commit ; les worktrees du clone la
-# partagent. Une autre adresse fait ajouter un co-auteur par GitHub à chaque merge en squash.
+# partagent. Une autre adresse fait apparaître un second auteur dans l'historique de GitHub.
 git config --local user.name "Romain Nicod"
 git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 bin/kickoff --dry-run
