@@ -1,37 +1,61 @@
 ---
 name: Bug
-about: Something behaves differently from its acceptance criteria
-title: "Bug — "
-labels: "type:bug"
+about: Un défaut constaté (recette, production, revue QA, test instable) — même cycle qu'une US
+title: "[BUG] "
+labels: "type:bug, à revoir par Romain"
 ---
 
-## What happens
+<!-- Titre : [BUG] <comportement fautif>. Romain lit les US et les bugs ; comme une US,
+     le bug passe par Backlog, puis Ready quand Romain l'a revu. -->
 
-<!-- One sentence. -->
+## État
 
-## What should happen
+- Board : **Backlog** — Romain passe le bug en *Ready* après revue, l'agent retire alors le label `à revoir par Romain`.
+- Branche : (créée à l'ouverture de la session) · PR : —
 
-<!-- Quote the acceptance criterion or the business rule: "US-102.4, the
-     24 px dead zone", "BR-05, times are rounded to 5 min". -->
+## Constat
 
-## Reproduce
+<!-- Ce qui se passe, en une phrase, puis comment le reproduire. -->
 
 1.
 2.
 3.
 
-**Device and browser:** <!-- the real target first -->
-A bug that only appears on the target device is still a bug; a bug that
-only appears somewhere the product does not target may not be one.
+- Où : production · recette · CI (test instable) · revue QA
+- Version (`VERSION`) et commit :
+- Largeur d'écran et navigateur :
+- Compte utilisé (fictif ; jamais un vrai mot de passe ici) :
 
-## Severity
+## Comportement attendu
 
-- [ ] **Blocker** — the core journey is broken (proposal, swipe, route).
-      Fixed before anything else, whatever the batch in progress.
-- [ ] **Major** — a story does not meet its criteria, but the journey
-      survives. Fixed within the current batch.
-- [ ] **Minor** — cosmetic or an edge case outside the demo path. Fixed
-      if time allows; it is never a reason to delay a batch.
+<!-- Citer le critère d'origine quand il existe : « #12 CA-03 ». -->
 
-The demonstration path is the arbiter: anything the jury will see is at
-least Major.
+## Critères d'acceptation
+
+- [ ] **CA-01** — le comportement attendu est rétabli, vérifiable par quelqu'un d'autre
+- [ ] **CA-02** — un test de non-régression le prouve, vu rouge sur le code fautif
+
+## Impacts
+
+<!-- Chaque ligne est remplie, ou porte « aucun » explicitement. -->
+
+| Impact | À faire |
+|---|---|
+| Gravité : bloquant (parcours principal cassé, données en jeu) · majeur (un critère non tenu) · mineur | |
+| Données de production à corriger | aucune |
+| Documents : wiki (`docs/wiki/`), `README`, `.env.example` | aucun |
+| Migration de données | aucune |
+| Dépendance à une autre issue | aucune |
+
+## Definition of Done
+
+- [ ] Critères d'acceptation vérifiés un par un
+- [ ] Test de non-régression écrit et vu rouge avant la correction, puis vert
+- [ ] Suite complète et CI vertes sur le dernier commit
+- [ ] Contrôles de sécurité passés (Brakeman, bundler-audit, `importmap audit`)
+- [ ] Passe UI/UX faite, captures jointes à la PR à 1512×982, 1280×800 et 390×844 (si interface)
+- [ ] QA idiomatique du diff faite, code commenté
+- [ ] Piège ajouté à `docs/wiki/Pieges.md` s'il peut toucher d'autres US, apprentissages dans le vault
+- [ ] Testé en recette
+- [ ] PR relue et **mergée par Romain**
+- [ ] Déployé en production et vérifié, listé dans la rubrique « Corrections » du `CHANGELOG.md`

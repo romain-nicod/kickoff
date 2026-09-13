@@ -26,21 +26,6 @@ CONFIG = ROOT / "kickoff.yml"
 # script runs, and the project it creates has no use for it.
 TEMPLATE_ONLY = ["README.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
 
-# Documents that only mean something to a team. On a solo project they
-# are not "a bit of overhead": a CEREMONIES.md nobody holds discredits
-# the documents next to it. Removed when team_size is 1 — the template
-# deletes, it never derives, so the wording of what stays is untouched.
-TEAM_ONLY = ["ROLES.md", "TEAM_CHARTER.md", "CEREMONIES.md",
-             "docs/STANDUP.md", "docs/ONBOARDING.md"]
-
-# The paragraphs pointing at them, marked in the files themselves.
-# Solo: the whole block goes. Otherwise only the two marker lines do —
-# template plumbing has no business in the project being created.
-TEAM_BLOCK = re.compile(
-    r"[ \t]*<!-- team-only -->\n.*?[ \t]*<!-- /team-only -->\n",
-    re.DOTALL)
-TEAM_MARKER = re.compile(r"[ \t]*<!-- /?team-only -->\n")
-
 # Text files we substitute into. Everything else is copied untouched.
 TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".py", ".erb", ".html", ".css",
                  ".js", ".rb", ".example", ".txt", ""}
@@ -67,9 +52,6 @@ def read_config():
         sys.exit("kickoff.yml still holds its example values — fill it in first.")
 
     owner, _, name = values["repo"].partition("/")
-    capacity = (float(values.get("dev_days", 10))
-                * float(values.get("team_size", 4))
-                * float(values.get("velocity", 2.5)))
 
     return {
         "PROJECT_NAME": values["project_name"],
@@ -78,11 +60,9 @@ def read_config():
         "REPO_NAME": name,
         "TAGLINE": values.get("tagline", ""),
         "STACK": values["stack"],
-        "DEV_DAYS": values.get("dev_days", "10"),
-        "TEAM_SIZE": values.get("team_size", "4"),
-        "VELOCITY": values.get("velocity", "2.5"),
-        "CAPACITY": str(int(capacity)),
-        "LANGUAGE": values.get("language", "en"),
+        # Left visible when empty: AGENTS.md must not read as if the
+        # project had no long memory.
+        "VAULT_FOLDER": values.get("vault_folder") or "TO FILL IN: vault folder",
     }
 
 
@@ -167,45 +147,6 @@ def apply_stack(stack, dry_run):
             shutil.copy2(source, target)
 
 
-def apply_team_size(values, dry_run):
-    """Solo project: remove the team documents and the links to them.
-
-    Deleting is not deriving. The template still refuses to rewrite a
-    sentence according to a profile; it only declines to ship a document
-    whose subject does not exist here.
-    """
-    solo = str(values.get("TEAM_SIZE", "")).strip() in ("1", "1.0")
-
-    if solo:
-        print("Solo project — team documents removed")
-        for name in TEAM_ONLY:
-            path = ROOT / name
-            if not path.exists():
-                continue
-            print(f"  remove  {name}")
-            if not dry_run:
-                path.unlink()
-
-    template_paths = {ROOT / name for name in TEMPLATE_ONLY}
-    for path in files_to_process():
-        # bin/kickoff carries the marker in its own source; the stack
-        # layers and the skills directory are deleted right after. None
-        # of them is part of the project being created.
-        if any(path == q or q in path.parents for q in template_paths):
-            continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except (UnicodeDecodeError, PermissionError):
-            continue
-        if "team-only" not in text:
-            continue
-        if solo:
-            print(f"  unlink  {path.relative_to(ROOT)}")
-        if not dry_run:
-            pattern = TEAM_BLOCK if solo else TEAM_MARKER
-            path.write_text(pattern.sub("", text), encoding="utf-8")
-
-
 def promote_template_readme(dry_run):
     """The project's README, after the template's own has been deleted.
 
@@ -252,9 +193,7 @@ def main():
     values = read_config()
 
     print(f"\n{values['PROJECT_NAME']} · {values['REPO']} · stack "
-          f"{values['STACK']}")
-    print(f"capacity: {values['DEV_DAYS']} days × {values['TEAM_SIZE']} people "
-          f"× {values['VELOCITY']} = {values['CAPACITY']} points\n")
+          f"{values['STACK']}\n")
 
     # The stack layer FIRST: its files land in the tree before the
     # substitution walks it, so a {{PLACEHOLDER}} written in a layer is
@@ -264,7 +203,6 @@ def main():
     apply_stack(values["STACK"], args.dry_run)
     print("Substituting")
     substitute(values, args.dry_run)
-    apply_team_size(values, args.dry_run)
     print("Cleaning up")
     clean_up(args.dry_run)
     promote_template_readme(args.dry_run)
@@ -273,42 +211,32 @@ def main():
         print("\nDry run — nothing was written.")
         return
 
-    solo = str(values.get("TEAM_SIZE", "")).strip() in ("1", "1.0")
-    gaps = ("""     docs/MILESTONES.md  the dates, derived from the demo date
-     docs/GO_LIVE.md     where your host's rollback button is"""
-            if solo else
-            """     ROLES.md            the names behind each hat
-     TEAM_CHARTER.md     each person's real working hours
-     docs/MILESTONES.md  the dates, derived from the demo date
-     docs/GO_LIVE.md     where your host's rollback button is""")
+    print("""
+Done. What is left, in this order:
 
-    print(f"""
-Done. What is left for you:
-
-  1. Fill in the gaps left on purpose:
-{gaps}
-
-  2. Configure the repository itself — labels, wiki, protected branch:
+  1. Configure the repository itself — labels first, since the issue
+     templates apply them and GitHub drops a label that does not exist:
 
      python3 scripts/setup_repo.py
 
-  2b. On the rails layer, AFTER `rails new` with the boilerplate:
+  2. On the rails layer, AFTER `rails new` with the boilerplate:
 
      python3 scripts/after_rails_new.py
 
-     The boilerplate deletes the CI workflow, overwrites .rubocop.yml,
-     and leaves tmp/ and log/ tracked. All three are silent. Skipping
-     this step is how a repository ends up with no checks on its pull
-     requests and 1700 runtime files in its history.
+     The boilerplate can delete the CI workflow, overwrite .rubocop.yml
+     and leave tmp/ and log/ tracked. All three are silent.
 
-  3. Write the specification in docs/, then populate GitHub:
+  3. The board, with the seven statuses of the delivery method:
 
-     python3 scripts/build_backlog.py
-     python3 scripts/create_issues.py
-     python3 scripts/create_epic_issues.py
      python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 
-  4. Commit, and read GOLDEN_RULES.md out loud at the kick-off.
+     Then the gestures the API cannot make: docs/BOARD.md.
+
+  4. Fill in AGENTS.md (board URL, production, deployment script) and
+     docs/DEPLOIEMENT.md, then the recette: docs/RECETTE.md.
+
+  5. Create the first user stories on .github/ISSUE_TEMPLATE/user_story.md,
+     in Backlog, labelled « à revoir par Romain ». Commit.
 """)
 
 

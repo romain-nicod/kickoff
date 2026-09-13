@@ -30,14 +30,16 @@ specially keep their conventional shouty names: `README.md`,
 
 | Thing | Convention | Example |
 |---|---|---|
-| Branch | story number, then the slugged feature | `us-102-reject-by-swipe` |
-| Commit | `Subject: detail` | `US-102: reject by swipe` |
-| PR title | the same as the issue | `US-102 — Reject by swipe` |
+| Branch | `us-`, the issue number, then the slugged need | `us-012-refuse-double-vote` |
+| Worktree | `code/<repository>-worktrees/<branch>/` | `code/go-meal-worktrees/us-012-refuse-double-vote/` |
+| Commit | in French, one behaviour | `Vote : refuser un second vote du même membre (#12)` |
+| Issue title | `[US]`, `[Task]` or `[BUG]`, in French | `[US] Refuser un second vote du même membre` |
+| PR title | the same as the issue | `[US] Refuser un second vote du même membre` |
 
-## Identifiers from the specification
+## Identifiers
 
-`En` epics · `US-nnn` stories · `BR-nn` business rules · `Bn` batches ·
-`Pn` priority phases.
+`#n` issues · `CA-nn` acceptance criteria, at the start of a test name ·
+`BR-nn` business rules, when the project keeps a list of them.
 
 **Cite them in code where they apply.** A comment saying `# BR-05` above
 a rounding is worth more than three lines explaining why the value is

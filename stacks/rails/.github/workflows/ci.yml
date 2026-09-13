@@ -1,5 +1,9 @@
 name: CI
 
+# The checks of the delivery method (§ 4.3, § 4.4): lint, security, the
+# Minitest suite AND the browser tests. No pull request until all four
+# are green on its last commit.
+
 on:
   pull_request:
   push:
@@ -9,7 +13,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
@@ -20,7 +24,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
@@ -29,6 +33,8 @@ jobs:
         run: bin/brakeman --no-pager
       - name: Audit the dependencies
         run: bundle exec bundler-audit --update
+      - name: Audit browser dependencies
+        run: bin/importmap audit
 
   test:
     runs-on: ubuntu-latest
@@ -47,12 +53,57 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:postgres@localhost:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      # If the Gemfile loads image_processing or ruby-vips, Rails does not
+      # boot without libvips: add, before this step,
+      #   sudo apt-get update -qq && sudo apt-get install -y libvips42
+      # Schema only, never db:prepare: the seeds belong to the recette,
+      # the fixtures to the tests.
       - name: Prepare the database
-        run: bin/rails db:prepare
+        run: bin/rails db:create db:schema:load
       - name: Test
         run: bin/rails test
+
+  # Browser tests: headless Chrome, real CSS and JavaScript, the job's own
+  # synthetic database, no email and no production access. Chrome is
+  # preinstalled on ubuntu-latest; Selenium Manager fetches the matching
+  # chromedriver.
+  system_test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd "pg_isready"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Show the browser version
+        run: google-chrome --version
+      - name: Prepare the database
+        run: bin/rails db:create db:schema:load
+      - name: System tests
+        run: bin/rails test:system
+      - name: Keep failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: system-test-screenshots
+          path: tmp/screenshots
+          if-no-files-found: ignore

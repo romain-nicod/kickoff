@@ -1,0 +1,56 @@
+name: Wiki
+
+# Publishes docs/wiki/ to the GitHub wiki of this repository, so that the
+# pages Romain reads are the ones he reviewed in a pull request
+# (docs/WIKI.md).
+#
+# The wiki must exist first: GitHub creates its repository only once a
+# first page is saved by hand. Until then this job says so and succeeds,
+# rather than turning main red for something no commit can fix.
+#
+# GITHUB_TOKEN only, with contents: write — no personal token.
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ "docs/wiki/**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Publish docs/wiki
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if ! git clone --quiet \
+              "https://x-access-token:${TOKEN}@github.com/${REPOSITORY}.wiki.git" \
+              "$RUNNER_TEMP/wiki"; then
+            echo "::notice::No wiki yet. Create its first page by hand (Wiki tab), then run this workflow again."
+            exit 0
+          fi
+          # A page removed from docs/wiki/ stays in the wiki: deleting a
+          # published page is done by hand, on purpose.
+          cp -R docs/wiki/. "$RUNNER_TEMP/wiki/"
+          git -C "$RUNNER_TEMP/wiki" add -A
+          if git -C "$RUNNER_TEMP/wiki" diff --cached --quiet; then
+            echo "The wiki already matches docs/wiki."
+            exit 0
+          fi
+          git -C "$RUNNER_TEMP/wiki" -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Publication de docs/wiki depuis ${SHA}"
+          # A wiki repository renders master, and only master.
+          git -C "$RUNNER_TEMP/wiki" push --quiet origin HEAD:master

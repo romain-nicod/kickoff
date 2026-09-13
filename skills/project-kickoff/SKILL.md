@@ -1,257 +1,172 @@
 ---
 name: project-kickoff
-description: Start a project from the kickoff template — create the repository, fill the method documents, write the specification in the parsed format, and generate the issues, epics, milestones and board. Use when the user is starting a new project, says "kick off", "new project", "set up the repo", "bootstrap", or asks to turn a product brief or specification into GitHub issues and a board.
+description: Lancer un projet web Rails depuis le gabarit kickoff en appliquant la méthode de livraison par user story — dépôt, AGENTS.md de 25 lignes, labels, board aux sept statuts, wiki, recette locale, issues [US], [Task] et [BUG] sur gabarit, PR de déploiement et release notes. Use when starting a new project ("kick off", "new project", "nouveau projet", "lancer un projet", "set up the repo", "bootstrap"), when turning a need into user stories on a board, or when preparing a [Déploiement] pull request and its GitHub release.
 ---
 
-# Project kickoff
+# Lancer un projet avec kickoff
 
-Turn a product idea into a repository whose method is already decided
-and whose board is already populated.
+**La méthode fait foi** :
+`/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`.
+La lire une fois, en commençant par le résumé en 8 lignes et le § 10 bis ; revenir au reste quand une
+question se pose. Cette skill ne la recopie pas : elle dit **quels gestes font, avec le gabarit
+`romain-nicod/kickoff`, ce que la méthode demande.**
 
-The template `romain-nicod/kickoff` carries everything that does not
-change from one project to the next. **This skill carries what does**:
-reading a brief, deriving a backlog from it, sizing it against a real
-capacity, and naming the rules that are specific to this product.
-
-Never re-type what the template already holds. If a document exists
-there, it is filled in, not rewritten.
+Aucune mention de l'assistant ni de son éditeur dans le dépôt, les issues, les PR et les commits, et
+aucune ligne `Co-authored-by:` (ni `Co-Authored-By:`) dans un commit ou une PR.
 
 ---
 
-## 1. Establish the ground before writing anything
+## 1. Poser le terrain
 
-Ask only what you cannot deduce, and ask it once:
+Demander une seule fois ce qui ne se déduit pas :
 
-| Value | Why it matters |
+| Valeur | Sert à |
 |---|---|
-| Project name and one-sentence pitch | Every document's first line |
-| GitHub owner and repository name | The scripts deduce it from the remote afterwards |
-| Stack | Picks the layer: `rails`, `static`, or `none` |
-| Development days, team size | Capacity — the number that governs the plan |
-| Demo or delivery date | Milestone dates, backwards from it |
-| Where the product specification lives | A document, a conversation, or nothing yet |
+| Nom du projet et une phrase | `kickoff.yml`, README |
+| Dépôt `propriétaire/nom` | nouveau dépôt privé sur le **compte personnel** (Q8) |
+| Dossier du projet dans le vault | première ligne d'`AGENTS.md` |
+| Hébergement de production, s'il est connu | `AGENTS.md`, `docs/DEPLOIEMENT.md` |
+| Le besoin, sous n'importe quelle forme | les premières `[US]` |
 
-If the user has no specification, say so plainly and offer to write one
-with them before touching GitHub. **A board generated from a vague brief
-is a hundred issues nobody trusts.**
+Vérifier le compte actif avant de créer quoi que ce soit : `gh api user --jq .login`.
 
-## 2. Create the repository from the template
+## 2. Créer le dépôt
 
 ```bash
-gh repo create <owner>/<name> --template romain-nicod/kickoff --private --clone
+gh repo create <propriétaire>/<nom> --template romain-nicod/kickoff --private --clone
 ```
 
-Then fill `kickoff.yml` with the eight values and run:
+Le clone vit dans `~/Documents/Claude/code/<nom>`. Remplir les cinq valeurs de `kickoff.yml`, puis :
 
 ```bash
+# L'identité du compte qui merge, avant le premier commit ; les worktrees du clone la
+# partagent. Une autre adresse fait ajouter un co-auteur par GitHub à chaque merge en squash.
+git config --local user.name "Romain Nicod"
+git config --local user.email 296897605+romain-nicod@users.noreply.github.com
+bin/kickoff --dry-run
 bin/kickoff
-```
-
-It substitutes everywhere, merges the stack layer, and deletes itself.
-Read its output: it lists the four gaps left on purpose.
-
-Then generate the application skeleton, in the cloned repository:
-
-```bash
 rails new -d postgresql \
-  -m https://raw.githubusercontent.com/romain-nicod/rails-ready/main/template.rb \
-  --skip .
+  -m https://raw.githubusercontent.com/romain-nicod/rails-ready/main/template.rb --skip .
+python3 scripts/after_rails_new.py
 ```
 
-🔴 **`rails-ready` is the default and needs no discussion** — it derives from Le Wagon's
-Rails template of that name, the base the team learnt on. `--skip` keeps
-the files the clone already holds. Not using it is a legitimate choice
-that gets **written into `README.md` under "Structural decisions"**, in
-the same commit. See `docs/BOILERPLATE.md`.
+`after_rails_new.py` signale les gems manquantes (`capybara`, `selenium-webdriver`,
+`sentry-rails`) : les ajouter, `bundle install`. Dans le même geste :
 
-Add `dotenv-rails` in the same move (rule 28 needs it):
+- créer le dossier vault du projet et sa carte, reliés au graphe ;
+- inscrire le dépôt dans `ObsiClaud/dev/Dépôts AI-GMENTED.md` (ligne, paragraphe, recouvrement) ;
+- vérifier `git check-ignore -v .env` avant le premier push.
 
-```ruby
-group :development, :test do
-  gem "dotenv-rails"
-end
-```
+## 3. Configurer GitHub
 
-## 3. Fill the method documents — briefly
-
-The template's documents are complete method, with holes where a project
-must speak for itself. Fill only those:
-
-- `README.md` — what the product does, how it works, the stack, the
-  structural decisions
-- `AGENTS.md` — sections 1, 3, 8 and 9: the product in five lines, the
-  absolute rules, the known traps, the hypotheses never to present as
-  facts
-- `ROLES.md`, `TEAM_CHARTER.md` — names and real working hours, if
-  known; otherwise leave the placeholders and say so
-- `docs/MILESTONES.md` — dates derived backwards from the demo
-
-**Section 3 of `AGENTS.md` is the one that earns its keep.** Five to
-eight prohibitions specific to this product, each with its reason. They
-come from the specification and from the design, not from a generic
-list. If you cannot write five, the product is not understood yet.
-
-Two of them arrive already written and stay: **every key in `.env`**
-(rule 28) and **the skeleton comes from `rails-ready`**. Do not paraphrase
-them into something weaker.
-
-🔴 **Fill the long-memory pointer at the top of `AGENTS.md`** with the real
-folder, and create that folder now, with its overview note. A project whose
-memory has no home writes it into the repository, and the repository is not
-where it belongs.
-
-## 4. Write the specification in the parsed format
-
-`docs/specification.md` is a shape, not a form: the tables in it are
-what `scripts/build_backlog.py` reads. Fill it with real content —
-epics, stories with testable acceptance criteria, business rules,
-complexity per story, batches.
-
-Four things that make it worth reading rather than merely parseable:
-
-**Acceptance criteria are testable by someone who did not write them.**
-"The screen is fast" is not one; "first result in under 3 s on 4G" is.
-
-**Every story also carries a success criterion, and the build fails
-without one.** It answers a different question: acceptance is met the day
-of the merge, success is read afterwards on the running product — one
-outcome, its threshold, when it is read. "The upload accepts a 10 MB
-file" is acceptance; "fewer than 5% of uploads abandoned over the first
-two weeks" is success. When the outcome only exists at epic level, name
-the epic measure rather than inventing a story-level one.
-
-**Complexity is relative, and the anchors are in the template.** Score
-every story, then sum. That sum against the capacity is the sentence
-that governs everything — write it explicitly, especially when the
-essential scope alone exceeds the capacity.
-
-**Batches cut, they do not rank.** B0 foundation, B1 the demo that works
-on its own, then the rest. Say what B1 delivers in one sentence: if it
-is not already the whole pitch, the batching is wrong.
-
-## 5. Generate GitHub
+Dans cet ordre — **les labels d'abord** : GitHub retire sans rien dire un label qui n'existe pas
+d'une issue créée sur gabarit.
 
 ```bash
-python3 scripts/build_backlog.py       # spec → scripts/backlog.json
-python3 scripts/create_issues.py       # labels, milestones, stories
-python3 scripts/create_epic_issues.py  # epics + sub-issue links
-python3 scripts/setup_project.py       # board and its fields
-gh project link <n> --owner <owner> --repo <owner>/<name>
+python3 scripts/setup_repo.py --dry-run && python3 scripts/setup_repo.py
+gh auth refresh -s project --hostname github.com
+python3 scripts/setup_project.py --dry-run && python3 scripts/setup_project.py
 ```
 
-Check the totals `build_backlog.py` prints against the specification's
-own totals. **If they differ, the specification is malformed** — fix the
-document, never the script's output.
+Labels : `type:user-story`, `Task`, `type:bug`, `à revoir par Romain`, `status:blocked`. Board :
+`Backlog · Ready · In progress · En recette · In review · À déployer · Done`.
 
-Two things the API cannot do, to hand to the user step by step:
+Donner ensuite à Romain, pas à pas, ce que l'API ne fait pas :
 
-1. `gh auth refresh -s project --hostname github.com` — the token has no
-   project scope by default, and `setup_project.py` fails without it.
-2. Creating the **Board view**: `+` next to the view tabs → Board, group
-   by Status.
+- les workflows du board et le regroupement du Kanban : `docs/BOARD.md`, « À faire à la main » ;
+- la première page du wiki : `docs/WIKI.md`, « Première publication ».
 
-## 6. Keys, before anything is pushed
+## 4. `AGENTS.md` de 25 lignes au plus
 
-🔴 **Every key lives in `.env`, and `.env` is never pushed** — golden rule
-28, and the one thing on this list that cannot be fixed afterwards. Check
-three things before the first push:
+Remplir les emplacements laissés par `bin/kickoff` : URL du board (affichée par
+`setup_project.py`), production, script de déploiement. **Seulement les spécificités du projet** :
+jamais la méthode. Les pièges vont dans `docs/wiki/Pieges.md`, les décisions dans une page ADR de
+`docs/wiki/`. `CLAUDE.md` reste à trois lignes. Contrôle : `wc -l AGENTS.md CLAUDE.md`.
 
-1. `git check-ignore -v .env` answers. If it does not, stop.
-2. No literal key anywhere: `git grep -nE '(sk_|pk_|ghp_|AKIA|BEGIN .*PRIVATE KEY)'`
-   comes back empty.
-3. Every variable the app reads is in `.env.example`, with an empty
-   value and a line saying what it is for.
+## 5. Créer les issues sur gabarit
 
-Never ask the user to paste a secret into the conversation. Host secrets
-are set by them, in the host's dashboard, step by step.
+**Un besoin de Romain devient une `[US]` sans attendre** ; un besoin trop gros devient plusieurs
+US. Le corps suit `.github/ISSUE_TEMPLATE/user_story.md` : état, story, critères `CA-01…`, impacts
+(chacun rempli ou « aucun »), hors périmètre, tâches, DoD. Écrire le corps dans un fichier du
+bloc-notes, jamais dans le dépôt.
 
-## 7. Record what was decided
+```bash
+gh issue create --repo <propriétaire>/<nom> --title "[US] <besoin ou parcours>" \
+  --label "type:user-story" --label "à revoir par Romain" --body-file <corps.md>
+gh project item-add <n> --owner <propriétaire> --url <URL de l'issue>
+```
 
-Write the structural decisions as ADRs in `docs/decisions/` while the
-reasons are fresh — especially the one about what you deliberately did
-not build. In six weeks nobody remembers why, and the choice gets
-reversed by accident.
+- **`[Task] <action concrète>`** sur `task.md`, label `Task`, rattachée à l'US en sous-issue :
 
-If the user keeps a knowledge base outside the repository, write the
-project's memory there too: decisions, traps met, state of play.
+  ```bash
+  id=$(gh api repos/<propriétaire>/<nom>/issues/<n° de la tâche> --jq .id)
+  gh api repos/<propriétaire>/<nom>/issues/<n° de l'US>/sub_issues -F sub_issue_id="$id"
+  ```
 
-## 8. Register the repository in the repository map
+- **`[BUG] <comportement fautif>`** sur `bug.md`, labels `type:bug` et `à revoir par Romain` : un
+  défaut constaté en recette, en production, en revue QA, ou un test instable. Même cycle qu'une US.
+- À partir de trois issues à revoir : note vault `<Projet> - Revue des US - AAAAMMJJ`, une case et
+  une ligne de commentaire par issue.
+- **Romain passe en *Ready*.** L'agent retire alors le label :
+  `gh issue edit <n> --remove-label "à revoir par Romain"`.
 
-🔴 **Before the first push**, add the new repository to whatever map lists
-every repository on the account. Three edits, in the same commit as the
-creation:
+## 6. Pendant les US — les commandes, la méthode fait foi
 
-1. **A row in the overview table** (§1), in the right family: name,
-   visibility, whether a local clone exists, one line on what it is.
-2. **A paragraph in §2**: what it holds, its state, its live URL if it has
-   one, its GitHub account if it is not `romain-nicod`.
-3. **An overlap entry in §3** — *only if it applies, and it usually does*.
-   Does this repository carry material that already lives elsewhere: content,
-   a method document, a skill, shared site code? Then say so, and **name
-   which copy is authoritative**. An unwritten overlap is an overlap that
-   will silently diverge.
+- Worktree et branche : `git -C code/<nom> worktree add -b us-NNN-slug ../<nom>-worktrees/us-NNN-slug origin/main`.
+- Changer un statut (*In progress*, *En recette*, *In review*, *Done*) : `docs/BOARD.md`,
+  « Déplacer une US ».
+- Tests : `docs/TESTS.md` ; PR sur `.github/PULL_REQUEST_TEMPLATE.md`, `Closes` pour l'US et chaque
+  tâche.
+- Recette : création, reconstruction à chaque lot et `bin/recette prepare` dans `docs/RECETTE.md`.
+- **Jamais de merge vers `main`** : Romain seul merge. Seule la branche locale `recette` reçoit des
+  merges de l'agent.
+- **Hygiène des branches, automatique** : `setup_repo.py` active la suppression des branches au
+  merge. Après chaque merge constaté par l'API (`gh api repos/<propriétaire>/<nom>/pulls/<n> --jq
+  .merged_at`), supprimer le worktree et la branche locale de l'US. Une branche fermée sans merge ou
+  remplacée est sauvegardée en bundle (`git bundle verify` doit répondre « okay »), puis supprimée en
+  local et sur GitHub. Aucune branche `worktree-agent-*` ne survit à sa session. Contrôle mensuel
+  des branches restantes. Commandes : `CONTRIBUTING.md`, « Hygiène des branches ».
 
-Then bump the note's footer version and date.
+## 7. Déployer un lot
 
-**Judge visibility on what is actually served, not on the repository
-setting.** A private repository with GitHub Pages enabled publishes its
-content to everyone. Check before writing "private" in the table.
+1. **Attendre que tout le lot soit mergé.** La PR de déploiement s'ouvre après et **se merge en
+   dernier** : une PR mergée après elle partirait sans figurer dans la release note.
+2. Branche `deploy/vX.Y.Z` depuis `origin/main` : `VERSION`, section `## vX.Y.Z — JJ/MM/AAAA` en
+   haut de `CHANGELOG.md` avec ses trois rubriques, et **le garde des migrations** mis à jour
+   (`docs/DEPLOIEMENT.md`, section Rails).
+3. PR `[Déploiement] vX.Y.Z` :
 
-The map covers the repository's whole life, not just its birth: flipping
-visibility, renaming, transferring or deleting it is written there in the
-same move — including what the change breaks (forks, stars, watchers,
-Pages). A map that lags behind GitHub is worse than no map.
+   ```bash
+   gh pr create --base main --head deploy/vX.Y.Z --title "[Déploiement] vX.Y.Z" \
+     --body-file .github/PULL_REQUEST_TEMPLATE/deploiement.md
+   ```
 
----
+4. CI verte, Romain merge. Déployer **le commit de merge** avec le script du projet.
+5. Production vérifiée, puis :
 
-## Who is authoritative
+   ```bash
+   python3 scripts/publish_release.py --dry-run
+   python3 scripts/publish_release.py
+   ```
 
-Each subject has one home — the table is in `README.md`, section "Who is
-authoritative".
+6. Les issues du lot passent en *Done*.
 
-The three that get confused most often:
+## 8. Pièges
 
-| Subject | Authoritative |
+- `setup_project.py` refuse de réécrire les statuts d'un board déjà rempli : les options de
+  *Status* changeraient d'identifiant et chaque élément perdrait le sien.
+- Le dépôt d'un wiki n'affiche que `master` ; le workflow *Wiki* ne publie rien tant que Romain n'a
+  pas créé la première page.
+- `publish_release.py` refuse de déplacer une étiquette déjà publiée : une correction prend un
+  nouveau numéro.
+- Un secret ne passe jamais par la conversation ni par la ligne de commande : les secrets de l'hôte
+  se saisissent par Romain, pas à pas.
+
+## Ce qui fait foi
+
+| Sujet | Où |
 |---|---|
-| This skill | **`kickoff`** (`skills/`). A copy in `~/.claude/skills/` is an install, never an edit |
-| The executable `template.rb` | **`rails-ready`** |
-| How to switch each optional gem on | **`rails-ready`** (`docs/CONFIGURATION.md`) |
-
----
-
-## What good looks like at the end
-
-- A repository whose README a stranger can follow to a running app
-- `AGENTS.md` with five real prohibitions, not five generic ones
-- Issues generated, each a sub-issue of its epic, each labelled by
-  batch, priority and complexity
-- A board with Status, Batch, Points and Priority filled for every item
-- A green CI on the first push
-- Four gaps explicitly left for the kick-off meeting, not silently
-  invented
-- A row, a paragraph and — where it applies — an overlap entry in the
-  repository map, written before the first push
-- A vault folder for the project, with its card and its `CLAUDE.md`, and
-  `AGENTS.md` pointing at it
-- `.env` gitignored, `.env.example` filled with names only, and no
-  literal key anywhere in the history
-
-## Traps
-
-**Do not invent the capacity.** Ask for the real days and the real
-people. A capacity model built on a guess produces a plan nobody
-believes.
-
-**Do not translate acceptance criteria.** They are quoted verbatim into
-the issues. If the specification is in another language than the
-repository, say so once and keep them as they are.
-
-**Do not create issues by hand to "get started".** An issue with no
-counterpart in the specification is an issue with no reviewed criteria.
-
-**Do not fill the wiki.** See `docs/WIKI.md` in the template: anything
-describing how the code works lives in the repository.
-
-**Check which GitHub account is active** before creating anything:
-`gh api user --jq .login`. Creating the repository under the wrong owner
-costs a delete and a re-clone.
+| Le cycle de livraison | la note de méthode du vault |
+| Gabarits, scripts, stack Rails, cette skill | le dépôt `kickoff` ; `~/.claude/skills/project-kickoff` est un lien symbolique vers `skills/project-kickoff` de son clone principal |
+| Les règles d'un projet | son `AGENTS.md` |
+| Le générateur de l'application | `rails-ready` |

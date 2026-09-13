@@ -53,7 +53,8 @@ graph TB
 ## 3. Structural decisions
 
 <!-- The choices someone would otherwise undo without knowing what they cost.
-     One line each; the full reasoning goes in docs/decisions/ as an ADR. -->
+     One line each; the full reasoning goes in an ADR page of this wiki,
+     listed in Decisions.md. -->
 
 | # | Decision | Rationale | Consequence accepted | ADR |
 |---|---|---|---|---|
@@ -82,7 +83,7 @@ only an answer with a limit and a dead-letter destination. -->
 
 ## 5. Data
 
-Structure of record: [`SCHEMA.md`](SCHEMA.md) — kept in sync with `db/schema.rb`.
+Structure of record: [`docs/SCHEMA.md`](../SCHEMA.md) — kept in sync with `db/schema.rb`.
 
 | Concern | Choice |
 |---|---|
@@ -141,6 +142,6 @@ Structure of record: [`SCHEMA.md`](SCHEMA.md) — kept in sync with `db/schema.r
 
 ---
 
-**Upstream:** product intent in [`PRD.md`](PRD.md) ·
-**Sibling:** data structure in [`SCHEMA.md`](SCHEMA.md) ·
-decisions in [`decisions/`](decisions/)
+**Upstream:** product intent in [`docs/PRD.md`](../PRD.md) ·
+**Sibling:** data structure in [`docs/SCHEMA.md`](../SCHEMA.md) ·
+decisions in [Decisions](Decisions.md)

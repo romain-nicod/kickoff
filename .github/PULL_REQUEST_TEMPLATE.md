@@ -1,50 +1,81 @@
-Closes #
+<!-- Titre de la PR = titre de l'US. Une PR par US, ouverte quand tout est vert.
+     Pour une PR de déploiement, voir .github/PULL_REQUEST_TEMPLATE/deploiement.md. -->
 
-## ⚠️ After pulling this branch
+Closes #<!-- US -->
+Closes #<!-- chaque [Task] de l'US, une ligne par tâche -->
+Dépend de : #<!-- une seule ligne, seulement si l'US dépend d'une autre issue ; sinon la supprimer -->
 
-<!-- Tick what the reviewer must run before the app works for them.
-     Delete the whole section if nothing applies — an empty checklist trains
-     people to skip it. Whoever merges relays this to the team channel. -->
+<!-- Le corps ne cite que son US, ses [Task] et, le cas échéant, sa dépendance.
+     Aucune liste d'autres PR ou issues pour le contexte. -->
 
-- [ ] `bundle install` — the Gemfile changed
-- [ ] `bin/rails db:migrate` — there is a new migration
-- [ ] `bin/rails db:seed` — the seed data changed
-- [ ] a new key in `.env` — the name is in `.env.example`, say where to get it
-- [ ] something else:
+## ⚠️ Après avoir récupéré cette branche
 
-## What this changes
+<!-- Cocher ce que le relecteur doit lancer pour que l'application marche chez lui.
+     Supprimer la section si rien ne s'applique. -->
 
-<!-- What the reviewer will see working — not the list of files. Three lines. -->
+- [ ] `bundle install` — le Gemfile a changé
+- [ ] `bin/rails db:migrate` — nouvelle migration
+- [ ] `bin/rails db:seed` — les données de démonstration ont changé
+- [ ] nouvelle variable dans `.env` — son nom est dans `.env.example`, dire où trouver la valeur
+- [ ] autre :
 
-- [ ] 
-- [ ] 
-- [ ] 
+## Ce que ça change
 
-## Which files are impacted
+<!-- Ce que Romain verra fonctionner, pas la liste des fichiers. Trois lignes. -->
 
-<!-- One line per file, saying WHY it changed, not what it contains. -->
+-
 
-- [ ] 
-- [ ] 
-- [ ] 
+## Fichiers impactés
 
-## How to test
+<!-- Une ligne par fichier : POURQUOI il change, pas ce qu'il contient. -->
 
-<!-- The exact commands, copy-pasteable, and what the reviewer should see.
-     A reviewer who has to guess how to run it will approve without running it. -->
+-
 
+## Instructions de test
+
+<!-- Les commandes exactes, puis les résultats réels sur le dernier commit. -->
+
+```bash
+bin/rails test
+bin/rails test:system
+bin/rubocop
+bin/brakeman --no-pager
+bundle exec bundler-audit --update
+bin/importmap audit
 ```
-```
 
-## Decisions
+| Contrôle | Résultat | Commit |
+|---|---|---|
+| `bin/rails test` | <!-- n tests, n assertions, 0 échec --> | `<sha>` |
+| `bin/rails test:system` | | `<sha>` |
+| Lint et sécurité | | `<sha>` |
+| CI | <!-- lien --> | `<sha>` |
+| Recette (port 3100) | <!-- intégrée le JJ/MM, parcours testé --> | `<sha>` |
 
-<!-- Delete this section if there were none.
-     Link the document where a structural choice was written down — never paste
-     the reasoning here, the two copies would drift apart. -->
+Parcours à suivre en recette :
 
-## Notes for reviewers
+1.
 
-<!-- Delete this section if there were none.
-     What cost you time and would cost them the same: a trap, a workaround, a
-     failure that only shows up in one environment, a teammate's code you
-     touched and why. -->
+## UI/UX
+
+<!-- Si l'US touche une page : captures à 1512×982, 1280×800 et 390×844, avec des
+     données longues. Aucun défilement horizontal, cibles ≥ 44 px, contraste,
+     aucun texte anglais visible, états vides et erreurs qui mènent quelque part.
+     Sinon : « sans objet ». -->
+
+## QA idiomatique
+
+<!-- Relecture du diff faite : conventions Rails, helpers natifs, pas de
+     factorisation excessive, commentaires d'intention en anglais, rien de mort. -->
+
+- [ ] Diff relu en entier
+
+## Definition of Done
+
+Suivie dans l'issue de l'US : les cases y sont cochées, pas ici.
+
+## Notes de déploiement
+
+<!-- Migration, variable, tâche à lancer, interrupteur à activer, ordre à respecter.
+     Repris dans la rubrique « À savoir » du CHANGELOG.md au prochain déploiement.
+     Sinon : « aucune ». -->

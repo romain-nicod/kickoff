@@ -1,77 +1,51 @@
-# The wiki: what goes in it, and what must not
+# Le wiki
 
-**Recommendation: the wiki stays nearly empty.**
+La méthode range dans le wiki GitHub du projet (§ 1, § 7, Q12) : **chaque US livrée** (parcours,
+fonctionnement), **les schémas d'architecture**, **les décisions et ADR**, les guides pratiques. Le
+vault n'en garde qu'un lien.
 
-A GitHub wiki is a second repository with no pull request, no review, no
-CI and no link to the commit that made its content wrong. Everything
-that describes *how the code works* therefore lives **in the
-repository**, next to the code, and changes in the same pull request as
-the code. A wiki diverges within a week.
+## Une seule source : `docs/wiki/`
 
-## What lives in the repository, never in the wiki
+Le wiki GitHub est un dépôt à part, que les PR ne montrent pas. Les pages s'écrivent donc dans
+`docs/wiki/`, dans la PR de l'US, où Romain les relit ; le workflow `.github/workflows/wiki.yml` les
+publie à chaque merge sur `main` qui touche ce dossier.
 
-| Content | Where |
+- Une page par fichier, nommé `Titre-Avec-Tirets.md` : c'est le nom de la page dans le wiki.
+- Une page modifiée dans l'interface du wiki est écrasée à la publication suivante.
+- Une page retirée de `docs/wiki/` reste dans le wiki : la supprimer à la main.
+- Le workflow n'utilise que le jeton fourni par GitHub, aucun jeton personnel.
+
+## Ce qui va où
+
+| Contenu | Où |
 |---|---|
-| What the product is, how to run it | `README.md` |
-| Absolute rules, traps, architecture | `AGENTS.md` |
-| How we write code | `GOLDEN_RULES.md` |
-| Branches, review, what blocks a merge | `CONTRIBUTING.md` |
-| Ready / Done | `DOR_DOD.md` |
-<!-- team-only -->
-| Roles, charter, ceremonies | `ROLES.md`, `TEAM_CHARTER.md`, `CEREMONIES.md` |
-<!-- /team-only -->
-| Board, backlog, milestones, demo | `docs/` |
-| Structural decisions | `docs/decisions/` |
-| The specification | `docs/` |
+| Page d'une US livrée | `docs/wiki/US-NNN-<slug>.md`, dans la PR de l'US |
+| Schéma d'architecture | [`docs/wiki/Architecture.md`](wiki/Architecture.md), dans la PR qui change la structure |
+| Décision | `docs/wiki/ADR-NNNN-<slug>.md`, et une ligne dans [`Decisions.md`](wiki/Decisions.md) |
+| Piège transverse | [`docs/wiki/Pieges.md`](wiki/Pieges.md) |
+| Schéma de données | [`docs/SCHEMA.md`](SCHEMA.md) : il change dans le même commit que la migration |
+| Commandes, variables | `README.md`, `.env.example` |
+| État du projet, apprentissages transverses | le vault |
 
-If you are about to write one of those in the wiki, you are about to
-create a second source of truth.
+## Première publication — Romain, une fois
 
-## What the wiki is genuinely good for
+GitHub ne crée le dépôt du wiki qu'à la première page enregistrée à la main.
 
-Things with **no versioned lifecycle** — dated, never wrong, nobody
-needs to review them:
+1. Ouvrir `https://github.com/{{REPO}}/wiki`.
+2. Cliquer **Create the first page**, garder le titre `Home`, cliquer **Save page**.
+3. Onglet **Actions** → workflow **Wiki** → **Run workflow** → **Run workflow**.
+4. Recharger le wiki : la page `Home` est celle de `docs/wiki/Home.md`.
 
-1. **Meeting notes** — checkpoints, the velocity measurement with its
-   actual numbers, the retrospective.
-2. **The project journal** — one section per day, three lines: what
-   moved, what broke, what we decided. This is what makes the final
-   presentation writable in an hour instead of an evening.
-3. **Demo notes** — questions asked and the answers given.
-4. **External resources** — links to design files, datasets, studies,
-   with the date they were consulted.
-<!-- team-only -->
-5. **Onboarding transcripts** — the questions a newcomer actually asked.
-   If the same one comes twice, its answer moves to `ONBOARDING.md`.
-<!-- /team-only -->
+Tant que l'étape 2 n'est pas faite, le workflow l'annonce et se termine sans erreur.
 
-## Suggested pages
-
-```
-Home          one screen: what this wiki is, links to the repo docs
-Journal       one section per day, newest first
-Meetings      checkpoints, measurements, retrospective
-Demo-notes    rehearsal findings, questions asked
-Resources     external links, with consultation dates
-```
-
-Five pages. A wiki with twenty pages is a wiki nobody reads.
-
-## How to populate it
-
-The wiki is a git repository of its own:
+## Publier à la main
 
 ```bash
-git clone git@github.com:{{REPO}}.wiki.git
-cd {{REPO_NAME}}.wiki
-git add -A && git commit -m "Journal: week 1, day 3" && git push
+git clone https://github.com/{{REPO}}.wiki.git /tmp/{{REPO_NAME}}.wiki
+cp -R docs/wiki/. /tmp/{{REPO_NAME}}.wiki/
+git -C /tmp/{{REPO_NAME}}.wiki add -A
+git -C /tmp/{{REPO_NAME}}.wiki commit -m "Publication de docs/wiki"
+git -C /tmp/{{REPO_NAME}}.wiki push origin HEAD:master
 ```
 
-It must be initialised once from the GitHub UI (Wiki tab → create the
-first page) before that clone works.
-
-## The rule that keeps it honest
-
-**Nothing in the wiki is a prerequisite for writing code.** If a
-newcomer needs a wiki page to run the project, that page is in the wrong
-place — move it to `docs/` and leave a link behind.
+Le dépôt d'un wiki n'affiche que la branche `master`.

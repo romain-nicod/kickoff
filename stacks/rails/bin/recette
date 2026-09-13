@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+# Local recette of this worktree, on http://127.0.0.1:3100, with synthetic
+# data only. See docs/RECETTE.md.
+#
+#   bin/recette prepare   # database, seeds, assets
+#   bin/recette start     # server; refuses uncommitted changes
+#   bin/recette reset     # recreate this worktree's synthetic database
+require "fileutils"
+require "open3"
+
+root = File.expand_path("..", __dir__)
+Dir.chdir(root)
+unless ARGV.size == 1 && %w[prepare start reset].include?(ARGV.first)
+  abort "Usage : bin/recette prepare|start|reset"
+end
+if ENV["RAILS_ENV"] == "production" || ENV["RACK_ENV"] == "production"
+  abort "Refus : environnement de production"
+end
+unless File.exist?("config/environments/recette.rb")
+  abort "config/environments/recette.rb manque : voir docs/RECETTE.md"
+end
+
+ENV["RAILS_ENV"] = ENV["RACK_ENV"] = "recette"
+require_relative "../lib/recette"
+begin
+  Recette.configure!(root)
+rescue ArgumentError => error
+  abort "Refus : #{error.message}"
+end
+FileUtils.mkdir_p("tmp/recette")
+
+# The lock is held for the whole setup or the whole server lifetime, child
+# processes included: a second prepare, reset or start is refused.
+File.open("tmp/recette/instance.lock", "w") do |lock|
+  unless lock.flock(File::LOCK_EX | File::LOCK_NB)
+    abort "Cette recette est occupée : arrêter son serveur avant de la modifier."
+  end
+
+  case ARGV.first
+  when "prepare"
+    exit false unless system("bin/rails", "db:prepare", "db:seed",
+                             "assets:precompile", lock.fileno => lock)
+    puts "Recette préparée avec des données fictives. Lancer : bin/recette start"
+  when "reset"
+    exit false unless system("bin/rails", "db:drop", lock.fileno => lock)
+    exit false unless system("bin/rails", "db:prepare", "db:seed",
+                             lock.fileno => lock)
+    puts "Données fictives recréées."
+  when "start"
+    status, ok = Open3.capture2("git", "status", "--porcelain")
+    unless ok.success? && status.empty?
+      abort "Committer les modifications avant la recette : " \
+            "la version testée doit être identifiable."
+    end
+    revision = Open3.capture2("git", "rev-parse", "HEAD").first.strip
+    branch = Open3.capture2("git", "branch", "--show-current").first.strip
+    ENV["RECETTE_REVISION"] = revision
+    ENV["RECETTE_BRANCH"] = branch
+    File.open("tmp/recette/history.log", "a") do |file|
+      file.puts "#{Time.now.utc} #{revision} #{branch}"
+    end
+    puts "Recette : http://127.0.0.1:#{ENV.fetch('PORT')} — #{branch} — #{revision}"
+    exit system("bin/rails", "server", "-b", "127.0.0.1",
+                "-p", ENV.fetch("PORT"), lock.fileno => lock)
+  end
+end

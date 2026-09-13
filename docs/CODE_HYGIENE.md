@@ -128,12 +128,12 @@ Comment **why**, never what. The code says what.
 ```
 
 Cite the rule by number. Anyone reading it later can find the full text
-in the specification.
+in the issue or the wiki page that introduced it.
 
 ## Dependencies
 
-**Adding a dependency is announced** in the team channel before the PR,
-with one sentence saying what it replaces. Most of what feels like it
+**Adding a dependency is named in the pull request**, with one sentence
+saying what it replaces. Most of what feels like it
 needs a library is twenty lines you already understand.
 
 Never a source whose terms of use forbid the usage, including through a
@@ -144,6 +144,6 @@ third-party wrapper.
 | File | Why |
 |---|---|
 | Design tokens | A value added without review is a design system dead in three weeks |
-| The specification | Changing it is a product decision; the issue scripts must be re-run |
-| Reference data | The demonstration rests on it |
+| An acceptance criterion | Changing it changes what done means: it changes in the issue |
+| Seeds and fixtures | The recette and the tests rest on them |
 | The linter configuration | See above |

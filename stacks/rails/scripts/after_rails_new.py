@@ -32,6 +32,7 @@ Idempotent: run it twice and the second run reports nothing to do.
 """
 
 import argparse
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -65,13 +66,21 @@ RAILS_IGNORE = """
 """
 
 GENERATORS = """
-    # Minitest, the Rails default -- see docs/TESTS.md. We only turn
-    # fixtures off for generated scaffolds; the framework itself is
-    # already Minitest and needs no block.
+    # Minitest, the Rails default -- see docs/TESTS.md. Fixtures are only
+    # turned off for generated scaffolds.
+    config.generators do |g|
       g.test_framework :test_unit, fixture: false
-      g.factory_bot dir: "spec/factories"
     end
 """
+
+# Gems the delivery method relies on, checked and reported — never
+# written into the Gemfile by this script: a Gemfile edited by a regex is
+# a Gemfile nobody reads.
+REQUIRED_GEMS = {
+    "capybara": 'group :test — browser tests, bin/rails test:system',
+    "selenium-webdriver": 'group :test — drives Chrome for the system tests',
+    "sentry-rails": 'top level — server errors (docs/GEMS.md, Sentry)',
+}
 
 
 def git(args, check=True):
@@ -193,6 +202,21 @@ def point_generators_at_minitest(dry_run):
     return "  config/application.rb: generators point at Minitest"
 
 
+def report_missing_gems():
+    """Name the gems of REQUIRED_GEMS the Gemfile does not declare."""
+    path = ROOT / "Gemfile"
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    missing = [
+        f"  MISSING  gem \"{name}\" — {where}"
+        for name, where in REQUIRED_GEMS.items()
+        if not re.search(rf"^\s*gem\s+[\"']{re.escape(name)}[\"']", text,
+                         re.MULTILINE)
+    ]
+    return "\n".join(missing) or None
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
@@ -208,6 +232,7 @@ def main():
         fix_gitignore(args.dry_run),
         untrack_runtime(args.dry_run),
         point_generators_at_minitest(args.dry_run),
+        report_missing_gems(),
     ]
     reported = [line for line in done if line]
     print("\n".join(reported) if reported else "  nothing to do")
@@ -219,10 +244,12 @@ def main():
     print("""
 Left for you, because they need a decision rather than a default:
 
-  1. Add the gems the specification needs. Minitest is already there —
-     it is the Rails default — so this is only what the stories call for.
-  2. bundle install, then write your first test under test/
-  3. Commit. Read the diff first: the boilerplate's own commit is large,
+  1. Add any gem reported MISSING above, then `bundle install`.
+  2. The browser half of Sentry: `bin/importmap pin @sentry/browser`, and
+     the snippet of docs/GEMS.md, section Sentry.
+  3. The recette: config/environments/recette.rb and the three YAML
+     blocks of docs/RECETTE.md, then `bin/rails test test/lib`.
+  4. Commit. Read the diff first: the boilerplate's own commit is large,
      and this script has just changed what is in it.
 """)
 

@@ -157,3 +157,18 @@ scrolling.
 
 **59 — No `console.log`, no `debugger`, no `binding.b` committed.** The
 linter catches some of it; the reviewer catches the rest.
+
+**60 — A JavaScript library is pinned with `bin/importmap pin`, never
+`yarn add`.** A package installed by yarn is not served by importmap: it
+disappears in production with no server error. `bin/importmap audit`
+runs in CI.
+
+---
+
+## 9. Two idioms that fail in silence
+
+**61 — Every `has_many` and `has_one` says what happens to its
+children**: `dependent: :destroy`, or another choice made on purpose and
+commented. And seeds use `create!`: without the bang an invalid record
+is skipped without a word, and the recette runs on data that is not
+there.

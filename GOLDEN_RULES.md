@@ -113,22 +113,23 @@ reviewer can read the feature.
 
 ## 5. Git and review
 
-**24 — Commit often, small, with a clear message.** One intent per
-commit, `Subject: detail`.
+**24 — Commit often, small, with a clear message.** One behaviour per
+commit, the test with its code. Messages in French, as the delivery
+method sets.
 
 ```
-no   fix stuff
-yes  US-102: reject by swipe, with the 24 px dead zone
+non  corrections
+oui  Vote : refuser un second vote du même membre (#12)
 ```
 
-**25 — One branch per issue, one PR per branch, under ~400 changed
+**25 — One story, one branch `us-NNN-slug`, one PR, under ~400 changed
 lines.** A big PR is not reviewed, it is approved.
 
-**26 — Read your own diff before asking someone else to.** Half the
-review comments you will get are things you would have caught yourself.
+**26 — Read your own diff before asking Romain to.** Half the review
+comments are things you would have caught yourself.
 
-**27 — Push daily.** Work that exists only on your laptop does not exist
-for the team, and cannot be picked up if you are ill.
+**27 — Push daily.** Work that exists only in one working copy cannot be
+picked up by the next session.
 
 **28 — Every key lives in `.env`, and `.env` is never pushed.** One
 mechanism, no exception: an API key, a token, a password, a connection
@@ -149,12 +150,12 @@ Never force-push a shared branch either. If a key leaks: revoke and
 rotate first, clean the history after — revocation is instant and
 total, history rewriting is slow and imperfect.
 
-**29 — CI green before you ask for a review.** Asking someone to read
-code that does not build spends their time to save yours.
+**29 — CI green before the pull request is opened.** Asking Romain to
+read code that does not build spends his time to save yours.
 
-**30 — Say you are stuck within the hour.** Not at tomorrow's standup.
-On a short project a day lost is a measurable share of the capacity —
-and someone else has probably already hit the same wall.
+**30 — Say you are stuck, on the issue, straight away.** The label
+`status:blocked` and a comment saying what blocks: a story stopped in
+silence looks exactly like work in progress.
 
 ---
 
@@ -163,7 +164,7 @@ and someone else has probably already hit the same wall.
 | File | Why |
 |---|---|
 | The design tokens | A value added without review is a design system dead in three weeks |
-| The specification | Changing it is a product decision, and the issue scripts must be re-run |
+| An acceptance criterion | Changing it changes what done means: it changes in the issue, where Romain sees it |
 | The database schema | Conflicts are resolved by re-running migrations, never by hand |
 | The linter configuration | An exclusion is a team decision, not a way to make your PR green |
 | `.gitignore`, `.env.example` | Removing a line from one of them is how a secret reaches the history |

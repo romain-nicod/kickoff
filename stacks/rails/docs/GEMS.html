@@ -81,6 +81,8 @@ text-align:center;color:var(--muted);font-size:.82rem;font-style:italic}
 <tr><td><code>hotwire-livereload</code> (dev)</td><td>The browser reloads itself. Pure comfort, missed the day it is gone</td></tr>
 <tr><td><code>faker</code> (dev/test)</td><td>Seed data somebody would believe</td></tr>
 <tr><td><code>rubocop-rails-omakase</code> · <code>brakeman</code> · <code>bundler-audit</code></td><td>Style, static security scan, dependency audit</td></tr>
+<tr><td><code>capybara</code> · <code>selenium-webdriver</code> (test)</td><td>Browser tests in headless Chrome, <code>bin/rails test:system</code> — required by the delivery method whenever a story touches a page</td></tr>
+<tr><td><code>sentry-rails</code></td><td>Server errors reported to Sentry, silent without <code>SENTRY_DSN</code> — browser errors need <code>@sentry/browser</code>, see GEMS.md</td></tr>
 </tbody></table>
 <h2 id="optional-shipped-commented">Optional — shipped commented</h2>
 <table><thead><tr><th>Gem</th><th>Switch it on when</th><th>Cost of switching it on by default</th></tr></thead><tbody>

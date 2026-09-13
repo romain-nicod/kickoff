@@ -1,71 +1,62 @@
 ---
 name: User story
-about: A new user capability, discovered along the way
-title: "US-nnn — "
-labels: ''
+about: Un parcours utilisateur ou la réponse à un besoin, revu par Romain avant Ready
+title: "[US] "
+labels: "type:user-story, à revoir par Romain"
 ---
 
-### User story
+<!-- Gabarit de la méthode « Livraison applicative par user story » (§ 3 et § 4.7).
+     Titre : [US] <besoin ou parcours>. Romain ne lit que les US ; les tâches
+     [Task] sont des sous-issues de celle-ci. -->
 
-As a <who>, I want <what>, so that <why>.
+## État
 
-### Acceptance criteria
+- Board : **Backlog** — Romain passe l'US en *Ready* après revue, l'agent retire alors le label `à revoir par Romain`.
+- Branche : `us-NNN-slug` (créée à l'ouverture de la session) · PR : —
 
-- [ ] 1.
-- [ ] 2.
-- [ ] 3.
+## User story
 
-### Definition of Ready
+En tant que <qui>, je veux <quoi>, afin de <pourquoi>.
 
-<!-- Before the first line of code. -->
+## Critères d'acceptation
 
-- [ ] Acceptance criteria are testable by someone else
-- [ ] The routes it adds or changes are named, verb and path
-- [ ] Dependencies are delivered, or explicitly stubbed
+<!-- Vérifiables par quelqu'un d'autre. L'identifiant figure dans le nom du test
+     qui le vérifie (`test "CA-01 ..."`) : pas de plan de tests séparé. -->
 
-### Deliverables to produce or update
+- [ ] **CA-01** —
+- [ ] **CA-02** —
+- [ ] **CA-03** —
 
-**Design**
+## Impacts
 
-- [ ] **Wireframe** of every screen touched, with its four states: empty,
-      loading, error, full. Mobile first, since Bootstrap is. Link it here.
-- [ ] **Clickable prototype** — only when the interaction is not obvious:
-      several steps, drag and drop, a frame that updates without a reload.
-      A plain CRUD does not need one.
-- [ ] **Design system** — does Bootstrap already have the component? Card,
-      Modal, Navbar, Alert, Badge, Form. If it does, use it. A genuinely new
-      component is added to the design system **before** it is coded, named
-      in BEM, with its SCSS variable if the colour or the spacing is new.
-- [ ] **Data schema** — tables and columns with their types, associations,
-      an index on every foreign key and every searched field, constraints
-      (`null: false`, unique, default). Files go through Active Storage,
-      never a `photo_url` column. Say what happens to the child when the
-      parent is destroyed.
+<!-- Chaque ligne est remplie, ou porte « aucun » explicitement. -->
 
-**Prepare**
+| Impact | À faire |
+|---|---|
+| Wireframe (validé à la revue, avant *Ready*) | aucun |
+| Documents : schéma de données, wiki (`docs/wiki/`), `README`, `.env.example`, déploiement | aucun |
+| Migration de données | aucune |
+| Dépendance à une autre US | aucune |
 
-- [ ] **Minitest tests**, one `test` per acceptance criterion, written before the
-      code and red for the right reason. The specs this story makes wrong are
-      updated in the same story, not later.
-- [ ] **`docs/SCENARIOS.md`** — each behaviour in Given / When / Then, naming
-      the example that verifies it by the example's description, never by a
-      line number.
-- [ ] **Pseudocode** — numbered steps as comments inside the method, before
-      any real code. They stay in the shipped code. A step that does not fit
-      on one line deserves its own method.
-- [ ] **Branch** from an up-to-date `main`, named from the story title:
-      `<type>/<entity>-<action>` — `feat/recipe-list`, `fix/recipe-validation`.
-      If the title yields no clear entity and action, the naming is not the
-      problem: the story is too vague or too big.
+## Hors périmètre
 
-**Code**
+-
 
-- [ ] **One vertical slice at a time**: migration → model → route →
-      controller → view → Stimulus, checked in the browser before the next
-      slice. Not the four routes, then the four actions, then the four views:
-      at the first error, twelve pieces are suspect instead of three.
-      The idioms are in `GOLDEN_RULES.md`, not repeated here.
+## Tâches
 
-### Definition of Done
+<!-- Sous-issues [Task], créées et tenues par l'agent. -->
 
-- [ ] Its error and empty states exist and lead somewhere
+- [ ] #
+
+## Definition of Done
+
+- [ ] Critères d'acceptation vérifiés un par un
+- [ ] Tests unitaires, intégration, système (si interface) et non-régression écrits, vus rouges puis verts
+- [ ] Suite complète et CI vertes sur le dernier commit
+- [ ] Contrôles de sécurité passés (Brakeman, bundler-audit, `importmap audit`, tests de droits, CSRF, injection, XSS)
+- [ ] Passe UI/UX faite, captures jointes à la PR à 1512×982, 1280×800 et 390×844 (si interface)
+- [ ] QA idiomatique du diff faite, code commenté
+- [ ] US documentée dans le wiki du projet (parcours livré ; schéma d'architecture si la structure change ; ADR si une décision a été prise), `README` et `.env.example` à jour, apprentissages dans le vault
+- [ ] Testée en recette
+- [ ] PR relue et **mergée par Romain**
+- [ ] Déployée en production et vérifiée

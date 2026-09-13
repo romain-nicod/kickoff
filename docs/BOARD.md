@@ -1,112 +1,61 @@
 # Board
 
-<!-- URL of the GitHub Project, once created by scripts/setup_project.py
-     and linked to the repository with:
-     gh project link <n> --owner {{OWNER}} --repo {{REPO}} -->
+Le board GitHub (Projects v2) est **le lieu de coordination** du projet : on y lit d'un coup d'œil ce
+qui attend qui. Les règles du cycle font foi dans la méthode
+(`/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`,
+§ 2.1) ; cette page ne dit que comment le board est installé et tenu.
 
-**Board:** _to fill in_ — GitHub Projects v2, linked to the repository.
+**Board :** <!-- URL affichée par scripts/setup_project.py -->
 
-Items: the user stories generated from the specification, the foundation
-tasks, and the epics.
+## Les sept statuts
 
-**E0 — Quality and acceptance** is supplied by the template and belongs on
-every board: the QA sweep, the accessibility and security audits,
-acceptance by real users, behaviour under real conditions, the restore
-drill, and the personal-data review. They are stories, with points, in a
-batch — not a checklist at the end. See `specification.md`.
+| Statut | Posé par |
+|---|---|
+| Backlog | l'agent, à la création d'une `[US]` ou d'un `[BUG]` (label `à revoir par Romain`) |
+| Ready | **Romain** |
+| In progress | l'agent, à l'ouverture du worktree |
+| En recette | l'agent, branche intégrée à la recette, tous les tests verts |
+| In review | l'agent, PR ouverte et CI verte |
+| À déployer | le workflow du board, au merge |
+| Done | l'agent, après le déploiement vérifié |
 
-Each story is a **sub-issue of its epic**, so an epic shows its own
-completion (`Sub-issues progress`). An epic is a container: it is never
-worked on directly, and it closes when its stories do.
+Un défaut trouvé en recette ou en revue ramène l'US à **In progress**.
 
-## Fields
+## Installation
 
-Every field but Status and Route is filled **from the issue's labels** by
-`scripts/setup_project.py`. The labels are the source, the board is the
-view — see [`LABELS.md`](LABELS.md).
-
-| Field | Values | Filled from | What it is for |
-|---|---|---|---|
-| **Status** | Backlog · Ready · In progress · In review · Done | — | The board columns |
-| **Batch** | B0 … Bn · out of scope | `batch:` | The delivery plan |
-| **Points** | 1 · 2 · 3 · 5 · 8 · 13 | `pts:` | Relative complexity, the input of the velocity measurement |
-| **MoSCoW Priority** | Must · Should · Can · Won't Have | `prio:` | The phasing from the specification, in the shared language |
-| **Route** | free text | — | The route the story is reached by, written before the code |
-
-A story in no batch becomes **Won't Have**: out of the committed scope is
-a decision, not an oversight.
-
-Group the board view by **Status**, filter by **Batch** — that is the
-view that answers "what are we shipping this week".
-
-## The four views
-
-`setup_project.py` creates them, and re-running only fills in what is
-missing. They are Le Wagon's, and each answers a different question:
-
-| View | Layout | Filter | The question it answers |
-|---|---|---|---|
-| **Kanban** | Board | — | Where does the work stand right now |
-| **Prioritized backlog** | Table | `-status:Done` | What is left, and in what order |
-| **My items** | Table | `assignee:@me` | What is mine |
-| **All items** | Table | — | Everything, to sort and search |
-
-⚠️ **One thing the API still cannot do: the grouping.** Neither
-`createProjectV2View` nor `updateProjectV2View` takes a `groupBy`
-argument. A board view falls back to grouping by Status — which is what
-we want — but nothing guarantees it. **Look at the Kanban once**, and fix
-it in the UI if it grouped by something else.
-
-> ⚠️ This section said the opposite until 01/09/2026: *"the API cannot
-> create a view"*. `createProjectV2View` has been in the public schema;
-> the claim was never checked, and it sent every project off with a
-> single unnamed table.
-
-## Column rules
-
-**Todo** — the story meets the Definition of Ready. A rough idea goes to
-the specification, not to the board.
-
-**In Progress** — someone's name is on it and a branch exists.
-**Limit: one story in progress per person.** Two in progress means
-neither is being finished, and unfinished work at the end is lost work.
-
-**Done** — the story meets the Definition of Done in full, and the issue
-is closed by its pull request. Merged is not Done.
-
-🔴 **The board does not update itself.** `setup_project.py` moves an item
-to Done when its issue is *closed* — so a pull request must close its
-issue (`Closes #n` in the body), and **the script must be re-run after a
-merge**. Neither is automatic.
-
-⚠️ **What it costs when neither happens**, seen on 01/09/2026: eight
-stories delivered, eight issues still open, every item still in Backlog.
-The board said nothing had been done for three days of work. A board
-nobody trusts is worse than no board — people stop reading it, and then
-stop filing in it.
-
-## How a story moves
-
-```
-Todo ──▶ In Progress ──▶ (pull request) ──▶ Done
-  ▲                                          │
-  └──────────── does not meet the DoD ───────┘
+```bash
+gh auth refresh -s project --hostname github.com   # une fois par machine
+python3 scripts/setup_project.py --dry-run
+python3 scripts/setup_project.py
 ```
 
-A story that comes back from review goes back to **In Progress**, never
-straight to Done "because the fix is small".
+Le script crée le board, le relie au dépôt, pose les sept statuts, ajoute les issues absentes
+(ouvertes en *Backlog*, fermées en *Done*) et crée trois vues : *Kanban*, *À revoir par Romain*,
+*All items*. Il ne déplace jamais un élément qui a déjà un statut.
 
-## What the board is not
+⚠️ Réécrire les options de *Status* leur donne de nouveaux identifiants : tous les éléments
+perdent leur statut. Sur un board déjà rempli, le script s'arrête ; `--force-statuses` passe outre.
 
-It is not the backlog. The backlog is the specification, and the issues
-are generated from it. An item created directly on the board has no
-acceptance criteria anyone reviewed, so nobody can say when it is done.
+### À faire à la main, une fois
 
-## Reading it in ten seconds
+L'API n'expose ni les workflows intégrés ni le regroupement des vues.
 
-- Points in **Done** ÷ person-days consumed = the measured velocity.
-  That number is the only one that changes the plan.
-- An item In Progress for more than two days is a blocker that has not
-  been said out loud.
-- **out of scope** shows what the product becomes. It is not a pool to
-  pull from.
+1. Ouvrir le board → menu `⋯` en haut à droite → **Workflows**.
+2. **Item closed** → activer → *Set value* : `Status` = `À déployer`.
+3. **Pull request merged** → activer → `Status` = `À déployer`.
+4. **Auto-add to project** → activer → filtre `is:issue is:open` sur ce dépôt.
+5. Vue **Kanban** → `⋯` → *Group by* → `Status`.
+
+Si le script n'a pas pu poser les statuts : `Status` → *Edit field* → créer les options dans l'ordre
+du tableau ci-dessus, avec ces libellés exacts.
+
+## Déplacer une US
+
+```bash
+gh project field-list <n> --owner {{OWNER}} --format json   # id du champ Status et de ses options
+gh project item-list <n> --owner {{OWNER}} --format json    # id de l'élément
+gh project item-edit --id <élément> --project-id <projet> \
+  --field-id <champ Status> --single-select-option-id <option>
+```
+
+Aucune GitHub Action à jeton personnel pour ces transitions, sans nécessité démontrée.

@@ -1,4 +1,4 @@
-# The eight values. Fill them in, then run bin/kickoff.
+# The five values. Fill them in, then run bin/kickoff.
 # Format is deliberately flat "key: value" — no YAML library needed.
 
 # The product's name, as a human says it. Example: Go Meal
@@ -14,19 +14,7 @@ tagline: One sentence saying what this does and for whom.
 # Stack layer: rails, static, or none.
 stack: rails
 
-# Development days actually available, once framing, pitch preparation
-# and the final presentation are removed.
-dev_days: 10
-
-# People on the team.
-team_size: 4
-
-# Points per person per day. 2.5 is a starting hypothesis for developers
-# on a stack they have just learnt — measure it at the end of week one
-# and re-run the numbers.
-velocity: 2.5
-
-# Language of the repository: en or fr. Everything is written in English
-# by default; "fr" only changes the convention stated in the docs, not
-# the files themselves.
-language: en
+# Absolute path of the project's folder in the vault. It lands on the
+# first line of AGENTS.md. Example:
+# /Users/albert/Documents/Claude/ObsiClaud/perso/pef/blog/
+vault_folder:

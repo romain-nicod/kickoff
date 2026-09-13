@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Create the GitHub board (Projects v2) and file every issue into it.
+"""Create the GitHub board (Projects v2) of the delivery method and file
+every issue into it.
 
-Beyond the built-in Status, the board carries three fields: delivery
-batch, complexity in points and priority. That is what answers, at a
-glance, the only question that matters at the end of week one: how many
-points were actually delivered.
+The seven statuses are those of the method, in its order:
+
+    Backlog · Ready · In progress · En recette · In review · À déployer · Done
 
 REQUIREMENT — the gh token must carry the `project` scope, which
 `gh auth login` does not grant by default:
@@ -14,11 +14,18 @@ REQUIREMENT — the gh token must carry the `project` scope, which
 Then:
 
     python3 scripts/setup_project.py
+    python3 scripts/setup_project.py --dry-run
 
-Idempotent: re-running reuses the existing board, adds only missing
-issues, and refreshes every field value.
+Idempotent: re-running reuses the board, adds only the missing issues and
+never moves an item that already has a status. Moving items is the
+agent's job, one `gh project item-edit` at a time — see docs/BOARD.md.
+
+Two things the API does not expose, walked through by hand in
+docs/BOARD.md: the board's built-in workflows (an issue closed by a merge
+goes to `À déployer`) and the grouping of the Kanban view.
 """
 
+import argparse
 import json
 import subprocess
 import sys
@@ -28,32 +35,26 @@ from kickoff_lib import repo, owner as repo_owner
 
 OWNER = repo_owner()
 REPO = repo()
-TITLE = "{{PROJECT_NAME}} — delivery"
+TITLE = "{{PROJECT_NAME}} — livraison"
 
-BATCHES = ["B0", "B1", "B2", "B3", "B4", "B5", "out of scope"]
+STATUSES = ["Backlog", "Ready", "In progress", "En recette", "In review",
+            "À déployer", "Done"]
+COLOURS = ["GRAY", "BLUE", "YELLOW", "ORANGE", "PURPLE", "PINK", "GREEN"]
 
-# The five columns of Le Wagon's project template, rather than GitHub's
-# default three. `Ready` and `In review` are the two that earn their place:
-# without `Ready` there is nowhere to put a story that met the Definition
-# of Ready but has not started, and without `In review` a pull request
-# waiting on a reviewer looks exactly like work in progress.
-STATUSES = ["Backlog", "Ready", "In progress", "In review", "Done"]
-
-# Prioritisation in MoSCoW, as Le Wagon's template reads it. It is derived
-# from the specification's own P1/P2/P3 — the document does not change, the
-# board speaks the shared language.
-MOSCOW = ["Must Have", "Should Have", "Can Have", "Won't Have"]
-MOSCOW_OF = {"P1": "Must Have", "P2": "Should Have", "P3": "Can Have"}
+# Created when missing, matched by name, never recreated.
+VIEWS = [
+    ("Kanban", "BOARD_LAYOUT", None),
+    ("À revoir par Romain", "TABLE_LAYOUT", 'label:"à revoir par Romain"'),
+    ("All items", "TABLE_LAYOUT", None),
+]
 
 
 def gh(args, check=True, retries=3):
     """Run `gh`, retrying GitHub's temporary Projects conflicts.
 
     Adding many items to a board in a row makes the API answer "your
-    attempt to move this item created a temporary conflict" — it is a lock
-    on the board, not a bad request, and it succeeds on the next try. A
-    hundred issues added one by one hits it several times, so the retry is
-    not an optimisation: without it the board is silently incomplete.
+    attempt to move this item created a temporary conflict" — a lock on
+    the board, not a bad request, and it succeeds on the next try.
     """
     for attempt in range(retries):
         result = subprocess.run(["gh"] + args, capture_output=True, text=True)
@@ -77,35 +78,77 @@ def check_scope():
                  "Run: gh auth refresh -s project --hostname github.com")
 
 
-def find_or_create_project():
+def find_project():
     listing = json.loads(gh(["project", "list", "--owner", OWNER,
                              "--format", "json"]).stdout)
     for project in listing.get("projects", []):
         if project["title"] == TITLE:
-            return project["number"], project["id"]
+            return project
+    return None
 
+
+def create_project():
     created = json.loads(gh(["project", "create", "--owner", OWNER,
                              "--title", TITLE, "--format", "json"]).stdout)
-    print(f"board created: #{created['number']} — {created['url']}")
-    return created["number"], created["id"]
+    print(f"  board created: #{created['number']}")
+    return created
 
 
-def set_status_options(project_id, field):
-    """Rewrite the built-in Status field's options.
-
-    `gh project field-create` cannot touch Status: GitHub creates it with
-    the project and only the GraphQL mutation can change its options.
-    Idempotent — it is skipped when the five are already in place.
-    """
-    current = [o["name"] for o in field.get("options", [])]
-    if current == STATUSES:
+def link_repository(number, dry_run):
+    """Show the board in the repository's Projects tab. Harmless when the
+    link already exists: gh then refuses, and the refusal is ignored."""
+    if dry_run:
+        print(f"  would link the board to {REPO}")
         return
+    gh(["project", "link", str(number), "--owner", OWNER, "--repo", REPO],
+       check=False)
+
+
+def fields(number):
+    listing = json.loads(gh(["project", "field-list", str(number),
+                             "--owner", OWNER, "--format", "json"]).stdout)
+    return {f["name"]: f for f in listing["fields"]}
+
+
+def option_id(field, name):
+    for option in field.get("options", []):
+        if option["name"] == name:
+            return option["id"]
+    return None
+
+
+def set_status_options(field, items_with_status, force, dry_run):
+    """Replace the options of the built-in Status field by the method's.
+
+    `gh project field-create` cannot touch Status: only the GraphQL
+    mutation can. ⚠️ Replacing the options gives them new ids, so every
+    item loses its status. On a board that already holds statuses the
+    script therefore stops and says so, unless --force-statuses is given.
+
+    Returns True when the options are the method's once it has run.
+    """
+    current = [option["name"] for option in field.get("options", [])]
+    if current == STATUSES:
+        print(f"  Status: {' · '.join(STATUSES)} (already in place)")
+        return True
+
+    if items_with_status and not force:
+        print(f"  ⚠️  Status is {' · '.join(current)}, and "
+              f"{len(items_with_status)} item(s) carry a value that a")
+        print("      rewrite would erase. Nothing changed. Either add the "
+              "missing options by hand")
+        print("      (docs/BOARD.md), or re-run with --force-statuses and "
+              "re-place every item.")
+        return False
+
+    if dry_run:
+        print(f"  would set Status: {' · '.join(STATUSES)}")
+        return True
 
     options = ", ".join(
-        '{name: "%s", color: %s, description: ""}' % (name, colour)
-        for name, colour in zip(STATUSES,
-                                ["GRAY", "BLUE", "YELLOW", "PURPLE", "GREEN"])
-    )
+        "{name: %s, color: %s, description: \"\"}"
+        % (json.dumps(name, ensure_ascii=False), colour)
+        for name, colour in zip(STATUSES, COLOURS))
     query = """
     mutation {
       updateProjectV2Field(input: {
@@ -117,99 +160,22 @@ def set_status_options(project_id, field):
     result = gh(["api", "graphql", "-f", f"query={query}"], check=False)
     if result.returncode == 0:
         print(f"  Status: {' · '.join(STATUSES)}")
-    else:
-        print("  ⚠️  Status options unchanged — the token may lack the "
-              "project scope on this owner")
-        print(f"      {result.stderr.strip()}")
-
-
-def fields(number):
-    listing = json.loads(gh(["project", "field-list", str(number),
-                             "--owner", OWNER, "--format", "json"]).stdout)
-    return {f["name"]: f for f in listing["fields"]}
-
-
-def ensure_fields(number, project_id):
-    existing = fields(number)
-
-    # Earlier French field names, dropped so the board reads in one language.
-    for stale in ("Lot", "Priorité"):
-        if stale in existing:
-            gh(["project", "field-delete", "--id", existing[stale]["id"]])
-            print(f"  dropped stale field {stale}")
-
-    existing = fields(number)
-    if "Status" in existing:
-        set_status_options(project_id, existing["Status"])
-
-    if "MoSCoW Priority" not in existing:
-        gh(["project", "field-create", str(number), "--owner", OWNER,
-            "--name", "MoSCoW Priority", "--data-type", "SINGLE_SELECT",
-            "--single-select-options", ",".join(MOSCOW)])
-    if "Route" not in existing:
-        # The Rails route a story is reached by. Empty until the story is
-        # started — routes are written before the code, so this is the
-        # first thing filled in and the fastest way to spot two stories
-        # that are really one.
-        gh(["project", "field-create", str(number), "--owner", OWNER,
-            "--name", "Route", "--data-type", "TEXT"])
-
-    # The P1/P2/P3 field is superseded by MoSCoW: two priority columns on
-    # one board is two answers to one question. The `prio:` label stays on
-    # the issue, and stays the source.
-    if "Priority" in existing:
-        gh(["project", "field-delete", "--id", existing["Priority"]["id"]],
-           check=False)
-        print("  dropped Priority — superseded by MoSCoW Priority")
-
-    if "Batch" not in existing:
-        gh(["project", "field-create", str(number), "--owner", OWNER,
-            "--name", "Batch", "--data-type", "SINGLE_SELECT",
-            "--single-select-options", ",".join(BATCHES)])
-    if "Points" not in existing:
-        gh(["project", "field-create", str(number), "--owner", OWNER,
-            "--name", "Points", "--data-type", "NUMBER"])
-    return fields(number)
-
-
-def option_id(field, name):
-    for option in field.get("options", []):
-        if option["name"] == name:
-            return option["id"]
-    return None
-
-
-# The four views of Le Wagon's project template. `createProjectV2View` is
-# in the public GraphQL schema — an earlier note in this file claimed the
-# API could not create a view, and it sent every project off with a single
-# unnamed table. Checked against the live schema on 01/09/2026.
-#
-# ⚠️ What the API still cannot do: set the *grouping*. Neither
-# createProjectV2View nor updateProjectV2View takes a groupBy argument. A
-# BOARD_LAYOUT view falls back to grouping by Status, which is the one we
-# want anyway — but nothing here guarantees it, so look once.
-VIEWS = [
-    ("Kanban", "BOARD_LAYOUT", None),
-    ("Prioritized backlog", "TABLE_LAYOUT", "-status:Done"),
-    ("My items", "TABLE_LAYOUT", "assignee:@me"),
-    ("All items", "TABLE_LAYOUT", None),
-]
+        return True
+    print("  ⚠️  Status options unchanged — set them by hand (docs/BOARD.md)")
+    print(f"      {result.stderr.strip()}")
+    return False
 
 
 def ensure_views(project_id):
-    """Create the missing views, and rename a lone default table.
-
-    Idempotent: a view is matched by name, never recreated.
-    """
+    """Create the missing views, and rename GitHub's lone default table."""
     q = ('query($p:ID!){node(id:$p){... on ProjectV2'
          '{views(first:20){nodes{id name layout}}}}}')
     existing = json.loads(gh(["api", "graphql", "-f", f"query={q}",
                               "-f", f"p={project_id}"]).stdout)
-    nodes = existing["data"]["node"]["views"]["nodes"]
-    by_name = {v["name"]: v for v in nodes}
+    by_name = {v["name"]: v for v in existing["data"]["node"]["views"]["nodes"]}
 
-    # GitHub names the first view "View 1". It is the All items view under
-    # another name, so rename it rather than leaving a duplicate behind.
+    # GitHub names the first view "View 1": it is All items under another
+    # name, so it is renamed rather than left as a duplicate.
     if "View 1" in by_name and "All items" not in by_name:
         m = ('mutation($v:ID!,$n:String!){updateProjectV2View'
              '(input:{viewId:$v,name:$n}){projectV2View{id name}}}')
@@ -217,7 +183,6 @@ def ensure_views(project_id):
             "-f", f"v={by_name['View 1']['id']}", "-f", "n=All items"],
            check=False)
         by_name["All items"] = by_name.pop("View 1")
-        print("  renamed View 1 → All items")
 
     for name, layout, view_filter in VIEWS:
         view = by_name.get(name)
@@ -231,7 +196,7 @@ def ensure_views(project_id):
             if not out.stdout:
                 continue
             view = json.loads(out.stdout)["data"]["createProjectV2View"]["projectV2View"]
-            print(f"  view: {name} [{layout}]")
+            print(f"  view: {name}")
 
         if view_filter:
             m = ('mutation($v:ID!,$f:String!){updateProjectV2View'
@@ -241,81 +206,69 @@ def ensure_views(project_id):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--force-statuses", action="store_true",
+                        help="rewrite Status even if items already carry "
+                             "one (they lose it)")
+    args = parser.parse_args()
+
     check_scope()
-    number, project_id = find_or_create_project()
-    field_map = ensure_fields(number, project_id)
+    project = find_project()
+    if not project:
+        if args.dry_run:
+            print(f"  would create the board « {TITLE} » with Status "
+                  f"{' · '.join(STATUSES)}")
+            print("\nDry run — nothing was written.")
+            return
+        project = create_project()
+    number, project_id = project["number"], project["id"]
+
+    link_repository(number, args.dry_run)
+
+    items = json.loads(gh(["project", "item-list", str(number), "--owner",
+                           OWNER, "--limit", "500", "--format",
+                           "json"]).stdout)["items"]
+    on_board = {i.get("content", {}).get("url") for i in items}
+    with_status = [i for i in items if i.get("status")]
+
+    status_ok = set_status_options(fields(number)["Status"], with_status,
+                                   args.force_statuses, args.dry_run)
+    status_field = fields(number)["Status"]
 
     issues = json.loads(gh(["issue", "list", "--repo", REPO, "--state", "all",
                             "--limit", "500", "--json",
-                            "number,title,url,labels,state"]).stdout)
-
-    items = json.loads(gh(["project", "item-list", str(number), "--owner", OWNER,
-                           "--limit", "500", "--format", "json"]).stdout)
-    known = {i.get("content", {}).get("url"): i["id"] for i in items["items"]}
-    # Where each story already stands. Re-running the script must never drag
-    # work backwards: a story someone moved to "In progress" stays there.
-    current_status = {i.get("content", {}).get("url"): i.get("status")
-                      for i in items["items"]}
-
+                            "title,url,state"]).stdout)
     for issue in issues:
-        labels = [label["name"] for label in issue["labels"]]
-        item_id = known.get(issue["url"])
+        if issue["url"] in on_board:
+            continue
+        # A new item starts in Backlog; an issue closed before the board
+        # existed is history, and lands in Done. Nothing else is decided
+        # here: where a story stands is set by whoever works on it.
+        wanted = "Done" if issue["state"] == "CLOSED" else "Backlog"
+        if args.dry_run:
+            print(f"  would add: {issue['title']} → {wanted}")
+            continue
+        added = json.loads(gh(["project", "item-add", str(number), "--owner",
+                               OWNER, "--url", issue["url"], "--format",
+                               "json"]).stdout)
+        oid = option_id(status_field, wanted) if status_ok else None
+        if oid:
+            gh(["project", "item-edit", "--id", added["id"], "--project-id",
+                project_id, "--field-id", status_field["id"],
+                "--single-select-option-id", oid], check=False)
+        print(f"  added: {issue['title']} → {wanted if oid else 'no status'}")
 
-        if not item_id:
-            added = json.loads(gh(["project", "item-add", str(number),
-                                   "--owner", OWNER, "--url", issue["url"],
-                                   "--format", "json"]).stdout)
-            item_id = added["id"]
-            print(f"  added: {issue['title']}")
-
-        batch = next((l.split(":")[1] for l in labels if l.startswith("batch:")), None)
-        if batch == "out-of-scope":
-            batch = "out of scope"
-        priority = next((l.split(":")[1] for l in labels if l.startswith("prio:")), None)
-        points = next((l.split(":")[1] for l in labels if l.startswith("pts:")), None)
-        # A closed issue is delivered; everything else waits in Backlog, so
-        # the board never shows a column-less pile on first open. Nothing is
-        # ever moved OUT of Backlog by this script: where a story stands is
-        # the team's answer, not the generator's, and re-running must never
-        # drag work back.
-        status = "Done" if issue["state"] == "CLOSED" else (
-            None if current_status.get(issue["url"]) else "Backlog"
-        )
-
-        # An epic is a container, never a story: it carries no priority of
-        # its own, and giving it one puts every epic in the same column.
-        # Seen on 01/09/2026 — seven epics filed under "Won't Have", which
-        # reads as "we decided against the whole product".
-        is_epic = not any(l.startswith("prio:") for l in labels)
-
-        # A story outside every batch is out of the committed scope, which
-        # is exactly what "Won't Have" says.
-        moscow = None if is_epic else (
-            MOSCOW_OF.get(priority) if batch else "Won't Have"
-        )
-
-        base = ["project", "item-edit", "--id", item_id, "--project-id", project_id]
-        for field_name, value in (("Batch", batch), ("MoSCoW Priority", moscow),
-                                  ("Status", status)):
-            oid = option_id(field_map[field_name], value) if value else None
-            if oid:
-                gh(base + ["--field-id", field_map[field_name]["id"],
-                           "--single-select-option-id", oid], check=False)
-            elif is_epic and field_name == "MoSCoW Priority":
-                # ⚠️ Not writing a value does not remove the one already
-                # there. Re-running a fixed script left every epic on the
-                # wrong column until the field was cleared explicitly.
-                gh(base + ["--field-id", field_map[field_name]["id"],
-                           "--clear"], check=False)
-        if points:
-            gh(base + ["--field-id", field_map["Points"]["id"],
-                       "--number", points], check=False)
+    if args.dry_run:
+        print("\nDry run — nothing was written.")
+        return
 
     ensure_views(project_id)
 
-    print(f"\nboard ready: https://github.com/users/{OWNER}/projects/{number}")
-    print("Views: " + " · ".join(name for name, _, _ in VIEWS))
-    print("Check once that Kanban groups by Status — the API cannot set it.")
+    print(f"\nboard ready: {project.get('url', f'#{number}')}")
+    print("Left by hand, once (docs/BOARD.md): the built-in workflows — "
+          "« Item closed » and « Pull request merged » set À déployer — "
+          "and the Kanban grouped by Status.")
 
 
 if __name__ == "__main__":

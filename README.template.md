@@ -36,7 +36,7 @@ needs; it does not belong at the bottom of the page.
 
 <!-- The choices you would not guess by reading the code and would risk
      breaking. Each one in a line, with its reason. The detail goes in
-     docs/decisions/ as ADRs. -->
+     docs/wiki/ as ADR pages. -->
 
 -
 -
@@ -70,75 +70,63 @@ host's secrets. See [`docs/SECRETS.md`](docs/SECRETS.md).
 ## 7. Tests and quality
 
 ```bash
+bin/rails test
+bin/rails test:system
+bin/rubocop
+bin/brakeman --no-pager
+bundle exec bundler-audit --update
+bin/importmap audit
 ```
+
+The CI runs all of them on every pull request. See [`docs/TESTS.md`](docs/TESTS.md).
 
 ## 8. Deployment
 
-<!-- Host, mechanism (automatic on main or manual), and the first-time
-     setup steps. Filled in with the first deployment, in the same
-     commit. -->
+<!-- Host and deployment script, filled in with the first deployment, in
+     the same commit. -->
+
+Every production deployment has its `[Déploiement] vX.Y.Z` pull request,
+merged last in its batch, then its GitHub release: the
+[releases](https://github.com/{{REPO}}/releases) are the deployment log.
+See [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) and
+[`CHANGELOG.md`](CHANGELOG.md).
 
 ## 9. Project tracking
 
-- **[Issues](https://github.com/{{REPO}}/issues)** — one per user story,
-  titled `US-nnn — …`, labelled by epic, priority, batch and complexity.
-  Each is a sub-issue of its epic.
-- **[Milestones](https://github.com/{{REPO}}/milestones)** — the delivery
-  batches.
-- **Board** — Status, Batch, Points, MoSCoW Priority, Route. Its fields
-  are filled from the labels, so the labels are the source.
-- **[Labels](docs/LABELS.md)** — six families, `family:value`, and the
-  rule that decides whether a thing deserves a label at all.
+The project follows the delivery method by user story — see
+[`AGENTS.md`](AGENTS.md).
 
-The repository itself is configured by script too — labels (ours created,
-GitHub's stock set deleted), wiki, pull-request settings, protected
-default branch:
+- **[Issues](https://github.com/{{REPO}}/issues)** — `[US]` and `[BUG]`,
+  reviewed by Romain, and `[Task]` as their sub-issues, on the templates
+  of `.github/ISSUE_TEMPLATE/`.
+- **Board** — `Backlog · Ready · In progress · En recette · In review ·
+  À déployer · Done`. See [`docs/BOARD.md`](docs/BOARD.md).
+- **[Labels](docs/LABELS.md)** — `type:user-story`, `Task`, `type:bug`,
+  `à revoir par Romain`, `status:blocked`.
+- **[Wiki](https://github.com/{{REPO}}/wiki)** — delivered stories,
+  architecture, decisions, written in `docs/wiki/`. See
+  [`docs/WIKI.md`](docs/WIKI.md).
+
+The repository and the board are configured by script:
 
 ```bash
 python3 scripts/setup_repo.py
+python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 ```
-
-Issues are **generated from the specification**, never typed by hand:
-
-```bash
-python3 scripts/build_backlog.py       # spec → scripts/backlog.json
-python3 scripts/create_issues.py       # labels, milestones, stories
-python3 scripts/create_epic_issues.py  # epics + sub-issue links
-python3 scripts/setup_project.py       # board and its fields
-```
-
-If an acceptance criterion must change, it changes in the specification
-first, then the scripts are re-run. Stories discovered along the way are
-opened from the issue template **and** added to the specification —
-see [`docs/BACKLOG.md`](docs/BACKLOG.md).
-
-**Capacity:** {{DEV_DAYS}} development days × {{TEAM_SIZE}} people ×
-{{VELOCITY}} points = **{{CAPACITY}} points**. Measure the real velocity
-at the end of week one and re-run that line — it is the only number that
-changes the plan.
 
 ## 10. Working framework
 
-The method is set up before the code, not after.
-
 | Axis | Document |
 |---|---|
+| **Delivery** | [`AGENTS.md`](AGENTS.md) · [`docs/BOARD.md`](docs/BOARD.md) · [`docs/LABELS.md`](docs/LABELS.md) · [`docs/RECETTE.md`](docs/RECETTE.md) · [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) · [`docs/WIKI.md`](docs/WIKI.md) |
 | **Engineering** | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`docs/ENVIRONMENTS.md`](docs/ENVIRONMENTS.md) · [`docs/CODE_HYGIENE.md`](docs/CODE_HYGIENE.md) · [`docs/TESTS.md`](docs/TESTS.md) · [`docs/SECRETS.md`](docs/SECRETS.md) |
-| **Delivery** | [`docs/BOARD.md`](docs/BOARD.md) · [`docs/BACKLOG.md`](docs/BACKLOG.md) · [`docs/MILESTONES.md`](docs/MILESTONES.md) · [`docs/DEMO.md`](docs/DEMO.md) |
-| **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`DOR_DOD.md`](DOR_DOD.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
-<!-- team-only -->
-| **Team** | [`ROLES.md`](ROLES.md) · [`TEAM_CHARTER.md`](TEAM_CHARTER.md) · [`CEREMONIES.md`](CEREMONIES.md) · [`docs/STANDUP.md`](docs/STANDUP.md) · [`docs/ONBOARDING.md`](docs/ONBOARDING.md) |
-<!-- /team-only -->
-| **Launch** | [`docs/GO_LIVE.md`](docs/GO_LIVE.md) |
-| **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/specification.md`](docs/specification.md) · [`docs/SCENARIOS.md`](docs/SCENARIOS.md) |
-| **Prompts** | [`docs/PROMPTS.md`](docs/PROMPTS.md) — one prompt per design deliverable, each with what to check in the answer |
+| **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
+| **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/PROMPTS.md`](docs/PROMPTS.md) — one prompt per deliverable, each with what to check in the answer |
+| **Architecture** | [`docs/wiki/Architecture.md`](docs/wiki/Architecture.md) · [`docs/SCHEMA.md`](docs/SCHEMA.md) · [`docs/wiki/Decisions.md`](docs/wiki/Decisions.md) · [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) |
 | **Boilerplate** | [`docs/BOILERPLATE.md`](docs/BOILERPLATE.md) — `rails-ready`, our Rails template, and what it decides for you |
-| **Architecture** | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/SCHEMA.md`](docs/SCHEMA.md) · [`docs/decisions/`](docs/decisions/) |
-| **Documentation** | [`AGENTS.md`](AGENTS.md) · [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) · [`docs/WIKI.md`](docs/WIKI.md) |
 
-Four before writing a line of code: `GOLDEN_RULES.md` for how we write,
-`AGENTS.md` for what this product forbids, `DOR_DOD.md` for when a story
-starts and ends, `CONTRIBUTING.md` for how a change reaches `main`.
+Three before writing a line of code: `AGENTS.md` and the method it links
+to, `GOLDEN_RULES.md` for how we write, `CONTRIBUTING.md` for the diff.
 
 ## 11. Licence
 
