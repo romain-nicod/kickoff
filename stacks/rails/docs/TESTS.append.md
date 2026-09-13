@@ -54,6 +54,24 @@ Les gems `capybara` et `selenium-webdriver` sont dans le groupe `:test` du `Gemf
 - Si la suite parallèle est instable ou lente sur une machine, `PARALLEL_WORKERS=1`, et la raison
   dans `AGENTS.md`.
 
+### Les gardes qu'une suite ne se donne pas seule
+
+Une suite verte dit que le code fait ce que les tests demandent, rien sur ce que personne n'a pensé à
+demander. Trois gardes, chacune écrite après un défaut passé à travers une suite verte sur le premier
+vrai projet :
+
+| Garde | Le défaut d'où elle vient |
+|---|---|
+| **Aucune liste ne déborde à 390 px** | une liste sur dix défilait de côté sur téléphone, et la garde en a trouvé une onzième que personne n'avait vérifiée |
+| **Chaque langue porte les clés de la source, portée par portée** | une traduction est restée à 56 % pendant une journée, et seul quelqu'un qui comptait pouvait le voir |
+| **Aucun écran n'affiche `translation missing`** | deux listes l'affichaient entre leurs contrôles de pagination, et chaque formulaire refusé l'affichait à la place de l'erreur |
+
+- 🔴 **Une garde qui ne peut pas échouer n'est pas une garde.** Casser ce qu'elle surveille, la voir
+  rouge, puis rétablir : c'est le « vu rouge » de la méthode, appliqué aux gardes.
+- ⚠️ **Parcourir, ne pas échantillonner.** Un chemin de plus dans une garde coûte une ligne ; un
+  chemin oublié coûte un écran cassé devant un client. Et **paginer avant de regarder** : une liste
+  de trois lignes cache tous les défauts qui vivent dans les contrôles de la deuxième page.
+
 ### La barrière
 
 `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`,

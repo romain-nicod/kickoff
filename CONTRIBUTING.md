@@ -5,7 +5,8 @@ Ce dépôt applique la méthode « Livraison applicative par user story » :
 Branches, commits, tests, recette, PR, revue et déploiement y font foi ; les spécificités du dépôt
 sont dans [AGENTS.md](AGENTS.md), les règles de code dans [GOLDEN_RULES.md](GOLDEN_RULES.md).
 
-Cette page n'ajoute que l'identité des commits, l'hygiène des branches et une règle d'écriture.
+Cette page n'ajoute que l'identité des commits, le mode de merge, l'hygiène des branches et une règle
+d'écriture.
 
 ## Identité des commits
 
@@ -17,7 +18,13 @@ git config --local user.name "Romain Nicod"
 git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 ```
 
-Une autre adresse fait ajouter un co-auteur par GitHub à chaque merge en squash.
+Une autre adresse fait apparaître un second auteur dans l'historique de GitHub.
+
+## Merge
+
+Une PR se merge par un **commit de merge**, jamais en squash : elle garde tous ses commits, avec
+leurs messages, pour être relue commit par commit. `python3 scripts/setup_repo.py` n'autorise que
+ce mode.
 
 ## Hygiène des branches
 
@@ -26,8 +33,8 @@ réglage `delete_branch_on_merge` est posé par `python3 scripts/setup_repo.py`.
 l'agent, depuis le clone principal.
 
 **Après chaque merge constaté**, le worktree et la branche locale de l'US disparaissent. Le merge se
-constate par l'API, jamais sur la foi du board : un merge en squash ne fait pas de la branche un
-ancêtre de `main`, et `git branch -d` la refuserait à tort.
+constate par l'API, jamais sur la foi du board ni sur un clone local qui n'a pas encore récupéré
+`main`.
 
 ```bash
 gh api repos/{{REPO}}/pulls/<n° de PR> --jq .merged_at        # une date, sinon s'arrêter

@@ -135,7 +135,11 @@ def fix_gitignore(dry_run):
     nobody corrects.
     """
     path = ROOT / ".gitignore"
-    text = path.read_text(encoding="utf-8")
+    # ⚠️ A `git init` done by hand before `rails new` can leave no
+    # .gitignore at all — which is how 1779 runtime files got committed
+    # once. Starting from empty is the right answer, not a crash: every
+    # rule below is then missing and gets written.
+    text = path.read_text(encoding="utf-8") if path.exists() else ""
     present = {line.strip() for line in text.splitlines()}
 
     missing = [line.strip() for line in RAILS_IGNORE.splitlines()
@@ -217,6 +221,62 @@ def report_missing_gems():
     return "\n".join(missing) or None
 
 
+TEST_DB_NOTE = """  # One test database PER WORKTREE, not one for the repository.
+  #
+  # Each story is built in its own git worktree (docs/PARALLEL_WORK.md), a
+  # checkout of this same repository that carries this same file. Without
+  # a suffix, two suites running at once fight over the same rows and the
+  # failures MOVE between runs, with nothing in the report naming the
+  # cause. TEST_DB_SUFFIX is set per worktree; without it the name is
+  # unchanged. Minitest's parallel workers append their own number to it.
+"""
+
+
+def isolate_test_database(dry_run):
+    """Make the test database name carry TEST_DB_SUFFIX.
+
+    `rails new` writes one test database for the repository. That holds
+    until two stories run their suites at once, which is what parallel
+    sessions in worktrees do on every batch.
+    """
+    path = ROOT / "config" / "database.yml"
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    if "TEST_DB_SUFFIX" in text:
+        return None
+
+    marker = "\ntest:\n"
+    if marker not in text:
+        return ("  WARNING  no `test:` block in config/database.yml — add "
+                "TEST_DB_SUFFIX to the test database name by hand")
+
+    head, tail = text.split(marker, 1)
+    lines = tail.split("\n")
+    index = None
+    for number, line in enumerate(lines):
+        # The block ends at the next top-level key: never read the
+        # production database name as the test one.
+        if line.strip() and not line.startswith((" ", "\t", "#")):
+            break
+        if line.strip().startswith("database:"):
+            index = number
+            break
+    if index is None:
+        return ("  WARNING  the `test:` block of config/database.yml names "
+                "no database — add TEST_DB_SUFFIX by hand")
+
+    if dry_run:
+        return "  add TEST_DB_SUFFIX to the test database in config/database.yml"
+
+    indent = lines[index][:len(lines[index]) - len(lines[index].lstrip())]
+    name = lines[index].split("database:", 1)[1].strip()
+    lines[index] = f'{indent}database: {name}<%= ENV["TEST_DB_SUFFIX"] %>'
+    lines.insert(index, TEST_DB_NOTE.rstrip("\n"))
+    path.write_text(head + marker + "\n".join(lines), encoding="utf-8")
+    return "  config/database.yml: one test database per worktree"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
@@ -232,6 +292,7 @@ def main():
         fix_gitignore(args.dry_run),
         untrack_runtime(args.dry_run),
         point_generators_at_minitest(args.dry_run),
+        isolate_test_database(args.dry_run),
         report_missing_gems(),
     ]
     reported = [line for line in done if line]

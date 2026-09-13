@@ -233,7 +233,10 @@ Done. What is left, in this order:
      Then the gestures the API cannot make: docs/BOARD.md.
 
   4. Fill in AGENTS.md (board URL, production, deployment script) and
-     docs/DEPLOIEMENT.md, then the recette: docs/RECETTE.md.
+     docs/DEPLOIEMENT.md, then the recette: docs/RECETTE.md. Then ask
+     what is still blank — no linter, test or scan can see it:
+
+     python3 scripts/check_placeholders.py
 
   5. Create the first user stories on .github/ISSUE_TEMPLATE/user_story.md,
      in Backlog, labelled « à revoir par Romain ». Commit.

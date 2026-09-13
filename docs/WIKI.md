@@ -48,4 +48,6 @@ git -C /tmp/{{REPO_NAME}}.wiki commit -m "Publication de docs/wiki"
 git -C /tmp/{{REPO_NAME}}.wiki push origin HEAD:master
 ```
 
-Le dépôt d'un wiki n'affiche que la branche `master`.
+Le dépôt d'un wiki n'affiche que la branche `master`. ⚠️ Pousser `main` est accepté sans erreur :
+`HEAD` reste sur `master` et rien de ce qui est écrit sur `main` ne s'affiche. L'échec est
+silencieux, le push réussit et la page ne change pas (vérifié le 25/08/2026).

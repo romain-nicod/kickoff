@@ -44,8 +44,8 @@ is left for you to do.
 | **Versions** | `VERSION`, `CHANGELOG.md` — each section is the release note —, `scripts/publish_release.py`, `docs/DEPLOIEMENT.md` |
 | **Recette** | `docs/RECETTE.md`, `docs/ENVIRONMENTS.md`; on the rails layer `bin/recette` and `lib/recette.rb` |
 | **Wiki** | `docs/wiki/` — the pages, reviewed in pull requests — and `.github/workflows/wiki.yml`, which publishes them; `docs/WIKI.md` |
-| **Engineering** | `CONTRIBUTING.md`, `.github/workflows/ci.yml` (stack layer), `docs/CODE_HYGIENE.md`, `docs/TESTS.md`, `docs/SECRETS.md`, `.env.example` |
-| **Quality** | `GOLDEN_RULES.md`, `docs/QUALITY.md`, `docs/NAMING.md` |
+| **Engineering** | `CONTRIBUTING.md`, `.github/workflows/ci.yml` (stack layer), `docs/CODE_HYGIENE.md`, `docs/TESTS.md`, `docs/SECRETS.md`, `.env.example`; `docs/PARALLEL_WORK.md` — several stories at once without two writers overwriting each other |
+| **Quality** | `GOLDEN_RULES.md`, `docs/QUALITY.md`, `docs/NAMING.md`; `scripts/check_placeholders.py` — what the template left blank and nobody filled, which no linter, test or scan can see |
 | **Product and design** | `docs/PRD.md`, `docs/SCHEMA.md`, `docs/SYSTEM_DESIGN.md`, `docs/DESIGN_CHECKLIST.md`, `docs/PROMPTS.md` |
 | **Boilerplate** | `docs/BOILERPLATE.md`, `docs/GEMS.md` (stack layer) — `rails-ready`, our Rails template, and what it decides for you |
 | **Skill** | `skills/project-kickoff/` — applies the method with this template; installed by symbolic link, see [`skills/README.md`](skills/README.md) |
