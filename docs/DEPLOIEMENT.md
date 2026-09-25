@@ -20,7 +20,20 @@ web. La méthode fait foi (§ 6) ; cette page dit comment l'appliquer dans ce d�
    Il met à jour `VERSION` et ajoute en haut de `CHANGELOG.md` la section `## vX.Y.Z — JJ/MM/AAAA`,
    avec ses trois rubriques (modèle en commentaire dans le fichier). **S'il y a des migrations
    nouvelles, il les relit et les ajoute au garde de déploiement dans cette même branche** : Romain
-   voit et approuve dans la PR ce qui part en production. Rien d'autre ne change dans cette branche.
+   voit et approuve dans la PR ce qui part en production.
+
+   Puis il **régénère la page wiki des notes de version**, dans la même branche :
+
+   ```bash
+   python3 scripts/wiki_release_notes.py
+   ```
+
+   Elle copie les sections de `CHANGELOG.md` dans `docs/wiki/Notes-de-version.md`, que
+   `.github/workflows/wiki.yml` publie au wiki quand la PR est mergée : **chaque release a sa note
+   de version dans le wiki du dépôt** (règle de Romain du 25/09/2026), écrite une seule fois.
+   `python3 scripts/wiki_release_notes.py --check` échoue si la page et le journal divergent.
+
+   Rien d'autre ne change dans cette branche.
 3. **Il ouvre la PR**, titre `[Déploiement] vX.Y.Z`, sur le gabarit dédié. GitHub ne l'applique pas
    tout seul ; deux façons de l'appeler :
 

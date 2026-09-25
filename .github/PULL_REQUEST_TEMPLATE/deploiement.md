@@ -22,6 +22,7 @@ La section `## vX.Y.Z — JJ/MM/AAAA` de `CHANGELOG.md`, visible dans le diff de
 - [ ] *User stories et fonctionnalités déployées* — titre de l'US, numéro, PR
 - [ ] *Corrections, outillage et documentation*
 - [ ] *À savoir* — ce qui est livré mais inactif, migrations, actions attendues
+- [ ] `python3 scripts/wiki_release_notes.py` lancé : `docs/wiki/Notes-de-version.md` reprend la section, et le wiki du dépôt la publie au merge
 
 ## Migrations qui partent en production
 
@@ -37,7 +38,7 @@ La section `## vX.Y.Z — JJ/MM/AAAA` de `CHANGELOG.md`, visible dans le diff de
 
 - [ ] Plus aucune PR du lot n'attend son merge : celle-ci est la dernière
 - [ ] CI verte sur le dernier commit de `deploy/vX.Y.Z`
-- [ ] Le diff ne touche que `VERSION`, `CHANGELOG.md` et le garde des migrations
+- [ ] Le diff ne touche que `VERSION`, `CHANGELOG.md`, `docs/wiki/Notes-de-version.md` et le garde des migrations
 - [ ] Chaque migration du tableau ci-dessus est relue et approuvée
 - [ ] Rien dans « À savoir » ne demande une action préalable qui n'a pas été faite
 
