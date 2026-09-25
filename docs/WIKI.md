@@ -23,6 +23,7 @@ publie à chaque merge sur `main` qui touche ce dossier.
 | Schéma d'architecture | [`docs/wiki/Architecture.md`](wiki/Architecture.md), dans la PR qui change la structure |
 | Décision | `docs/wiki/ADR-NNNN-<slug>.md`, et une ligne dans [`Decisions.md`](wiki/Decisions.md) |
 | Piège transverse | [`docs/wiki/Pieges.md`](wiki/Pieges.md) |
+| Notes de version | `docs/wiki/Notes-de-version.md`, **générée** depuis `CHANGELOG.md` par `scripts/wiki_release_notes.py`, dans la PR de déploiement |
 | Schéma de données | [`docs/SCHEMA.md`](SCHEMA.md) : il change dans le même commit que la migration |
 | Commandes, variables | `README.md`, `.env.example` |
 | État du projet, apprentissages transverses | le vault |

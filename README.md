@@ -41,7 +41,7 @@ is left for you to do.
 | **Issues** | `.github/ISSUE_TEMPLATE/` — `[US]` (state, story, criteria `CA-01…`, impacts, out of scope, tasks, Definition of Done), `[Task]`, `[BUG]` |
 | **Pull requests** | `.github/PULL_REQUEST_TEMPLATE.md` for a story; `.github/PULL_REQUEST_TEMPLATE/deploiement.md` for `[Déploiement] vX.Y.Z` |
 | **Board and labels** | `scripts/setup_project.py` — the seven statuses; `.github/labels.yml`, `scripts/setup_repo.py`; `docs/BOARD.md`, `docs/LABELS.md` |
-| **Versions** | `VERSION`, `CHANGELOG.md` — each section is the release note —, `scripts/publish_release.py`, `docs/DEPLOIEMENT.md` |
+| **Versions** | `VERSION`, `CHANGELOG.md` — each section is the release note —, `scripts/publish_release.py`, `scripts/wiki_release_notes.py` (the wiki page of the release notes), `docs/DEPLOIEMENT.md` |
 | **Recette** | `docs/RECETTE.md`, `docs/ENVIRONMENTS.md`; on the rails layer `bin/recette` and `lib/recette.rb` |
 | **Wiki** | `docs/wiki/` — the pages, reviewed in pull requests — and `.github/workflows/wiki.yml`, which publishes them; `docs/WIKI.md` |
 | **Engineering** | `CONTRIBUTING.md`, `.github/workflows/ci.yml` (stack layer), `docs/CODE_HYGIENE.md`, `docs/TESTS.md`, `docs/SECRETS.md`, `.env.example`; `docs/PARALLEL_WORK.md` — several stories at once without two writers overwriting each other |
