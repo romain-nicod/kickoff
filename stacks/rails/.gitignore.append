@@ -1,0 +1,39 @@
+# Rails runtime and keys — Rails' own rules, shipped by this layer.
+#
+# `rails new --skip .` writes NO .gitignore when one already exists, and in
+# a clone of this template one always does: it prints `skip .gitignore` and
+# every rule below is silently missing. The boilerplate then ends on
+# `git add .` and `git commit`, so the project's first commit carries every
+# tmp/, log/ and storage/ file the generator just produced — measured once
+# at 1779 — and the key that decrypts its credentials. Hence: here, BEFORE
+# `rails new` runs, never after.
+#
+# `scripts/after_rails_new.py` checks these rules are in force and fails if
+# they are not. Keep them in step with Rails' own template when upgrading.
+/.bundle
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+/storage/*
+!/storage/.keep
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/vendor/bundle
+
+# The key that decrypts config/credentials.yml.enc, and every per-
+# environment key beside it. A committed key is leaked even once removed:
+# it has to be rotated, not deleted.
+/config/*.key
+
+# `!.env.example` stays where the core .gitignore put it, and must remain
+# the LAST .env rule of the file — git keeps the last matching rule. The
+# boilerplate appends its own `.env*` after this block, with the negation
+# behind it; after_rails_new.py puts it back last if anything moves it.

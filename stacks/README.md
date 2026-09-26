@@ -15,9 +15,12 @@ Two mechanisms, and no third:
 root. `stacks/rails/.github/workflows/ci.yml` becomes
 `.github/workflows/ci.yml`.
 
-**Append.** A file named `X.append.md` is appended to `X.md` instead of
-replacing it. `stacks/rails/GOLDEN_RULES.append.md` adds the Rails rules
-after rule 30 of the core file.
+**Append.** A file whose name carries the suffix `.append` is appended to
+the same name without it, instead of replacing it.
+`stacks/rails/GOLDEN_RULES.append.md` adds the Rails rules after rule 30
+of the core file; `stacks/rails/.gitignore.append` adds Rails' runtime
+rules to the core `.gitignore`. If the target does not exist, the file is
+copied as it is named, which is visible and therefore fixable.
 
 That is the whole contract. A layer is a directory and two files.
 
@@ -25,7 +28,7 @@ That is the whole contract. A layer is a directory and two files.
 
 | Layer | What it adds |
 |---|---|
-| `rails` | Rules 31 to 61 (Rails idioms and boilerplate helpers, CSS components and tokens, Hotwire, importmap), a CI workflow with PostgreSQL — RuboCop, Brakeman, bundler-audit, importmap audit, Minitest and system tests in Chrome —, the Capybara base class, the local recette (`bin/recette`), the Sentry initializer and the migration guard of the deployment |
+| `rails` | Rails' own `.gitignore` rules — `rails new` writes none when a `.gitignore` already exists —, rules 31 to 61 (Rails idioms and boilerplate helpers, CSS components and tokens, Hotwire, importmap), a CI workflow with PostgreSQL — RuboCop, Brakeman, bundler-audit, importmap audit, Minitest and system tests in Chrome —, the Capybara base class, the local recette (`bin/recette`), the Sentry initializer and the migration guard of the deployment |
 | `static` | Rules 31 to 40 (structure, assets, no framework), a CI workflow that lints and checks links |
 | `none` | Nothing. The method only. |
 
