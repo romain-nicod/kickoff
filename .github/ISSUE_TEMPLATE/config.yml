@@ -1,17 +1,16 @@
-# Le sélecteur d'issues. Les issues vierges restent possibles : un défaut
-# signalé en urgence ne doit pas être bloqué par un formulaire. Une US se crée
-# toujours sur son gabarit.
+# The issue chooser. Blank issues stay possible: a defect reported in a hurry
+# must not be held back by a form. A story is always opened on its template.
 blank_issues_enabled: true
 
 contact_links:
-  - name: Règles du dépôt
+  - name: Rules of this repository
     url: https://github.com/{{REPO}}/blob/main/AGENTS.md
-    about: Méthode de livraison, commandes, ports, déploiement et interdits.
+    about: Delivery method, commands, ports, deployment and what is forbidden.
 
-  - name: Board du projet
+  - name: Project board
     url: https://github.com/{{REPO}}/projects
     about: Backlog · Ready · In progress · En recette · In review · À déployer · Done.
 
   - name: Releases
     url: https://github.com/{{REPO}}/releases
-    about: Le suivi des déploiements en production, une release par version.
+    about: The trail of production deployments, one release per version.

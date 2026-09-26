@@ -40,11 +40,11 @@ web. La méthode fait foi (§ 6) ; cette page dit comment l'appliquer dans ce d�
    ```bash
    git push -u origin deploy/vX.Y.Z
    gh pr create --base main --head deploy/vX.Y.Z --title "[Déploiement] vX.Y.Z" \
-     --body-file .github/PULL_REQUEST_TEMPLATE/deploiement.md
+     --body-file .github/PULL_REQUEST_TEMPLATE/deployment.md
    ```
 
    ou, dans le navigateur :
-   `https://github.com/{{REPO}}/compare/main...deploy/vX.Y.Z?expand=1&template=deploiement.md`
+   `https://github.com/{{REPO}}/compare/main...deploy/vX.Y.Z?expand=1&template=deployment.md`
 4. **CI verte → Romain relit et merge.**
 5. **L'agent déploie le commit de merge** avec le script du projet (ci-dessous).
 6. **Il publie la release**, une fois la production vérifiée :
