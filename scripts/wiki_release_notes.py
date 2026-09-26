@@ -24,17 +24,17 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHANGELOG = ROOT / "CHANGELOG.md"
 PAGE = ROOT / "docs" / "wiki" / "Release-notes.md"
 
-HEADER = """# Notes de version
+HEADER = """# Release notes
 
-Ce qui est parti en production, version par version, la plus récente en haut.
+What reached production, version by version, most recent first.
 
-> Page produite par `scripts/wiki_release_notes.py` depuis `CHANGELOG.md`, qui
-> fait foi. Une modification faite ici est écrasée à la publication suivante.
+> Page produced by `scripts/wiki_release_notes.py` from `CHANGELOG.md`, which
+> is authoritative. A change made here is overwritten at the next publication.
 """
 
-NO_VERSION = "\n*Aucune version n'est encore déployée en production.*\n"
+NO_VERSION = "\n*No version is deployed to production yet.*\n"
 
-# A released section: `## vX.Y.Z — JJ/MM/AAAA`, as publish_release.py reads it.
+# A released section: `## vX.Y.Z — DD/MM/YYYY`, as publish_release.py reads it.
 SECTION = re.compile(r"^## v\d+\.\d+\.\d+ ", re.MULTILINE)
 
 
@@ -57,25 +57,25 @@ def main():
     arguments = parser.parse_args()
 
     if not CHANGELOG.exists():
-        sys.exit(f"{CHANGELOG} est introuvable.")
+        sys.exit(f"{CHANGELOG} is missing.")
 
     wanted = page(CHANGELOG.read_text(encoding="utf-8"))
     current = PAGE.read_text(encoding="utf-8") if PAGE.exists() else None
 
     if arguments.check:
         if current == wanted:
-            print(f"{PAGE.relative_to(ROOT)} est à jour.")
+            print(f"{PAGE.relative_to(ROOT)} is up to date.")
             return 0
-        sys.exit(f"{PAGE.relative_to(ROOT)} ne correspond plus à CHANGELOG.md : "
-                 "relance `python3 scripts/wiki_release_notes.py` et commite la page.")
+        sys.exit(f"{PAGE.relative_to(ROOT)} no longer matches CHANGELOG.md: "
+                 "run `python3 scripts/wiki_release_notes.py` again and commit the page.")
 
     if current == wanted:
-        print(f"{PAGE.relative_to(ROOT)} est déjà à jour.")
+        print(f"{PAGE.relative_to(ROOT)} is already up to date.")
         return 0
 
     PAGE.parent.mkdir(parents=True, exist_ok=True)
     PAGE.write_text(wanted, encoding="utf-8")
-    print(f"{PAGE.relative_to(ROOT)} écrite depuis CHANGELOG.md.")
+    print(f"{PAGE.relative_to(ROOT)} written from CHANGELOG.md.")
     return 0
 
 
