@@ -6,7 +6,8 @@ Branches, commits, tests, the recette environment, pull requests, review and dep
 authoritative there; what is specific to this repository is in [AGENTS.md](AGENTS.md), and the coding
 rules are in [GOLDEN_RULES.md](GOLDEN_RULES.md).
 
-This page only adds the identity of the commits, branch hygiene and one rule about writing.
+This page only adds the identity of the commits, how a pull request is merged, branch hygiene
+and one rule about writing.
 
 ## Identity of the commits
 
@@ -20,6 +21,12 @@ git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 
 Any other address makes GitHub add a co-author at every squash merge.
 
+## Merging
+
+A pull request is merged with a **merge commit**, never squashed: it keeps all of its commits, with
+their messages, so it can be read commit by commit. `python3 scripts/setup_repo.py` allows that mode
+only.
+
 ## Branch hygiene
 
 Automatic on every project (method § 6). GitHub deletes the remote branch on merge: the
@@ -27,8 +34,8 @@ Automatic on every project (method § 6). GitHub deletes the remote branch on me
 agent, from the main clone.
 
 **Once a merge is established**, the story's worktree and local branch disappear. A merge is
-established through the API, never on the board's word: a squash merge does not make the branch an
-ancestor of `main`, and `git branch -d` would refuse it wrongly.
+established through the API — never on the board's word, and never on a local clone that has not
+fetched `main` yet.
 
 ```bash
 gh api repos/{{REPO}}/pulls/<PR number> --jq .merged_at        # a date, otherwise stop
