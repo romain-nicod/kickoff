@@ -88,7 +88,7 @@ The CI runs all of them on every pull request. See [`docs/TESTS.md`](docs/TESTS.
 Every production deployment has its `[Déploiement] vX.Y.Z` pull request,
 merged last in its batch, then its GitHub release: the
 [releases](https://github.com/{{REPO}}/releases) are the deployment log.
-See [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) and
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) and
 [`CHANGELOG.md`](CHANGELOG.md).
 
 ## 9. Project tracking
@@ -118,7 +118,7 @@ python3 scripts/setup_project.py       # needs: gh auth refresh -s project
 
 | Axis | Document |
 |---|---|
-| **Delivery** | [`AGENTS.md`](AGENTS.md) · [`docs/BOARD.md`](docs/BOARD.md) · [`docs/LABELS.md`](docs/LABELS.md) · [`docs/RECETTE.md`](docs/RECETTE.md) · [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) · [`docs/WIKI.md`](docs/WIKI.md) |
+| **Delivery** | [`AGENTS.md`](AGENTS.md) · [`docs/BOARD.md`](docs/BOARD.md) · [`docs/LABELS.md`](docs/LABELS.md) · [`docs/RECETTE.md`](docs/RECETTE.md) · [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) · [`docs/WIKI.md`](docs/WIKI.md) |
 | **Engineering** | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`docs/ENVIRONMENTS.md`](docs/ENVIRONMENTS.md) · [`docs/CODE_HYGIENE.md`](docs/CODE_HYGIENE.md) · [`docs/TESTS.md`](docs/TESTS.md) · [`docs/SECRETS.md`](docs/SECRETS.md) |
 | **Quality** | [`GOLDEN_RULES.md`](GOLDEN_RULES.md) · [`docs/QUALITY.md`](docs/QUALITY.md) · [`docs/NAMING.md`](docs/NAMING.md) |
 | **Product** | [`docs/PRD.md`](docs/PRD.md) · [`docs/PROMPTS.md`](docs/PROMPTS.md) — one prompt per deliverable, each with what to check in the answer |

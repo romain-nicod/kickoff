@@ -3,7 +3,7 @@
        gh pr create --base main --head deploy/vX.Y.Z --title "[Déploiement] vX.Y.Z" \
          --body-file .github/PULL_REQUEST_TEMPLATE/deployment.md
      or open https://github.com/<owner>/<repo>/compare/main...deploy/vX.Y.Z?expand=1&template=deployment.md
-     Full instructions: docs/DEPLOIEMENT.md.
+     Full instructions: docs/DEPLOYMENT.md.
 
      The title and the three CHANGELOG.md headings below stay in French on purpose:
      scripts/publish_release.py matches them literally, and so does the wiki page.

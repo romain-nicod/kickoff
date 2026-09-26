@@ -1,32 +1,32 @@
-# Stratégie de tests
+# Test strategy
 
-La méthode fait foi (§ 4.3 à 4.5) ; cette page dit comment elle s'applique dans ce dépôt.
+The method is authoritative (§ 4.3 to 4.5); this page says how it applies in this repository.
 
-## Dans quel ordre
+## In which order
 
-1. Écrire le test à partir du critère d'acceptation, dans ses mots, **son identifiant en tête du
-   nom**, en anglais : `test "CA-01 refuses a second vote from the same member"`.
-2. Le lancer et **le voir échouer**, pour la bonne raison. Un test qui n'a jamais été rouge n'a rien
-   prouvé ; pour un défaut, il est vu rouge sur le code fautif.
-3. Écrire le moins de code possible pour le faire passer, puis ranger, test vert.
+1. Write the test from the acceptance criterion, in its own words, **with its identifier at the start
+   of the name**: `test "CA-01 refuses a second vote from the same member"`.
+2. Run it and **see it fail**, for the right reason. A test that has never been red has proved
+   nothing; for a defect, it is seen red against the faulty code.
+3. Write the least code that makes it pass, then tidy up, with the test green.
 
-Aucun plan de tests séparé : l'identifiant du critère dans le nom du test est le lien avec l'issue.
+No separate test plan: the criterion's identifier in the test name is the link back to the issue.
 
-## Ce qui est testé
+## What is tested
 
-| Niveau | Quand |
+| Level | When |
 |---|---|
-| Unitaire | règles métier, validations, services : chaque borne |
-| Intégration | chaque route touchée, pour chaque rôle (anonyme, connecté, administrateur), en HTML et en JSON |
-| Système | dès que l'US touche une page : le parcours dans un vrai navigateur, aux trois largeurs de la passe UI/UX |
-| Non-régression | tout défaut corrigé |
-| Sécurité | droits, CSRF actif, injection par les paramètres, échappement XSS ; aucun outil offensif |
+| Unit | business rules, validations, services: every boundary |
+| Integration | every route touched, for every role (anonymous, signed in, administrator), in HTML and in JSON |
+| System | as soon as the story touches a page: the journey in a real browser, at the three widths of the UI/UX pass |
+| Regression | every defect fixed |
+| Security | permissions, CSRF on, injection through the parameters, XSS escaping; no offensive tooling |
 
-Un code 200 ne prouve rien sur une page : ce qui compte est ce que le navigateur a dessiné.
+A 200 proves nothing about a page: what counts is what the browser drew.
 
-## Quand
+## When
 
-- Pendant le développement : les tests ciblés.
-- Avant d'intégrer la branche à la recette : la suite complète, une fois.
-- La CI est l'arbitre : **pas de PR tant qu'elle n'est pas verte.** Un script lancé hors CI ne
-  compte pas comme test.
+- While developing: the targeted tests.
+- Before merging the branch into the recette environment: the full suite, once.
+- CI is the referee: **no pull request until it is green.** A script run outside CI does not count as
+  a test.

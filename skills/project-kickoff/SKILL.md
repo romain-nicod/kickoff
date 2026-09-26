@@ -25,7 +25,7 @@ Demander une seule fois ce qui ne se déduit pas :
 | Nom du projet et une phrase | `kickoff.yml`, README |
 | Dépôt `propriétaire/nom` | nouveau dépôt privé sur le **compte personnel** (Q8) |
 | Dossier du projet dans le vault | première ligne d'`AGENTS.md` |
-| Hébergement de production, s'il est connu | `AGENTS.md`, `docs/DEPLOIEMENT.md` |
+| Hébergement de production, s'il est connu | `AGENTS.md`, `docs/DEPLOYMENT.md` |
 | Le besoin, sous n'importe quelle forme | les premières `[US]` |
 
 Vérifier le compte actif avant de créer quoi que ce soit : `gh api user --jq .login`.
@@ -143,7 +143,7 @@ gh project item-add <n> --owner <propriétaire> --url <URL de l'issue>
    dernier** : une PR mergée après elle partirait sans figurer dans la release note.
 2. Branche `deploy/vX.Y.Z` depuis `origin/main` : `VERSION`, section `## vX.Y.Z — JJ/MM/AAAA` en
    haut de `CHANGELOG.md` avec ses trois rubriques, et **le garde des migrations** mis à jour
-   (`docs/DEPLOIEMENT.md`, section Rails).
+   (`docs/DEPLOYMENT.md`, section Rails).
 3. PR `[Déploiement] vX.Y.Z` :
 
    ```bash

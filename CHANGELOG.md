@@ -3,7 +3,7 @@
 Une section par version déployée en production, la plus récente en haut. Chaque section **est** la
 release note : `scripts/publish_release.py` la reprend telle quelle dans la release GitHub de
 l'étiquette du même nom, sans deuxième rédaction. Elle s'écrit dans la PR `[Déploiement] vX.Y.Z`
-(voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
+(voir [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 
 Numérotation `MAJEUR.MINEUR.CORRECTIF` : le **mineur** augmente pour une version qui apporte au
 moins une US, le **correctif** pour une version qui ne contient que des corrections. `VERSION`

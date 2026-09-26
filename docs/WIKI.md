@@ -1,54 +1,54 @@
-# Le wiki
+# The wiki
 
-La méthode range dans le wiki GitHub du projet (§ 1, § 7, Q12) : **chaque US livrée** (parcours,
-fonctionnement), **les schémas d'architecture**, **les décisions et ADR**, les guides pratiques. Le
-vault n'en garde qu'un lien.
+The method files these in the project's GitHub wiki (§ 1, § 7, Q12): **every delivered story** (its
+journey, how it works), **the architecture diagrams**, **the decisions and ADRs**, the practical
+guides. The vault keeps nothing but a link to them.
 
-## Une seule source : `docs/wiki/`
+## A single source: `docs/wiki/`
 
-Le wiki GitHub est un dépôt à part, que les PR ne montrent pas. Les pages s'écrivent donc dans
-`docs/wiki/`, dans la PR de l'US, où Romain les relit ; le workflow `.github/workflows/wiki.yml` les
-publie à chaque merge sur `main` qui touche ce dossier.
+A GitHub wiki is a separate repository, which pull requests do not show. Pages are therefore written
+in `docs/wiki/`, in the story's pull request, where Romain reviews them; the workflow
+`.github/workflows/wiki.yml` publishes them on every merge to `main` that touches that folder.
 
-- Une page par fichier, nommé `Titre-Avec-Tirets.md` : c'est le nom de la page dans le wiki.
-- Une page modifiée dans l'interface du wiki est écrasée à la publication suivante.
-- Une page retirée de `docs/wiki/` reste dans le wiki : la supprimer à la main.
-- Le workflow n'utilise que le jeton fourni par GitHub, aucun jeton personnel.
+- One page per file, named `Title-With-Dashes.md`: that is the page's name in the wiki.
+- A page edited in the wiki interface is overwritten at the next publication.
+- A page removed from `docs/wiki/` stays in the wiki: delete it by hand.
+- The workflow only uses the token GitHub provides, never a personal one.
 
-## Ce qui va où
+## What goes where
 
-| Contenu | Où |
+| Content | Where |
 |---|---|
-| Page d'une US livrée | `docs/wiki/US-NNN-<slug>.md`, dans la PR de l'US |
-| Schéma d'architecture | [`docs/wiki/Architecture.md`](wiki/Architecture.md), dans la PR qui change la structure |
-| Décision | `docs/wiki/ADR-NNNN-<slug>.md`, et une ligne dans [`Decisions.md`](wiki/Decisions.md) |
-| Piège transverse | [`docs/wiki/Traps.md`](wiki/Traps.md) |
-| Notes de version | `docs/wiki/Release-notes.md`, **générée** depuis `CHANGELOG.md` par `scripts/wiki_release_notes.py`, dans la PR de déploiement |
-| Schéma de données | [`docs/SCHEMA.md`](SCHEMA.md) : il change dans le même commit que la migration |
-| Commandes, variables | `README.md`, `.env.example` |
-| État du projet, apprentissages transverses | le vault |
+| Page of a delivered story | `docs/wiki/US-NNN-<slug>.md`, in the story's pull request |
+| Architecture diagram | [`docs/wiki/Architecture.md`](wiki/Architecture.md), in the pull request that changes the structure |
+| Decision | `docs/wiki/ADR-NNNN-<slug>.md`, plus a line in [`Decisions.md`](wiki/Decisions.md) |
+| Cross-cutting trap | [`docs/wiki/Traps.md`](wiki/Traps.md) |
+| Release notes | `docs/wiki/Release-notes.md`, **generated** from `CHANGELOG.md` by `scripts/wiki_release_notes.py`, in the deployment pull request |
+| Data schema | [`docs/SCHEMA.md`](SCHEMA.md): it changes in the same commit as the migration |
+| Commands, variables | `README.md`, `.env.example` |
+| State of the project, cross-cutting lessons | the vault |
 
-## Première publication — Romain, une fois
+## First publication — Romain, once
 
-GitHub ne crée le dépôt du wiki qu'à la première page enregistrée à la main.
+GitHub only creates the wiki's repository once a first page has been saved by hand.
 
-1. Ouvrir `https://github.com/{{REPO}}/wiki`.
-2. Cliquer **Create the first page**, garder le titre `Home`, cliquer **Save page**.
-3. Onglet **Actions** → workflow **Wiki** → **Run workflow** → **Run workflow**.
-4. Recharger le wiki : la page `Home` est celle de `docs/wiki/Home.md`.
+1. Open `https://github.com/{{REPO}}/wiki`.
+2. Click **Create the first page**, keep the title `Home`, click **Save page**.
+3. **Actions** tab → **Wiki** workflow → **Run workflow** → **Run workflow**.
+4. Reload the wiki: the `Home` page is the one from `docs/wiki/Home.md`.
 
-Tant que l'étape 2 n'est pas faite, le workflow l'annonce et se termine sans erreur.
+Until step 2 is done, the workflow says so and finishes without an error.
 
-## Publier à la main
+## Publishing by hand
 
 ```bash
 git clone https://github.com/{{REPO}}.wiki.git /tmp/{{REPO_NAME}}.wiki
 cp -R docs/wiki/. /tmp/{{REPO_NAME}}.wiki/
 git -C /tmp/{{REPO_NAME}}.wiki add -A
-git -C /tmp/{{REPO_NAME}}.wiki commit -m "Publication de docs/wiki"
+git -C /tmp/{{REPO_NAME}}.wiki commit -m "Publish docs/wiki"
 git -C /tmp/{{REPO_NAME}}.wiki push origin HEAD:master
 ```
 
-Le dépôt d'un wiki n'affiche que la branche `master`. ⚠️ Pousser `main` est accepté sans erreur :
-`HEAD` reste sur `master` et rien de ce qui est écrit sur `main` ne s'affiche. L'échec est
-silencieux, le push réussit et la page ne change pas (vérifié le 25/08/2026).
+A wiki repository only renders the `master` branch. ⚠️ Pushing `main` is accepted without an error:
+`HEAD` stays on `master`, and nothing written on `main` is displayed. The failure is silent — the push
+succeeds and the page does not change (verified on 25/08/2026).

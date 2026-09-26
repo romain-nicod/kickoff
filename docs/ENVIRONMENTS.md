@@ -1,30 +1,30 @@
-# Environnements
+# Environments
 
-Quatre environnements, et pas de préproduction partagée : la recette locale en tient lieu.
+Four environments, and no shared staging: the local recette environment stands in for it.
 
-| Environnement | Où | Port | Données | Qui y met du code |
+| Environment | Where | Port | Data | Who puts code there |
 |---|---|---|---|---|
-| Développement | `code/{{REPO_NAME}}/` et un worktree par US, `code/{{REPO_NAME}}-worktrees/us-NNN-slug/` | `3000` (un autre port par worktree lancé en même temps) | fixtures et seeds | la session de l'US, sur sa branche |
-| Test | la base `test` du worktree, puis la CI | — | fixtures | `bin/rails test`, `bin/rails test:system` |
-| Recette | `code/{{REPO_NAME}}-recette/`, branche locale `recette` | `3100` | synthétiques uniquement | l'agent y merge les US *En recette* ; Romain y teste — [RECETTE.md](RECETTE.md) |
-| Production | <!-- hôte et URL --> | — | réelles | le script de déploiement, sur le commit de merge de la PR `[Déploiement]` — [DEPLOIEMENT.md](DEPLOIEMENT.md) |
+| Development | `code/{{REPO_NAME}}/` and one worktree per story, `code/{{REPO_NAME}}-worktrees/us-NNN-slug/` | `3000` (another port per worktree running at the same time) | fixtures and seeds | the story's session, on its branch |
+| Test | the worktree's `test` database, then CI | — | fixtures | `bin/rails test`, `bin/rails test:system` |
+| Recette | `code/{{REPO_NAME}}-recette/`, local `recette` branch | `3100` | synthetic only | the agent merges the *En recette* stories there; Romain tests there — [RECETTE.md](RECETTE.md) |
+| Production | <!-- host and URL --> | — | real | the deployment script, on the merge commit of the `[Déploiement]` pull request — [DEPLOYMENT.md](DEPLOYMENT.md) |
 
-## Développement
+## Development
 
 ```bash
 bin/setup
 bin/rails server    # http://127.0.0.1:3000
 ```
 
-<!-- Les pièges de cette machine : le service qui doit tourner, la version qui doit correspondre,
-     l'outil qui demande une option. -->
+<!-- The traps of this machine: the service that has to be running, the version that has to match,
+     the tool that needs an option. -->
 
-## Variables qui changent d'un environnement à l'autre
+## Variables that change from one environment to the next
 
-| Variable | Développement | Recette | Production |
+| Variable | Development | Recette | Production |
 |---|---|---|---|
-| `SENTRY_DSN` | vide | retirée par `bin/recette` | secret de l'hôte |
-| `SMTP_*` | vide : emails en mémoire | Mailpit sur `127.0.0.1`, dans `.env.recette.local` | relais Infomaniak, secrets de l'hôte |
-| `DATABASE_URL` | — | fixée par `bin/recette`, propre au worktree | secret de l'hôte |
+| `SENTRY_DSN` | empty | removed by `bin/recette` | host secret |
+| `SMTP_*` | empty: emails kept in memory | Mailpit on `127.0.0.1`, in `.env.recette.local` | Infomaniak relay, host secrets |
+| `DATABASE_URL` | — | set by `bin/recette`, one per worktree | host secret |
 
-Les noms et leur usage : `.env.example`. Où vivent les valeurs : [SECRETS.md](SECRETS.md).
+The names and what they are for: `.env.example`. Where the values live: [SECRETS.md](SECRETS.md).

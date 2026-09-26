@@ -8,7 +8,7 @@
 - Issues on the templates of `.github/ISSUE_TEMPLATE/`: `[US]` and `[BUG]`, reviewed by Romain who moves them to *Ready*; `[Task]`, sub-issues kept by the agent.
 - One story = one worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, one branch `us-NNN-slug`, one pull request.
 - Branch hygiene: once a merge is established, delete the local branch and the worktree; a branch closed or replaced is deleted everywhere once bundled; no `worktree-agent-*` survives its session; monthly check ([CONTRIBUTING.md](CONTRIBUTING.md)).
-- Production: <!-- public URL --> · deployment: <!-- the project's script --> then `python3 scripts/publish_release.py` ([docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
+- Production: <!-- public URL --> · deployment: <!-- the project's script --> then `python3 scripts/publish_release.py` ([docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 - Emails: vault note `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · errors: Sentry (`SENTRY_DSN`).
 
 ## Forbidden

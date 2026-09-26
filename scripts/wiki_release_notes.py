@@ -5,7 +5,7 @@
     python3 scripts/wiki_release_notes.py --check    # fails if out of date
 
 CHANGELOG.md stays the single source: every released version has its
-section there, and that section IS the release note (docs/DEPLOIEMENT.md).
+section there, and that section IS the release note (docs/DEPLOYMENT.md).
 This script copies those sections into docs/wiki/Release-notes.md, which
 `.github/workflows/wiki.yml` publishes to the repository wiki at merge — so
 the people who use the product read the same words as the GitHub release,

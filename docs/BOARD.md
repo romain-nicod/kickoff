@@ -1,61 +1,64 @@
 # Board
 
-Le board GitHub (Projects v2) est **le lieu de coordination** du projet : on y lit d'un coup d'œil ce
-qui attend qui. Les règles du cycle font foi dans la méthode
+The GitHub board (Projects v2) is the project's **place of coordination**: at a glance, it says what
+is waiting for whom. The rules of the cycle are authoritative in the method
 (`/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`,
-§ 2.1) ; cette page ne dit que comment le board est installé et tenu.
+§ 2.1); this page only says how the board is installed and kept.
 
-**Board :** <!-- URL affichée par scripts/setup_project.py -->
+**Board:** <!-- URL printed by scripts/setup_project.py -->
 
-## Les sept statuts
+## The seven statuses
 
-| Statut | Posé par |
+The names of the statuses are identifiers: `scripts/setup_project.py` creates them literally, and two
+of them stay in French because the method's vocabulary names them that way.
+
+| Status | Set by |
 |---|---|
-| Backlog | l'agent, à la création d'une `[US]` ou d'un `[BUG]` (label `à revoir par Romain`) |
+| Backlog | the agent, when a `[US]` or a `[BUG]` is created (label `à revoir par Romain`) |
 | Ready | **Romain** |
-| In progress | l'agent, à l'ouverture du worktree |
-| En recette | l'agent, branche intégrée à la recette, tous les tests verts |
-| In review | l'agent, PR ouverte et CI verte |
-| À déployer | le workflow du board, au merge |
-| Done | l'agent, après le déploiement vérifié |
+| In progress | the agent, when the worktree opens |
+| En recette | the agent, branch merged into the recette environment, every test green |
+| In review | the agent, pull request opened and CI green |
+| À déployer | the board's workflow, on merge |
+| Done | the agent, once the deployment is verified |
 
-Un défaut trouvé en recette ou en revue ramène l'US à **In progress**.
+A defect found on the recette environment or in review sends the story back to **In progress**.
 
 ## Installation
 
 ```bash
-gh auth refresh -s project --hostname github.com   # une fois par machine
+gh auth refresh -s project --hostname github.com   # once per machine
 python3 scripts/setup_project.py --dry-run
 python3 scripts/setup_project.py
 ```
 
-Le script crée le board, le relie au dépôt, pose les sept statuts, ajoute les issues absentes
-(ouvertes en *Backlog*, fermées en *Done*) et crée trois vues : *Kanban*, *À revoir par Romain*,
-*All items*. Il ne déplace jamais un élément qui a déjà un statut.
+The script creates the board, links it to the repository, sets the seven statuses, adds the issues it
+is missing (open ones in *Backlog*, closed ones in *Done*) and creates three views: *Kanban*,
+*À revoir par Romain*, *All items*. It never moves an item that already holds a status.
 
-⚠️ Réécrire les options de *Status* leur donne de nouveaux identifiants : tous les éléments
-perdent leur statut. Sur un board déjà rempli, le script s'arrête ; `--force-statuses` passe outre.
+⚠️ Rewriting the options of *Status* gives them new identifiers: every item loses its status. On a
+board that already holds statuses the script stops; `--force-statuses` overrides it.
 
-### À faire à la main, une fois
+### To do by hand, once
 
-L'API n'expose ni les workflows intégrés ni le regroupement des vues.
+The API exposes neither the built-in workflows nor the grouping of the views.
 
-1. Ouvrir le board → menu `⋯` en haut à droite → **Workflows**.
-2. **Item closed** → activer → *Set value* : `Status` = `À déployer`.
-3. **Pull request merged** → activer → `Status` = `À déployer`.
-4. **Auto-add to project** → activer → filtre `is:issue is:open` sur ce dépôt.
-5. Vue **Kanban** → `⋯` → *Group by* → `Status`.
+1. Open the board → `⋯` menu, top right → **Workflows**.
+2. **Item closed** → enable → *Set value*: `Status` = `À déployer`.
+3. **Pull request merged** → enable → `Status` = `À déployer`.
+4. **Auto-add to project** → enable → filter `is:issue is:open` on this repository.
+5. **Kanban** view → `⋯` → *Group by* → `Status`.
 
-Si le script n'a pas pu poser les statuts : `Status` → *Edit field* → créer les options dans l'ordre
-du tableau ci-dessus, avec ces libellés exacts.
+If the script could not set the statuses: `Status` → *Edit field* → create the options in the order of
+the table above, with exactly those names.
 
-## Déplacer une US
+## Moving a story
 
 ```bash
-gh project field-list <n> --owner {{OWNER}} --format json   # id du champ Status et de ses options
-gh project item-list <n> --owner {{OWNER}} --format json    # id de l'élément
-gh project item-edit --id <élément> --project-id <projet> \
-  --field-id <champ Status> --single-select-option-id <option>
+gh project field-list <n> --owner {{OWNER}} --format json   # id of the Status field and of its options
+gh project item-list <n> --owner {{OWNER}} --format json    # id of the item
+gh project item-edit --id <item> --project-id <project> \
+  --field-id <Status field> --single-select-option-id <option>
 ```
 
-Aucune GitHub Action à jeton personnel pour ces transitions, sans nécessité démontrée.
+No GitHub Action with a personal token for these transitions, as long as nothing demands one.
