@@ -14,6 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # A .gitignore that lost Rails' runtime rules fails at nothing: the
+      # repository just starts carrying tmp/, log/ and storage/ — and the
+      # key that decrypts the credentials. Cheapest check of the pipeline,
+      # first on purpose.
+      - name: No generated or secret file is tracked
+        run: |
+          tracked=$(git ls-files log tmp storage public/assets .bundle 'config/*.key' \
+                    | grep -v '\.keep$' || true)
+          if [ -n "$tracked" ]; then
+            echo "$tracked"
+            # No backtick in this message: inside double quotes the
+            # shell would run what it encloses.
+            echo '::error::These files are generated or secret and must not be tracked. Restore the Rails runtime rules in .gitignore, then untrack them with git rm -r --cached. A key that was committed has to be rotated at the source, not just removed.'
+            exit 1
+          fi
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version

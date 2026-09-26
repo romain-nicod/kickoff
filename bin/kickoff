@@ -128,9 +128,12 @@ def apply_stack(stack, dry_run):
             continue
         relative = source.relative_to(layer)
 
-        # foo.append.md is appended to foo.md instead of replacing it.
-        if source.name.endswith(".append.md"):
-            target = ROOT / relative.parent / source.name.replace(".append.md", ".md")
+        # `X.append` is appended to `X` instead of replacing it:
+        # GOLDEN_RULES.append.md -> GOLDEN_RULES.md, and .gitignore.append
+        # -> .gitignore. The test is on the suffix, not on the string: a
+        # file called appendix.md is not an append.
+        if ".append" in Path(source.name).suffixes:
+            target = ROOT / relative.parent / source.name.replace(".append", "", 1)
             if target.exists():
                 print(f"  append  {target.relative_to(ROOT)}")
                 if not dry_run:
@@ -223,8 +226,11 @@ Done. What is left, in this order:
 
      python3 scripts/after_rails_new.py
 
-     The boilerplate can delete the CI workflow, overwrite .rubocop.yml
-     and leave tmp/ and log/ tracked. All three are silent.
+     The boilerplate can delete the CI workflow and overwrite
+     .rubocop.yml, both silently. The script also checks that the Rails
+     runtime rules this layer added to .gitignore are still in force: if
+     they are not, it stops, because `rails new` has just committed
+     everything under tmp/, log/ and storage/.
 
   3. The board, with the seven statuses of the delivery method:
 
