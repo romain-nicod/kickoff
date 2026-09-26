@@ -1,16 +1,40 @@
 name: CI
 
 # The checks of the delivery method (§ 4.3, § 4.4): lint, security, the
-# Minitest suite AND the browser tests. No pull request until all four
-# are green on its last commit.
+# Minitest suite AND the browser tests. No pull request until all are
+# green on its last commit.
 
+# 🔴 ONE run per branch (method § 6 ter). Without this, every push starts
+# a fresh run and the superseded ones keep going to the end: 47 runs in a
+# single day on AGROMALIBIO, for a plan that includes 3 000 minutes a
+# month. On `main` nothing is cancelled: the merged commit is verified to
+# the end.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Paths with no executable code: documentation, delivery screenshots,
+# issue templates. ⚠️ A check that must run on a documentation-only pull
+# request — the template placeholder gate, for instance — belongs in its
+# own workflow, WITHOUT this filter: a placeholder hole appears exactly
+# there.
 on:
   pull_request:
+    paths-ignore: &ignored
+      - "docs/**"
+      - "**/*.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE/**"
+      - "LICENSE"
   push:
     branches: [ main ]
+    paths-ignore: *ignored
 
 jobs:
-  lint:
+  # 🔴 ONE job for everything that needs neither a database nor a browser
+  # (method § 6 ter): each extra job pays another checkout and another
+  # `bundle install`, billed every single run.
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -35,15 +59,6 @@ jobs:
           bundler-cache: true
       - name: Lint
         run: bin/rubocop --parallel
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
       - name: Scan the application code
         run: bin/brakeman --no-pager
       - name: Audit the dependencies
