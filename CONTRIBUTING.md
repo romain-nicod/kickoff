@@ -1,65 +1,65 @@
-# Contribuer
+# Contributing
 
-Ce dépôt applique la méthode « Livraison applicative par user story » :
+This repository applies the "Delivery by user story" method:
 `/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`.
-Branches, commits, tests, recette, PR, revue et déploiement y font foi ; les spécificités du dépôt
-sont dans [AGENTS.md](AGENTS.md), les règles de code dans [GOLDEN_RULES.md](GOLDEN_RULES.md).
+Branches, commits, tests, the recette environment, pull requests, review and deployment are
+authoritative there; what is specific to this repository is in [AGENTS.md](AGENTS.md), and the coding
+rules are in [GOLDEN_RULES.md](GOLDEN_RULES.md).
 
-Cette page n'ajoute que l'identité des commits, le mode de merge, l'hygiène des branches et une règle
-d'écriture.
+This page only adds the identity of the commits, how a pull request is merged, branch hygiene
+and one rule about writing.
 
-## Identité des commits
+## Identity of the commits
 
-Aucune ligne `Co-authored-by:` (ni `Co-Authored-By:`), dans un commit comme dans une PR. Chaque clone
-porte, avant son premier commit, l'identité du compte qui merge ; ses worktrees la partagent :
+No `Co-authored-by:` line (nor `Co-Authored-By:`), in a commit or in a pull request. Every clone
+carries, before its first commit, the identity of the account that merges; its worktrees share it:
 
 ```bash
 git config --local user.name "Romain Nicod"
 git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 ```
 
-Une autre adresse fait apparaître un second auteur dans l'historique de GitHub.
+Any other address makes GitHub add a co-author at every squash merge.
 
-## Merge
+## Merging
 
-Une PR se merge par un **commit de merge**, jamais en squash : elle garde tous ses commits, avec
-leurs messages, pour être relue commit par commit. `python3 scripts/setup_repo.py` n'autorise que
-ce mode.
+A pull request is merged with a **merge commit**, never squashed: it keeps all of its commits, with
+their messages, so it can be read commit by commit. `python3 scripts/setup_repo.py` allows that mode
+only.
 
-## Hygiène des branches
+## Branch hygiene
 
-Automatique sur tous les projets (méthode § 6). GitHub supprime la branche distante au merge : le
-réglage `delete_branch_on_merge` est posé par `python3 scripts/setup_repo.py`. Le reste revient à
-l'agent, depuis le clone principal.
+Automatic on every project (method § 6). GitHub deletes the remote branch on merge: the
+`delete_branch_on_merge` setting is applied by `python3 scripts/setup_repo.py`. The rest is up to the
+agent, from the main clone.
 
-**Après chaque merge constaté**, le worktree et la branche locale de l'US disparaissent. Le merge se
-constate par l'API, jamais sur la foi du board ni sur un clone local qui n'a pas encore récupéré
-`main`.
+**Once a merge is established**, the story's worktree and local branch disappear. A merge is
+established through the API — never on the board's word, and never on a local clone that has not
+fetched `main` yet.
 
 ```bash
-gh api repos/{{REPO}}/pulls/<n° de PR> --jq .merged_at        # une date, sinon s'arrêter
-git -C code/{{REPO_NAME}} worktree remove ../{{REPO_NAME}}-worktrees/us-NNN-slug   # refuse un worktree modifié
+gh api repos/{{REPO}}/pulls/<PR number> --jq .merged_at        # a date, otherwise stop
+git -C code/{{REPO_NAME}} worktree remove ../{{REPO_NAME}}-worktrees/us-NNN-slug   # refuses a modified worktree
 git -C code/{{REPO_NAME}} branch -D us-NNN-slug
 git -C code/{{REPO_NAME}} fetch --prune origin
 ```
 
-**Une branche fermée sans merge, ou remplacée**, est d'abord sauvegardée en bundle hors du dépôt,
-puis supprimée en local et sur GitHub :
+**A branch closed without a merge, or replaced**, is first saved as a bundle outside the repository,
+then deleted locally and on GitHub:
 
 ```bash
 mkdir -p ~/Documents/Claude/projects/{{REPO_NAME}}/branches
-git -C code/{{REPO_NAME}} bundle create ~/Documents/Claude/projects/{{REPO_NAME}}/branches/<branche>-AAAAMMJJ.bundle <branche>
-git bundle verify ~/Documents/Claude/projects/{{REPO_NAME}}/branches/<branche>-AAAAMMJJ.bundle   # doit répondre « okay », sinon s'arrêter
-git -C code/{{REPO_NAME}} push origin --delete <branche>
-git -C code/{{REPO_NAME}} branch -D <branche>
+git -C code/{{REPO_NAME}} bundle create ~/Documents/Claude/projects/{{REPO_NAME}}/branches/<branch>-YYYYMMDD.bundle <branch>
+git bundle verify ~/Documents/Claude/projects/{{REPO_NAME}}/branches/<branch>-YYYYMMDD.bundle   # must answer "okay", otherwise stop
+git -C code/{{REPO_NAME}} push origin --delete <branch>
+git -C code/{{REPO_NAME}} branch -D <branch>
 ```
 
-**Aucune branche `worktree-agent-*` ne survit à la session** qui l'a créée : son worktree et sa
-branche sont supprimés avant de rendre la main, avec la même sauvegarde si elle porte un travail non
-mergé.
+**No `worktree-agent-*` branch survives the session** that created it: its worktree and its branch are
+deleted before handing back, with the same backup if it carries unmerged work.
 
-**Contrôle mensuel** : lister ce qui reste et écrire pour chaque branche sa raison d'être (une US
-ouverte sur le board) ; sinon, la traiter comme ci-dessus.
+**Monthly check**: list what is left and write, for every branch, its reason to exist (an open story on
+the board); otherwise, treat it as above.
 
 ```bash
 git -C code/{{REPO_NAME}} fetch --prune origin
@@ -68,17 +68,16 @@ git -C code/{{REPO_NAME}} branch -vv
 gh api repos/{{REPO}}/branches --paginate --jq '.[].name'
 ```
 
-## Le livrable, c'est le diff
+## The deliverable is the diff
 
-Viser **le plus petit diff qui fait le travail** : Romain doit voir le changement, pas le chercher.
+Aim for **the smallest diff that does the work**: Romain should see the change, not go looking for it.
 
-- Ne jamais toucher l'indentation d'une ligne qu'on ne change pas : un décalage fait paraître dix
-  lignes modifiées quand une seule l'est.
-- Ne jamais retaper un bloc pour y changer un mot : le risque de perdre une balise fermante est
-  réel, et le diff devient illisible.
-- Les passes de QA (sécurité, accessibilité, formatage) sont des commits séparés des commits de
-  comportement.
-- Relire `git diff` avant de dire que c'est fini : un fichier juste peut produire un diff illisible.
+- Never touch the indentation of a line you are not changing: a shift makes ten lines look modified
+  when only one is.
+- Never retype a block to change a word in it: the risk of losing a closing tag is real, and the diff
+  becomes unreadable.
+- QA passes (security, accessibility, formatting) are commits separate from behaviour commits.
+- Read `git diff` before saying it is done: a correct file can still produce an unreadable diff.
 
-Le test avant de pousser : combien de lignes changées pour combien de lignes utiles ? Au-delà de
-deux pour une, découper autrement.
+The test before pushing: how many lines changed, for how many useful lines? Past two for one, cut it
+differently.

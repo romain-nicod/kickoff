@@ -114,12 +114,12 @@ reviewer can read the feature.
 ## 5. Git and review
 
 **24 — Commit often, small, with a clear message.** One behaviour per
-commit, the test with its code. Messages in French, as the delivery
-method sets.
+commit, the test with its code. Messages in English, like everything
+else in the repository (AGENTS.md).
 
 ```
-non  corrections
-oui  Vote : refuser un second vote du même membre (#12)
+no   fixes
+yes  Vote: refuse a second vote from the same member (#12)
 ```
 
 **25 — One story, one branch `us-NNN-slug`, one PR, under ~400 changed

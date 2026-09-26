@@ -51,6 +51,6 @@ jobs:
           fi
           git -C "$RUNNER_TEMP/wiki" -c user.name="github-actions[bot]" \
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit --quiet -m "Publication de docs/wiki depuis ${SHA}"
+            commit --quiet -m "Publish docs/wiki from ${SHA}"
           # A wiki repository renders master, and only master.
           git -C "$RUNNER_TEMP/wiki" push --quiet origin HEAD:master

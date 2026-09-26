@@ -1,12 +1,13 @@
 # {{PROJECT_NAME}} — wiki
 
-Ces pages s'écrivent dans `docs/wiki/` du dépôt, se relisent dans les PR, puis sont publiées ici par
-le workflow *Wiki* à chaque merge sur `main`. **Ne pas les modifier dans l'interface du wiki** : la
-publication suivante écraserait la modification.
+These pages are written in `docs/wiki/` in the repository, reviewed in pull requests, then published
+here by the *Wiki* workflow on every merge to `main`. **Do not edit them in the wiki interface**: the
+next publication would overwrite the change.
 
-| Page | Contenu |
+| Page | Contents |
 |---|---|
-| [Architecture](Architecture.md) | le schéma d'architecture, mis à jour quand la structure change |
-| [Décisions](Decisions.md) | les ADR, une page par décision |
-| [Pièges](Pieges.md) | les pièges qui touchent plusieurs US |
-| `US-NNN-<slug>` | une page par US livrée : parcours et fonctionnement |
+| [Architecture](Architecture.md) | the architecture diagram, updated whenever the structure changes |
+| [Decisions](Decisions.md) | the ADRs, one page per decision |
+| [Traps](Traps.md) | the traps that hit more than one story |
+| [Release notes](Release-notes.md) | what reached production, version by version |
+| `US-NNN-<slug>` | one page per delivered story: the journey and how it works |

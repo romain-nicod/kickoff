@@ -267,7 +267,7 @@ def main():
 
     print(f"\nboard ready: {project.get('url', f'#{number}')}")
     print("Left by hand, once (docs/BOARD.md): the built-in workflows — "
-          "« Item closed » and « Pull request merged » set À déployer — "
+          "\"Item closed\" and \"Pull request merged\" set À déployer — "
           "and the Kanban grouped by Status.")
 
 

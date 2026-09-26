@@ -1,30 +1,31 @@
-# Journal des versions
+# Changelog
 
-Une section par version déployée en production, la plus récente en haut. Chaque section **est** la
-release note : `scripts/publish_release.py` la reprend telle quelle dans la release GitHub de
-l'étiquette du même nom, sans deuxième rédaction. Elle s'écrit dans la PR `[Déploiement] vX.Y.Z`
-(voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
+One section per version deployed to production, most recent first. Each section **is** the release
+note: `scripts/publish_release.py` carries it, word for word, into the GitHub release of the tag with
+the same name, with no second write-up. It is written in the `[Déploiement] vX.Y.Z` pull request
+(see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 
-Numérotation `MAJEUR.MINEUR.CORRECTIF` : le **mineur** augmente pour une version qui apporte au
-moins une US, le **correctif** pour une version qui ne contient que des corrections. `VERSION`
-vaut `0.0.0` tant que rien n'est en production.
+Numbering `MAJOR.MINOR.PATCH`: the **minor** goes up for a version that brings at least one story, the
+**patch** for a version that only holds fixes. `VERSION` stays at `0.0.0` until something is in
+production.
 
-<!-- Modèle d'une section, à copier au-dessus de la précédente. Les trois titres
-     de niveau 3 sont exigés par scripts/publish_release.py.
+<!-- Model of a section, to be copied above the previous one. The three level-3
+     headings are required by scripts/publish_release.py, which matches them
+     literally: they stay in French, like the pull request's title.
 
-## vX.Y.Z — JJ/MM/AAAA
+## vX.Y.Z — DD/MM/YYYY
 
-Lot mergé depuis `vX.Y.Z` (`<sha>`) jusqu'à `<sha>`.
+Batch merged from `vX.Y.Z` (`<sha>`) up to `<sha>`.
 
 ### User stories et fonctionnalités déployées
 
-- [US] <titre de l'US> (#<US>, PR #<PR>)
+- [US] <story title> (#<story>, PR #<PR>)
 
 ### Corrections, outillage et documentation
 
-- <titre de la PR> (#<PR>)
+- <pull request title> (#<PR>)
 
 ### À savoir
 
-- <livré mais inactif, migration, action attendue>, ou « Rien de particulier. »
+- <shipped but inactive, migration, action expected>, or "Rien de particulier."
 -->

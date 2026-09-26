@@ -1,73 +1,75 @@
-# Recette locale
+# Local recette environment
 
-La recette est l'endroit où Romain teste les US *En recette* avant de relire leurs PR. La méthode
-fait foi (§ 5) ; cette page dit comment elle est installée et tenue dans ce dépôt.
+The recette environment is where Romain tests the *En recette* stories before reviewing their pull
+requests. The method is authoritative (§ 5); this page says how it is installed and kept in this
+repository. The word `recette` stays: it names a branch, a port, a script and a Rails environment.
 
-## Le modèle
+## The model
 
-| | Développement | Recette |
+| | Development | Recette |
 |---|---|---|
-| Dossier | `code/{{REPO_NAME}}/` | `code/{{REPO_NAME}}-recette/`, worktree du clone principal |
-| Branche | `main`, ou `us-NNN-slug` dans un worktree d'US | `recette`, **locale**, reconstruite à chaque lot |
-| Port | `3000` | `3100`, sur `127.0.0.1` uniquement |
-| Données | fixtures, seeds | synthétiques uniquement, base propre au worktree |
-| Emails | en mémoire | capturés par Mailpit, jamais envoyés |
+| Folder | `code/{{REPO_NAME}}/` | `code/{{REPO_NAME}}-recette/`, a worktree of the main clone |
+| Branch | `main`, or `us-NNN-slug` in a story worktree | `recette`, **local**, rebuilt for every batch |
+| Port | `3000` | `3100`, on `127.0.0.1` only |
+| Data | fixtures, seeds | synthetic only, database private to the worktree |
+| Emails | in memory | captured by Mailpit, never sent |
 
-**L'agent peut merger dans `recette`, jamais dans `main`.** La branche `recette` n'est jamais poussée
-ni mergée ailleurs.
+**The agent may merge into `recette`, never into `main`.** The `recette` branch is never pushed, and
+never merged anywhere else.
 
-## Côté Romain
+## Romain's side
 
-Ouvrir `code/{{REPO_NAME}}-recette/` dans VS Code, puis dans son terminal :
+Open `code/{{REPO_NAME}}-recette/` in VS Code, then in its terminal:
 
 ```bash
 bin/recette start
 ```
 
-L'adresse, la branche et le commit testés s'affichent : http://127.0.0.1:3100. Ctrl+C arrête le
-serveur.
+The address, the branch and the commit under test are printed: http://127.0.0.1:3100. Ctrl+C stops the
+server.
 
-## Côté agent
+## The agent's side
 
-**Création, une fois**, depuis le clone principal :
+**Creation, once**, from the main clone:
 
 ```bash
 git -C code/{{REPO_NAME}} fetch origin
 git -C code/{{REPO_NAME}} worktree add -b recette ../{{REPO_NAME}}-recette origin/main
 ```
 
-**À chaque lot**, serveur de recette arrêté :
+**For every batch**, with the recette server stopped:
 
 ```bash
-git -C code/{{REPO_NAME}}-recette status --porcelain    # doit être vide, sinon s'arrêter
+git -C code/{{REPO_NAME}}-recette status --porcelain    # must be empty, otherwise stop
 git -C code/{{REPO_NAME}}-recette fetch origin
 git -C code/{{REPO_NAME}}-recette switch recette
 git -C code/{{REPO_NAME}}-recette reset --hard origin/main
 git -C code/{{REPO_NAME}}-recette merge --no-ff origin/us-012-refuse-double-vote
-bin/recette prepare                                      # lancé depuis code/{{REPO_NAME}}-recette
+bin/recette prepare                                      # run from code/{{REPO_NAME}}-recette
 ```
 
-⚠️ `reset --hard` efface les merges de la recette précédente, et eux seuls : ils se refont depuis les
-branches d'US. Il ne touche ni `main` ni une branche d'US. Un conflit de merge arrête la
-reconstruction : le résoudre dans la branche de l'US, jamais dans `recette`.
+⚠️ `reset --hard` wipes the merges of the previous recette, and nothing else: they are redone from the
+story branches. It touches neither `main` nor a story branch. A merge conflict stops the rebuild:
+resolve it in the story's branch, never in `recette`.
 
-Puis écrire dans le board, sur chaque US intégrée, la liste exacte présente en recette :
+Then write on the board, on every story merged in, the exact list of what is on the recette
+environment:
 
 ```bash
 git -C code/{{REPO_NAME}}-recette log --oneline origin/main..recette
 ```
 
-## Installation dans l'application — une fois
+## Installing it in the application — once
 
-Le stack Rails fournit `bin/recette`, `lib/recette.rb` et `test/lib/recette_test.rb`. `lib/recette.rb`
-refuse une base externe, une écoute hors de `127.0.0.1`, un port invalide et un relais d'emails qui
-ne serait pas sur ce Mac ; il retire de l'environnement les secrets de production, `SMTP_*`,
-`SENTRY_*` et `PG*` ; il génère `.env.recette.local` (mode 600, ignoré par Git) avec un
-`SECRET_KEY_BASE` propre au worktree.
+The Rails stack ships `bin/recette`, `lib/recette.rb` and `test/lib/recette_test.rb`. `lib/recette.rb`
+refuses an external database, a listener outside `127.0.0.1`, an invalid port and a mail relay that is
+not on this Mac; it removes the production secrets, `SMTP_*`, `SENTRY_*` and `PG*` from the
+environment; and it generates `.env.recette.local` (mode 600, ignored by Git) with a `SECRET_KEY_BASE`
+private to the worktree.
 
-Il reste quatre fichiers à compléter dans l'application.
+Four files are left to fill in, in the application.
 
-`config/environments/recette.rb` :
+`config/environments/recette.rb`:
 
 ```ruby
 require_relative "production"
@@ -102,12 +104,12 @@ Rails.application.configure do
   end
   config.session_store :cookie_store, httponly: true, same_site: :lax,
     key: "_recette_#{ENV.fetch('RECETTE_ID')}"
-  config.x.recette_revision = ENV.fetch("RECETTE_REVISION", "non identifiée")
-  config.x.recette_branch = ENV.fetch("RECETTE_BRANCH", "non identifiée")
+  config.x.recette_revision = ENV.fetch("RECETTE_REVISION", "unidentified")
+  config.x.recette_branch = ENV.fetch("RECETTE_BRANCH", "unidentified")
 end
 ```
 
-Dans `config/database.yml`, `config/cable.yml` et `config/storage.yml` :
+In `config/database.yml`, `config/cable.yml` and `config/storage.yml`:
 
 ```yaml
 # config/database.yml
@@ -125,33 +127,33 @@ recette:
   root: <%= Rails.root.join("tmp/recette/storage") %>
 ```
 
-Les seeds doivent pouvoir tourner sans aucun secret de production : ils créent des comptes et des
-contenus fictifs, et affichent comment se connecter sans écrire de mot de passe dans le dépôt.
+The seeds have to run without a single production secret: they create fictional accounts and content,
+and print how to sign in without writing a password into the repository.
 
-Facultatif : un bandeau dans le layout qui affiche `Rails.configuration.x.recette_branch` et
-`recette_revision` quand `Rails.env.recette?`, pour que Romain sache toujours ce qu'il teste.
+Optional: a banner in the layout showing `Rails.configuration.x.recette_branch` and
+`recette_revision` when `Rails.env.recette?`, so Romain always knows what he is testing.
 
-## Emails : Mailpit
+## Emails: Mailpit
 
-Mailpit tourne sur le Mac de Romain : SMTP sur `127.0.0.1:1025`, interface sur
-http://127.0.0.1:8025, sans aucun relais. Installation, identifiants et arrêt du service : note vault
+Mailpit runs on Romain's Mac: SMTP on `127.0.0.1:1025`, interface on http://127.0.0.1:8025, with no
+relay at all. Installation, credentials and how to stop the service: vault note
 `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md`.
 
-Pour capturer les emails de cette recette, ouvrir `.env.recette.local` dans un éditeur et
-décommenter les lignes `SMTP_*`, en recopiant l'identifiant et le mot de passe depuis le fichier de
-Mailpit indiqué dans la note. Ne jamais les passer sur la ligne de commande. Sans `SMTP_ADDRESS`, les
-emails restent en mémoire (`:test`). Si Mailpit refuse l'authentification sans TLS, voir la note.
+To capture this recette's emails, open `.env.recette.local` in an editor and uncomment the `SMTP_*`
+lines, copying the user name and password from the Mailpit file the note points at. Never pass them on
+the command line. Without `SMTP_ADDRESS`, emails stay in memory (`:test`). If Mailpit refuses
+authentication without TLS, see the note.
 
-## Contrôles
+## Checks
 
 ```bash
 bin/rails test test/lib/recette_test.rb
 ```
 
-Les tests automatisés tournent sur leur base `test`, jamais sur la base de recette.
+The automated tests run against their own `test` database, never against the recette one.
 
-## Limites connues
+## Known limits
 
-- HTTP sur la boucle locale : le TLS de production n'est pas testé ici.
-- Les jobs tournent dans le processus du serveur ; aucun worker ni tâche récurrente n'est lancé.
-- Déplacer le worktree change son identifiant, donc sa base : préparer à nouveau.
+- HTTP on the loopback: production's TLS is not tested here.
+- Jobs run inside the server process; no worker and no recurring task is started.
+- Moving the worktree changes its identifier, hence its database: prepare it again.

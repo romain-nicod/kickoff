@@ -14,10 +14,10 @@ unless ARGV.size == 1 && %w[prepare start reset].include?(ARGV.first)
   abort "Usage : bin/recette prepare|start|reset"
 end
 if ENV["RAILS_ENV"] == "production" || ENV["RACK_ENV"] == "production"
-  abort "Refus : environnement de production"
+  abort "Refused: production environment"
 end
 unless File.exist?("config/environments/recette.rb")
-  abort "config/environments/recette.rb manque : voir docs/RECETTE.md"
+  abort "config/environments/recette.rb is missing: see docs/RECETTE.md"
 end
 
 ENV["RAILS_ENV"] = ENV["RACK_ENV"] = "recette"
@@ -25,7 +25,7 @@ require_relative "../lib/recette"
 begin
   Recette.configure!(root)
 rescue ArgumentError => error
-  abort "Refus : #{error.message}"
+  abort "Refused: #{error.message}"
 end
 FileUtils.mkdir_p("tmp/recette")
 
@@ -33,24 +33,24 @@ FileUtils.mkdir_p("tmp/recette")
 # processes included: a second prepare, reset or start is refused.
 File.open("tmp/recette/instance.lock", "w") do |lock|
   unless lock.flock(File::LOCK_EX | File::LOCK_NB)
-    abort "Cette recette est occupée : arrêter son serveur avant de la modifier."
+    abort "This recette is busy: stop its server before changing it."
   end
 
   case ARGV.first
   when "prepare"
     exit false unless system("bin/rails", "db:prepare", "db:seed",
                              "assets:precompile", lock.fileno => lock)
-    puts "Recette préparée avec des données fictives. Lancer : bin/recette start"
+    puts "Recette prepared with fictional data. Run: bin/recette start"
   when "reset"
     exit false unless system("bin/rails", "db:drop", lock.fileno => lock)
     exit false unless system("bin/rails", "db:prepare", "db:seed",
                              lock.fileno => lock)
-    puts "Données fictives recréées."
+    puts "Fictional data recreated."
   when "start"
     status, ok = Open3.capture2("git", "status", "--porcelain")
     unless ok.success? && status.empty?
-      abort "Committer les modifications avant la recette : " \
-            "la version testée doit être identifiable."
+      abort "Commit the changes before the recette: " \
+            "the version under test has to be identifiable."
     end
     revision = Open3.capture2("git", "rev-parse", "HEAD").first.strip
     branch = Open3.capture2("git", "branch", "--show-current").first.strip

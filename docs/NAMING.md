@@ -32,9 +32,9 @@ specially keep their conventional shouty names: `README.md`,
 |---|---|---|
 | Branch | `us-`, the issue number, then the slugged need | `us-012-refuse-double-vote` |
 | Worktree | `code/<repository>-worktrees/<branch>/` | `code/go-meal-worktrees/us-012-refuse-double-vote/` |
-| Commit | in French, one behaviour | `Vote : refuser un second vote du même membre (#12)` |
-| Issue title | `[US]`, `[Task]` or `[BUG]`, in French | `[US] Refuser un second vote du même membre` |
-| PR title | the same as the issue | `[US] Refuser un second vote du même membre` |
+| Commit | one behaviour, in English | `Vote: refuse a second vote from the same member (#12)` |
+| Issue title | `[US]`, `[Task]` or `[BUG]`, in English | `[US] Refuse a second vote from the same member` |
+| PR title | the same as the issue | `[US] Refuse a second vote from the same member` |
 
 ## Identifiers
 

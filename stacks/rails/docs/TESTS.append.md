@@ -1,34 +1,33 @@
-## Rails : Minitest et Capybara
+## Rails: Minitest and Capybara
 
-Minitest et les fixtures, le défaut de Rails. Un projet trouvé sous RSpec bascule sur Minitest.
+Minitest and fixtures, Rails' own default. A project found on RSpec moves to Minitest.
 
 ```bash
-bin/rails test                               # unitaires et intégration
-bin/rails test:system                        # navigateur : bin/rails test ne le lance pas
-bin/rails test test/models/vote_test.rb:42   # pendant le développement
-bin/rails test -n "/CA-01/"                  # les tests d'un critère
+bin/rails test                               # unit and integration
+bin/rails test:system                        # browser: bin/rails test does not run these
+bin/rails test test/models/vote_test.rb:42   # while developing
+bin/rails test -n "/CA-01/"                  # the tests of one criterion
 ```
 
-### Où vont les tests d'une US
+### Where a story's tests go
 
-| L'US change | Elle reçoit |
+| The story changes | It gets |
 |---|---|
-| une règle métier, une validation, un scope | `test/models/`, chaque borne |
-| un calcul sorti d'une vue | `test/helpers/` |
-| un service, un analyseur | `test/services/` |
-| une route : statut, redirection, droits par rôle, HTML et JSON | `test/integration/` |
-| une page | `test/system/`, aux trois largeurs |
+| a business rule, a validation, a scope | `test/models/`, every boundary |
+| a computation taken out of a view | `test/helpers/` |
+| a service, a parser | `test/services/` |
+| a route: status, redirection, permissions per role, HTML and JSON | `test/integration/` |
+| a page | `test/system/`, at the three widths |
 
-### Tests système
+### System tests
 
-`test/application_system_test_case.rb` pilote Chrome sans interface par Selenium, et fournit :
+`test/application_system_test_case.rb` drives headless Chrome through Selenium, and provides:
 
-- `WIDTHS` et `resize_viewport(width)` : les largeurs CSS exactes de la passe UI/UX, 1512, 1280
-  et 390 px ;
-- `assert_no_horizontal_overflow(width)` : aucun défilement horizontal, ni sur la page ni dans un
-  élément ;
-- `assert_reachable_targets(width, selector)` : chaque contrôle est visible et mesure au moins
-  44 px.
+- `WIDTHS` and `resize_viewport(width)`: the exact CSS widths of the UI/UX pass, 1512, 1280 and
+  390 px;
+- `assert_no_horizontal_overflow(width)`: no horizontal scrolling, neither on the page nor inside an
+  element;
+- `assert_reachable_targets(width, selector)`: every control is visible and at least 44 px.
 
 ```ruby
 test "CA-02 the vote list fits every screen" do
@@ -41,39 +40,38 @@ test "CA-02 the vote list fits every screen" do
 end
 ```
 
-Les gems `capybara` et `selenium-webdriver` sont dans le groupe `:test` du `Gemfile` ;
-`python3 scripts/after_rails_new.py` signale celle qui manque.
+The `capybara` and `selenium-webdriver` gems belong to the `:test` group of the `Gemfile`;
+`python3 scripts/after_rails_new.py` names the one that is missing.
 
-### Pièges déjà payés
+### Traps already paid for
 
-- **`rack_test` n'exécute pas Turbo.** Un `POST` qui répond 200 sans rediriger passe dans un test
-  d'intégration et échoue dans le navigateur : rediriger, et le vérifier en test système.
-- **Fixtures, pas FactoryBot** : une fixture porte le minimum pour être valide.
-- **Aucun appel réseau réel** dans la suite : bouchonner le client HTTP.
-- **`travel_to`** pour tout ce qui dépend du temps, jamais `sleep`.
-- Si la suite parallèle est instable ou lente sur une machine, `PARALLEL_WORKERS=1`, et la raison
-  dans `AGENTS.md`.
+- **`rack_test` does not run Turbo.** A `POST` answering 200 without redirecting passes an integration
+  test and fails in the browser: redirect, and check it in a system test.
+- **Fixtures, not FactoryBot**: a fixture carries the minimum that makes it valid.
+- **No real network call** in the suite: stub the HTTP client.
+- **`travel_to`** for anything that depends on time, never `sleep`.
+- If the parallel suite is flaky or slow on a machine, `PARALLEL_WORKERS=1`, and the reason in
+  `AGENTS.md`.
 
-### Les gardes qu'une suite ne se donne pas seule
+### The guards a suite does not give itself
 
-Une suite verte dit que le code fait ce que les tests demandent, rien sur ce que personne n'a pensé à
-demander. Trois gardes, chacune écrite après un défaut passé à travers une suite verte sur le premier
-vrai projet :
+A green suite says the code does what the tests ask, and nothing about what nobody thought of asking.
+Three guards, each written after a defect went through a green suite on the first real project:
 
-| Garde | Le défaut d'où elle vient |
+| Guard | The defect it comes from |
 |---|---|
-| **Aucune liste ne déborde à 390 px** | une liste sur dix défilait de côté sur téléphone, et la garde en a trouvé une onzième que personne n'avait vérifiée |
-| **Chaque langue porte les clés de la source, portée par portée** | une traduction est restée à 56 % pendant une journée, et seul quelqu'un qui comptait pouvait le voir |
-| **Aucun écran n'affiche `translation missing`** | deux listes l'affichaient entre leurs contrôles de pagination, et chaque formulaire refusé l'affichait à la place de l'erreur |
+| **No list overflows at 390 px** | one list in ten scrolled sideways on a phone, and the guard found an eleventh nobody had checked |
+| **Every locale carries the keys of the source, scope by scope** | a translation stayed at 56 % for a whole day, and only somebody counting could see it |
+| **No screen shows `translation missing`** | two lists showed it between their pagination controls, and every rejected form showed it instead of the error |
 
-- 🔴 **Une garde qui ne peut pas échouer n'est pas une garde.** Casser ce qu'elle surveille, la voir
-  rouge, puis rétablir : c'est le « vu rouge » de la méthode, appliqué aux gardes.
-- ⚠️ **Parcourir, ne pas échantillonner.** Un chemin de plus dans une garde coûte une ligne ; un
-  chemin oublié coûte un écran cassé devant un client. Et **paginer avant de regarder** : une liste
-  de trois lignes cache tous les défauts qui vivent dans les contrôles de la deuxième page.
+- 🔴 **A guard that cannot fail is not a guard.** Break what it watches, see it red, then put it back:
+  that is the method's "seen red", applied to guards.
+- ⚠️ **Walk them all, do not sample.** One more path in a guard costs a line; one forgotten path costs a
+  broken screen in front of a client. And **paginate before looking**: a list of three rows hides every
+  defect that lives in the controls of the second page.
 
-### La barrière
+### The gate
 
 `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`,
-`bundle exec bundler-audit --update` et `bin/importmap audit` : verts en local, puis en CI, avant
-d'ouvrir la PR.
+`bundle exec bundler-audit --update` and `bin/importmap audit`: green locally, then in CI, before
+opening the pull request.

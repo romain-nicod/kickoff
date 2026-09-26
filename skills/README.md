@@ -1,22 +1,22 @@
 # Skills
 
-Une seule skill, `project-kickoff` : elle applique, avec ce gabarit, la méthode de livraison par
-user story (`/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`).
-**Elle vit ici, versionnée avec les gabarits qu'elle utilise** : une skill et un gabarit modifiés
-dans le même commit ne peuvent pas diverger.
+One skill, `project-kickoff`: it applies, with this template, the delivery-by-user-story method
+(`/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md`).
+**It lives here, versioned with the templates it uses**: a skill and a template changed in the same
+commit cannot diverge.
 
-| Skill | Répond à | Se déclenche |
+| Skill | Answers | Triggered by |
 |---|---|---|
-| **`project-kickoff`** | « Crée le dépôt, le board et les premières US » ; « Prépare le déploiement » | lancement d'un projet, besoin à transformer en US, PR de déploiement |
+| **`project-kickoff`** | "Create the repository, the board and the first stories"; "Prepare the deployment" | starting a project, a need to turn into stories, a deployment pull request |
 
-## Installation : un lien symbolique, pas une copie
+## Installation: a symbolic link, not a copy
 
-`~/.claude/skills/project-kickoff` est un **lien symbolique** vers ce dossier dans le clone
-principal. Il n'y a donc rien à recopier après une modification : la skill chargée est celle de la
-branche extraite dans `code/kickoff`, normalement `main`. Une branche de travail dans un worktree ne
-change pas la skill en service tant qu'elle n'est pas mergée.
+`~/.claude/skills/project-kickoff` is a **symbolic link** to this folder in the main clone. Nothing has
+to be copied after a change: the skill that loads is the one on the branch checked out in
+`code/kickoff`, normally `main`. A working branch in a worktree does not change the skill in service
+until it is merged.
 
-Sur une nouvelle machine, depuis son terminal :
+On a new machine, from its terminal:
 
 ```bash
 ls -la ~/.claude/skills/
@@ -24,18 +24,17 @@ ln -s /Users/albert/Documents/Claude/code/kickoff/skills/project-kickoff ~/.clau
 ls -l ~/.claude/skills/project-kickoff
 ```
 
-Attendu : une ligne qui commence par `l` et se termine par
-`-> /Users/albert/Documents/Claude/code/kickoff/skills/project-kickoff`. Si `ln` répond
-« File exists », un dossier ou un lien porte déjà ce nom : regarder ce qu'il contient avant toute
-chose, l'archiver dans `~/.claude/skills-archive/` s'il s'agit d'une ancienne copie, puis relancer
-`ln`.
+Expected: a line starting with `l` and ending with
+`-> /Users/albert/Documents/Claude/code/kickoff/skills/project-kickoff`. If `ln` answers
+"File exists", a folder or a link already carries that name: look at what it holds before anything
+else, archive it under `~/.claude/skills-archive/` if it is an old copy, then run `ln` again.
 
-`bin/kickoff` retire `skills/` du projet qu'il crée : la skill a fini son travail à ce moment-là.
+`bin/kickoff` removes `skills/` from the project it creates: the skill's work is done by then.
 
-## Pourquoi il n'y en a qu'une
+## Why there is only one
 
-Les anciennes skills `methode-projet` et `methode-wagon` sont archivées dans
-`~/.claude/skills-archive/` et ne reviennent pas : elles portaient une deuxième version de la
-méthode, qui la contredisait (RSpec, branches `feat/…`, commentaires en français, spécifications et
-plans de tests hors des issues). La méthode fait foi dans la note du vault ; les idiomes Rails encore
-valables sont dans `stacks/rails/` (`GOLDEN_RULES.append.md`, `docs/GEMS.md`).
+The former `methode-projet` and `methode-wagon` skills are archived under
+`~/.claude/skills-archive/` and are not coming back: they carried a second version of the method, which
+contradicted it (RSpec, `feat/…` branches, French comments, specifications and test plans outside the
+issues). The method is authoritative in the vault note; the Rails idioms that still hold are in
+`stacks/rails/` (`GOLDEN_RULES.append.md`, `docs/GEMS.md`).

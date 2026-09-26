@@ -102,7 +102,7 @@ def main():
                  "MAJOR.MINOR.PATCH")
     if version == "0.0.0":
         sys.exit("VERSION is still 0.0.0: open the [Déploiement] pull "
-                 "request first (docs/DEPLOIEMENT.md)")
+                 "request first (docs/DEPLOYMENT.md)")
 
     tag = f"v{version}"
     notes = release_notes(run(["git", "show", f"{sha}:CHANGELOG.md"]).stdout,

@@ -55,7 +55,7 @@ labels: "type:bug, à revoir par Romain"
 - [ ] Security checks passed (Brakeman, bundler-audit, `importmap audit`)
 - [ ] UI/UX pass done, screenshots attached to the pull request at 1512×982, 1280×800 and 390×844 (if there is an interface)
 - [ ] Idiomatic QA of the diff done, code commented
-- [ ] Trap added to `docs/wiki/Pieges.md` if it can hit other stories, lessons written to the vault
+- [ ] Trap added to `docs/wiki/Traps.md` if it can hit other stories, lessons written to the vault
 - [ ] Tested on the recette environment
 - [ ] Pull request reviewed and **merged by Romain**
 - [ ] Deployed to production and verified, listed under "Corrections" in `CHANGELOG.md`
