@@ -22,13 +22,20 @@ and all four are silent:
      keeps the last matching rule, so the appended line swallows the very
      example file golden rule 28 depends on.
   4. `rails new` inside a repository that already has a `.gitignore` does
-     not write Rails' own — so `tmp/`, `log/` and `storage/` are tracked.
-     On the project this was written from, that was 1779 files.
+     not write Rails' own — so `tmp/`, `log/` and `storage/` would be
+     tracked. On the project this was written from, that was 1779 files.
+     This one cannot be repaired here: the boilerplate ends on `git add .`
+     and `git commit`, so by the time this script runs the files are
+     already in the project's first commit. The rules therefore ship with
+     the stack layer, in `.gitignore.append`, and land BEFORE `rails new`.
+     What is left here is to check they are in force, and to stop if they
+     are not.
 
 None of the four is a bug in `minimal.rb`. All four are certain, on every
 project, which is why this is a script and not a paragraph in a document.
 
-Idempotent: run it twice and the second run reports nothing to do.
+Idempotent: run it twice and the second run reports nothing to do. Exits
+non-zero when the runtime rules are missing — nothing else here is fatal.
 """
 
 import argparse
@@ -39,31 +46,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-RAILS_IGNORE = """
-# Rails runtime — regenerated on every boot, never versioned.
-# `rails new` does not write these when a .gitignore already exists.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/
-!/tmp/storage/.keep
-/public/assets
-/app/assets/builds/*
-!/app/assets/builds/.keep
-/vendor/bundle
+# Paths that prove the rules of `.gitignore.append` are in force. A rule
+# list here would be a second copy of that file, and two copies diverge —
+# these are what the rules are FOR.
+RUNTIME_PROBES = (
+    "log/development.log",
+    "tmp/cache/bootsnap/x",
+    "tmp/pids/server.pid",
+    "tmp/storage/x",
+    "storage/x",
+    "public/assets/x",
+    ".bundle/config",
+    "config/master.key",
+)
 
-# LAST, on purpose: the boilerplate appends `.env*` above, and git keeps
-# the final matching rule. Without this line the example file that golden
-# rule 28 depends on is ignored.
-!.env.example
-"""
+WHERE_THE_RULES_ARE = (
+    "https://github.com/romain-nicod/kickoff/blob/main/stacks/rails/"
+    ".gitignore.append")
 
 GENERATORS = """
     # Minitest, the Rails default -- see docs/TESTS.md. Fixtures are only
@@ -126,51 +125,54 @@ def restore_overwritten(path, dry_run):
     return f"  restored {path} — the boilerplate had overwritten it"
 
 
-def fix_gitignore(dry_run):
-    """Add only the rules that are missing, and put the negation last.
+def check_runtime_ignored():
+    """Report the runtime paths .gitignore does not cover. Fatal.
 
-    Appending the whole block blindly duplicates whatever a previous run —
-    or a careful human — already wrote. Two identical rules are harmless
-    to git and confusing to read, and a .gitignore nobody can read is one
-    nobody corrects.
+    Returns a message when something is wrong, None when all is well.
+
+    `--no-index` is not optional: without it `git check-ignore` answers
+    "not ignored" for a path that is already TRACKED, which is exactly the
+    case this check exists to diagnose — it would then blame the rules
+    instead of the index.
+    """
+    missed = [probe for probe in RUNTIME_PROBES
+              if git(["check-ignore", "--no-index", "-q", probe],
+                     check=False).returncode != 0]
+    if not missed:
+        return None
+    return ("  FAILED   .gitignore does not cover " + ", ".join(missed)
+            + "\n           These are Rails' own rules, and this layer ships"
+              " them in\n           .gitignore.append so they are in place"
+              " BEFORE `rails new`.\n           Put them back, then run this"
+              " script again:\n           " + WHERE_THE_RULES_ARE)
+
+
+def keep_env_negation_last(dry_run):
+    """Move `!.env.example` back to the end of .gitignore.
+
+    Git keeps the LAST matching rule, and the boilerplate appends its own
+    `.env*` — so a negation placed above it is dead, and golden rule 28
+    depends on that example file being tracked.
     """
     path = ROOT / ".gitignore"
-    # ⚠️ A `git init` done by hand before `rails new` can leave no
-    # .gitignore at all — which is how 1779 runtime files got committed
-    # once. Starting from empty is the right answer, not a crash: every
-    # rule below is then missing and gets written.
-    text = path.read_text(encoding="utf-8") if path.exists() else ""
-    present = {line.strip() for line in text.splitlines()}
+    if not path.exists():
+        return ("  WARNING  no .gitignore at all — see the FAILED line "
+                "above before anything else")
 
-    missing = [line.strip() for line in RAILS_IGNORE.splitlines()
-               if line.strip() and not line.strip().startswith("#")
-               and line.strip() not in present
-               and line.strip() != "!.env.example"]
-    # The negation has to be LAST whatever else is there: git keeps the
-    # final matching rule, and the boilerplate appends `.env*` above it.
-    negation_last = text.rstrip().endswith("!.env.example")
-
-    if not missing and negation_last:
+    text = path.read_text(encoding="utf-8")
+    if text.rstrip().endswith("!.env.example"):
         return None
     if dry_run:
-        what = f"add {len(missing)} rule(s)" if missing else "no rule to add"
-        tail = "" if negation_last else ", move !.env.example last"
-        return f"  .gitignore: {what}{tail}"
+        return "  .gitignore: move !.env.example last"
 
-    body = text.rstrip()
-    if missing:
-        body += ("\n\n# Rails runtime — regenerated on every boot, never "
-                 "versioned.\n# `rails new` does not write these when a "
-                 ".gitignore already exists.\n")
-        body += "\n".join(missing)
-    if not negation_last:
-        body += ("\n\n# LAST, on purpose: the boilerplate appends `.env*` "
-                 "above, and git\n# keeps the final matching rule. Without "
-                 "this line the example file\n# that golden rule 28 depends "
-                 "on is ignored.\n!.env.example")
-    path.write_text(body + "\n", encoding="utf-8")
-    return (f"  .gitignore: {len(missing)} rule(s) added, "
-            "!.env.example put last")
+    path.write_text(
+        text.rstrip()
+        + "\n\n# LAST, on purpose: the boilerplate appends `.env*` above, "
+          "and git\n# keeps the final matching rule. Without this line the "
+          "example file\n# that golden rule 28 depends on is ignored.\n"
+          "!.env.example\n",
+        encoding="utf-8")
+    return "  .gitignore: !.env.example put last"
 
 
 def untrack_runtime(dry_run):
@@ -286,17 +288,30 @@ def main():
         sys.exit("No config/application.rb — run this after `rails new`.")
 
     print("\nPutting back what the boilerplate removed\n")
+    # The check comes first: every line after it is cosmetic next to a
+    # repository that has just committed its own tmp/ directory.
+    runtime_check = check_runtime_ignored()
     done = [
+        runtime_check,
         restore_deleted(".github/workflows/ci.yml", args.dry_run),
         restore_overwritten(".rubocop.yml", args.dry_run),
-        fix_gitignore(args.dry_run),
-        untrack_runtime(args.dry_run),
+        keep_env_negation_last(args.dry_run),
+        # Pointless while the rules are missing: the `git add` it
+        # ends on would bring every file straight back.
+        None if runtime_check else untrack_runtime(args.dry_run),
         point_generators_at_minitest(args.dry_run),
         isolate_test_database(args.dry_run),
         report_missing_gems(),
     ]
     reported = [line for line in done if line]
     print("\n".join(reported) if reported else "  nothing to do")
+
+    if runtime_check:
+        sys.exit("\nStopped: the runtime rules have to be back in "
+                 ".gitignore first. Whatever\nthe boilerplate already "
+                 "committed under tmp/, log/ and storage/ is in the\n"
+                 "history until that commit is amended — check "
+                 "`git show --stat HEAD`.")
 
     if args.dry_run:
         print("\nDry run — nothing was written.")
