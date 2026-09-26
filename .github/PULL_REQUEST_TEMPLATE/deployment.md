@@ -25,7 +25,7 @@ The `## vX.Y.Z — DD/MM/YYYY` section of `CHANGELOG.md`, visible in this pull r
 - [ ] *User stories et fonctionnalités déployées* — story title, number, pull request
 - [ ] *Corrections, outillage et documentation*
 - [ ] *À savoir* — what is shipped but inactive, migrations, actions expected
-- [ ] `python3 scripts/wiki_release_notes.py` run: `docs/wiki/Notes-de-version.md` carries the section, and the repository wiki publishes it on merge
+- [ ] `python3 scripts/wiki_release_notes.py` run: `docs/wiki/Release-notes.md` carries the section, and the repository wiki publishes it on merge
 
 ## Migrations reaching production
 
@@ -40,7 +40,7 @@ The `## vX.Y.Z — DD/MM/YYYY` section of `CHANGELOG.md`, visible in this pull r
 
 - [ ] No pull request of the batch is still waiting to be merged: this one is the last
 - [ ] CI green on the last commit of `deploy/vX.Y.Z`
-- [ ] The diff only touches `VERSION`, `CHANGELOG.md`, `docs/wiki/Notes-de-version.md` and the migration guard
+- [ ] The diff only touches `VERSION`, `CHANGELOG.md`, `docs/wiki/Release-notes.md` and the migration guard
 - [ ] Every migration in the table above is reviewed and approved
 - [ ] Nothing under "À savoir" needs a prior action that has not been taken
 

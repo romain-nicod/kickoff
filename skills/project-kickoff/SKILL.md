@@ -90,7 +90,7 @@ Donner ensuite à Romain, pas à pas, ce que l'API ne fait pas :
 
 Remplir les emplacements laissés par `bin/kickoff` : URL du board (affichée par
 `setup_project.py`), production, script de déploiement. **Seulement les spécificités du projet** :
-jamais la méthode. Les pièges vont dans `docs/wiki/Pieges.md`, les décisions dans une page ADR de
+jamais la méthode. Les pièges vont dans `docs/wiki/Traps.md`, les décisions dans une page ADR de
 `docs/wiki/`. `CLAUDE.md` reste à trois lignes. Contrôle : `wc -l AGENTS.md CLAUDE.md`.
 
 ## 5. Créer les issues sur gabarit

@@ -20,4 +20,4 @@
 
 ## Traps
 
-- Cross-cutting traps: [docs/wiki/Pieges.md](docs/wiki/Pieges.md).
+- Cross-cutting traps: [docs/wiki/Traps.md](docs/wiki/Traps.md).

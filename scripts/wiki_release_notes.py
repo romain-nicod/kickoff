@@ -6,7 +6,7 @@
 
 CHANGELOG.md stays the single source: every released version has its
 section there, and that section IS the release note (docs/DEPLOIEMENT.md).
-This script copies those sections into docs/wiki/Notes-de-version.md, which
+This script copies those sections into docs/wiki/Release-notes.md, which
 `.github/workflows/wiki.yml` publishes to the repository wiki at merge — so
 the people who use the product read the same words as the GitHub release,
 without anybody writing them twice.
@@ -22,7 +22,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHANGELOG = ROOT / "CHANGELOG.md"
-PAGE = ROOT / "docs" / "wiki" / "Notes-de-version.md"
+PAGE = ROOT / "docs" / "wiki" / "Release-notes.md"
 
 HEADER = """# Notes de version
 

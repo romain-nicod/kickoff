@@ -28,7 +28,7 @@ web. La méthode fait foi (§ 6) ; cette page dit comment l'appliquer dans ce d�
    python3 scripts/wiki_release_notes.py
    ```
 
-   Elle copie les sections de `CHANGELOG.md` dans `docs/wiki/Notes-de-version.md`, que
+   Elle copie les sections de `CHANGELOG.md` dans `docs/wiki/Release-notes.md`, que
    `.github/workflows/wiki.yml` publie au wiki quand la PR est mergée : **chaque release a sa note
    de version dans le wiki du dépôt** (règle de Romain du 25/09/2026), écrite une seule fois.
    `python3 scripts/wiki_release_notes.py --check` échoue si la page et le journal divergent.
