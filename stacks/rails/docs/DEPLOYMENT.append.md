@@ -1,26 +1,25 @@
-## Rails : le garde des migrations
+## Rails: the migration guard
 
-Le script de déploiement refuse toute migration nouvelle que personne n'a relue. Le garde est une
-liste `version:empreinte SHA-256` tenue dans le script (ou dans un fichier qu'il lit), et **mise à
-jour dans la PR de déploiement** : Romain voit et approuve ce qui part en production.
+The deployment script refuses any new migration nobody has reviewed. The guard is a list of
+`version:SHA-256 digest` kept in the script (or in a file it reads), and **updated in the deployment
+pull request**: Romain sees and approves what is going to production.
 
-Pour chaque fichier de `db/migrate/` absent de `schema_migrations` en production :
+For every file of `db/migrate/` missing from `schema_migrations` in production:
 
-1. **la relire** : l'ancienne version de l'application tourne-t-elle encore sur la base migrée
-   (retour arrière sans toucher la base) ? Supprime-t-elle une donnée ? Est-elle longue sur une grosse
-   table ?
-2. **calculer son empreinte** :
+1. **review it**: does the previous version of the application still run against the migrated database
+   (a rollback that does not touch the database)? Does it delete data? Is it slow on a large table?
+2. **compute its digest**:
 
    ```bash
-   shasum -a 256 db/migrate/<version>_<nom>.rb
+   shasum -a 256 db/migrate/<version>_<name>.rb
    ```
 
-3. **l'ajouter au garde**, avec une ligne de commentaire : ce qu'elle fait et l'US qui l'apporte ;
-4. la reporter dans le tableau « Migrations » de la PR de déploiement et dans la rubrique « À savoir »
-   du `CHANGELOG.md`.
+3. **add it to the guard**, with a comment line: what it does, and the story that brings it;
+4. carry it over into the "Migrations" table of the deployment pull request and into the "À savoir"
+   heading of `CHANGELOG.md`.
 
-Forme du garde dans un script shell exécuté sur l'hôte, `$release` étant le dossier du commit
-déployé et `$release.applied` la liste des versions lues dans `schema_migrations` en production :
+Shape of the guard in a shell script run on the host, `$release` being the folder of the deployed
+commit and `$release.applied` the list of versions read from `schema_migrations` in production:
 
 ```bash
 for migration in "$release"/db/migrate/*.rb; do
@@ -28,13 +27,13 @@ for migration in "$release"/db/migrate/*.rb; do
   if ! grep -qx "$version" "$release.applied"; then
     digest=$(shasum -a 256 "$migration" | cut -d ' ' -f 1)
     case "$version:$digest" in
-      # 20260101120000 : <ce qu'elle fait> (#<US>)
-      20260101120000:<empreinte>) ;;
-      *) echo "Migration à examiner avant déploiement : $version"; exit 4 ;;
+      # 20260101120000: <what it does> (#<story>)
+      20260101120000:<digest>) ;;
+      *) echo "Migration to examine before deploying: $version"; exit 4 ;;
     esac
   fi
 done
 ```
 
-Une migration modifiée après sa relecture change d'empreinte et se fait refuser : c'est voulu, elle
-se relit à nouveau. Modèle en service : `script/deploy_studio_remote.sh` du dépôt PEF.
+A migration changed after its review has a different digest and is refused: that is the point — it gets
+reviewed again. A working model: `script/deploy_studio_remote.sh` in the PEF repository.
