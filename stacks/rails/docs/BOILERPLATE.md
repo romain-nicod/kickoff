@@ -134,19 +134,39 @@ Each is marked `DEPARTURE` in the template, with its reason:
 python3 scripts/after_rails_new.py
 ```
 
-`rails-ready` fixes defects 1 to 3 at the source, so the script now has **one
-job left**, and it is specific to this repository:
+`rails-ready` fixes defects 1 to 3 at the source, so what is left is specific
+to this repository:
 
 > `rails new` writes no `.gitignore` when one already exists — and in a cloned
-> kickoff repository, one always does. So `tmp/`, `log/` and `storage/` end up
-> tracked. Measured once: **1779 files** in the template's own commit.
+> kickoff repository, one always does. `rails new --skip .` prints
+> `skip .gitignore`, and Rails' own runtime rules never land. So `tmp/`,
+> `log/` and `storage/` end up tracked. Measured once: **1779 files** in the
+> template's own commit.
 
-That case cannot be fixed by the template: it is a consequence of generating
-*into an existing repository*, which the template has no way to know about.
+🔴 **The script cannot repair that one**, and never could: the template ends on
+`git add .` and `git commit`, so the files are already in the project's first
+commit by the time anything of ours runs. The rules therefore ship with the
+stack layer —
+[`stacks/rails/.gitignore.append`](https://github.com/romain-nicod/kickoff/blob/main/stacks/rails/.gitignore.append)
+in the kickoff template, merged into this project's `.gitignore` by
+`bin/kickoff` — and are in place **before** `rails new` runs. They are the
+single source: no copy of them lives in the script.
 
-The script is idempotent, and `--dry-run` says what it would do. Its checks for
-defects 1 to 3 now report nothing to do — which is the expected outcome, not a
-failure.
+What the script does about it is **check** that the rules are in force, by
+asking git whether it would ignore `tmp/cache`, `log/development.log`,
+`storage/`, `public/assets`, `.bundle` and `config/master.key`. If any of them
+is not ignored, it says which and **exits non-zero** — that is the one failure
+here that stops everything else.
+
+Its remaining jobs: put `!.env.example` back last if something moved it,
+untrack any runtime file that slipped through, point the generators at
+Minitest, give the test database its per-worktree suffix, and name the missing
+gems. It is idempotent, and `--dry-run` says what it would do. Its checks for
+defects 1 to 3 report nothing to do — the expected outcome, not a failure.
+
+The same thing is caught a second time, on every pull request, by the
+`No generated or secret file is tracked` step of `.github/workflows/ci.yml`:
+a `.gitignore` that loses those rules later fails at nothing otherwise.
 
 ## Not using it
 

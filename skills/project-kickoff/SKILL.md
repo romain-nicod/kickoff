@@ -45,17 +45,27 @@ git config --local user.name "Romain Nicod"
 git config --local user.email 296897605+romain-nicod@users.noreply.github.com
 bin/kickoff --dry-run
 bin/kickoff
+# 🔴 Jamais `rails new` avant `bin/kickoff` : c'est lui qui pose dans `.gitignore` les
+# règles de Rails que `rails new --skip .` ne posera pas (« skip .gitignore »), et le
+# gabarit finit par un `git add .` qui commiterait tout `tmp/`, `log/` et `storage/`.
 rails new -d postgresql \
   -m https://raw.githubusercontent.com/romain-nicod/rails-ready/main/template.rb --skip .
 python3 scripts/after_rails_new.py
 ```
 
-`after_rails_new.py` signale les gems manquantes (`capybara`, `selenium-webdriver`,
-`sentry-rails`) : les ajouter, `bundle install`. Dans le même geste :
+`after_rails_new.py` s'arrête en code non nul si ces règles manquent, et signale les gems
+manquantes (`capybara`, `selenium-webdriver`, `sentry-rails`) : les ajouter, `bundle install`.
+Dans le même geste :
 
 - créer le dossier vault du projet et sa carte, reliés au graphe ;
 - inscrire le dépôt dans `ObsiClaud/dev/Dépôts AI-GMENTED.md` (ligne, paragraphe, recouvrement) ;
-- vérifier `git check-ignore -v .env` avant le premier push.
+- avant le premier push, lire ce que git ignore vraiment — un `.gitignore` muet coûte un
+  secret ou mille fichiers :
+
+```bash
+git check-ignore -v .env config/master.key tmp/cache log/development.log storage/x
+git ls-files log tmp storage 'config/*.key' | grep -v '\.keep$'   # doit ne rien afficher
+```
 
 ## 3. Configurer GitHub
 
