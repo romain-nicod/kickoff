@@ -1,27 +1,27 @@
 ---
 name: User story
-about: Un parcours utilisateur ou la réponse à un besoin, revu par Romain avant Ready
+about: A user journey, or the answer to a need, reviewed by Romain before Ready
 title: "[US] "
 labels: "type:user-story, à revoir par Romain"
 ---
 
-<!-- Gabarit de la méthode « Livraison applicative par user story » (§ 3 et § 4.7).
-     Titre : [US] <besoin ou parcours>. Romain ne lit que les US ; les tâches
-     [Task] sont des sous-issues de celle-ci. -->
+<!-- Template of the "delivery by user story" method (§ 3 and § 4.7).
+     Title: [US] <need or journey>. Romain only reads the stories; the [Task]
+     issues are sub-issues of this one. -->
 
-## État
+## State
 
-- Board : **Backlog** — Romain passe l'US en *Ready* après revue, l'agent retire alors le label `à revoir par Romain`.
-- Branche : `us-NNN-slug` (créée à l'ouverture de la session) · PR : —
+- Board: **Backlog** — Romain moves the story to *Ready* after review, and the agent then removes the `à revoir par Romain` label.
+- Branch: `us-NNN-slug` (created when the session opens) · PR: —
 
 ## User story
 
-En tant que <qui>, je veux <quoi>, afin de <pourquoi>.
+As <who>, I want <what>, so that <why>.
 
-## Critères d'acceptation
+## Acceptance criteria
 
-<!-- Vérifiables par quelqu'un d'autre. L'identifiant figure dans le nom du test
-     qui le vérifie (`test "CA-01 ..."`) : pas de plan de tests séparé. -->
+<!-- Verifiable by somebody else. The identifier appears in the name of the test
+     that verifies it (`test "CA-01 ..."`): no separate test plan. -->
 
 - [ ] **CA-01** —
 - [ ] **CA-02** —
@@ -29,34 +29,34 @@ En tant que <qui>, je veux <quoi>, afin de <pourquoi>.
 
 ## Impacts
 
-<!-- Chaque ligne est remplie, ou porte « aucun » explicitement. -->
+<!-- Every line is filled in, or explicitly says "none". -->
 
-| Impact | À faire |
+| Impact | To do |
 |---|---|
-| Wireframe (validé à la revue, avant *Ready*) | aucun |
-| Documents : schéma de données, wiki (`docs/wiki/`), `README`, `.env.example`, déploiement | aucun |
-| Migration de données | aucune |
-| Dépendance à une autre US | aucune |
+| Wireframe (approved at review, before *Ready*) | none |
+| Documents: data schema, wiki (`docs/wiki/`), `README`, `.env.example`, deployment | none |
+| Data migration | none |
+| Dependency on another story | none |
 
-## Hors périmètre
+## Out of scope
 
 -
 
-## Tâches
+## Tasks
 
-<!-- Sous-issues [Task], créées et tenues par l'agent. -->
+<!-- [Task] sub-issues, created and kept by the agent. -->
 
 - [ ] #
 
 ## Definition of Done
 
-- [ ] Critères d'acceptation vérifiés un par un
-- [ ] Tests unitaires, intégration, système (si interface) et non-régression écrits, vus rouges puis verts
-- [ ] Suite complète et CI vertes sur le dernier commit
-- [ ] Contrôles de sécurité passés (Brakeman, bundler-audit, `importmap audit`, tests de droits, CSRF, injection, XSS)
-- [ ] Passe UI/UX faite, captures jointes à la PR à 1512×982, 1280×800 et 390×844 (si interface)
-- [ ] QA idiomatique du diff faite, code commenté
-- [ ] US documentée dans le wiki du projet (parcours livré ; schéma d'architecture si la structure change ; ADR si une décision a été prise), `README` et `.env.example` à jour, apprentissages dans le vault
-- [ ] Testée en recette
-- [ ] PR relue et **mergée par Romain**
-- [ ] Déployée en production et vérifiée
+- [ ] Acceptance criteria verified one by one
+- [ ] Unit, integration, system (if there is an interface) and regression tests written, seen red then green
+- [ ] Full suite and CI green on the last commit
+- [ ] Security checks passed (Brakeman, bundler-audit, `importmap audit`, permission tests, CSRF, injection, XSS)
+- [ ] UI/UX pass done, screenshots attached to the pull request at 1512×982, 1280×800 and 390×844 (if there is an interface)
+- [ ] Idiomatic QA of the diff done, code commented
+- [ ] Story documented in the project wiki (the journey delivered; an architecture diagram if the structure changed; an ADR if a decision was taken), `README` and `.env.example` up to date, lessons written to the vault
+- [ ] Tested on the recette environment
+- [ ] Pull request reviewed and **merged by Romain**
+- [ ] Deployed to production and verified

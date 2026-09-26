@@ -1,3 +1,3 @@
 # CLAUDE.md
 
-Les règles de ce dépôt sont dans [AGENTS.md](AGENTS.md) : le lire avant toute action.
+The rules of this repository are in [AGENTS.md](AGENTS.md): read it before doing anything.

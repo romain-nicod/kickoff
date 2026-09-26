@@ -1,39 +1,39 @@
-<!-- Titre de la PR = titre de l'US. Une PR par US, ouverte quand tout est vert.
-     Pour une PR de déploiement, voir .github/PULL_REQUEST_TEMPLATE/deploiement.md. -->
+<!-- PR title = story title. One pull request per story, opened when everything is green.
+     For a deployment pull request, see .github/PULL_REQUEST_TEMPLATE/deployment.md. -->
 
-Closes #<!-- US -->
-Closes #<!-- chaque [Task] de l'US, une ligne par tâche -->
-Dépend de : #<!-- une seule ligne, seulement si l'US dépend d'une autre issue ; sinon la supprimer -->
+Closes #<!-- the story -->
+Closes #<!-- every [Task] of the story, one line per task -->
+Depends on: #<!-- a single line, only if the story depends on another issue; otherwise delete it -->
 
-<!-- Le corps ne cite que son US, ses [Task] et, le cas échéant, sa dépendance.
-     Aucune liste d'autres PR ou issues pour le contexte. -->
+<!-- The body only names its own story, its [Task] issues and, where there is one,
+     its dependency. No list of other pull requests or issues for context. -->
 
-## ⚠️ Après avoir récupéré cette branche
+## ⚠️ After pulling this branch
 
-<!-- Cocher ce que le relecteur doit lancer pour que l'application marche chez lui.
-     Supprimer la section si rien ne s'applique. -->
+<!-- Tick what the reviewer has to run for the application to work on their machine.
+     Delete the section when nothing applies. -->
 
-- [ ] `bundle install` — le Gemfile a changé
-- [ ] `bin/rails db:migrate` — nouvelle migration
-- [ ] `bin/rails db:seed` — les données de démonstration ont changé
-- [ ] nouvelle variable dans `.env` — son nom est dans `.env.example`, dire où trouver la valeur
-- [ ] autre :
+- [ ] `bundle install` — the Gemfile changed
+- [ ] `bin/rails db:migrate` — new migration
+- [ ] `bin/rails db:seed` — the demonstration data changed
+- [ ] new variable in `.env` — its name is in `.env.example`, say where to find the value
+- [ ] other:
 
-## Ce que ça change
+## What this changes
 
-<!-- Ce que Romain verra fonctionner, pas la liste des fichiers. Trois lignes. -->
-
--
-
-## Fichiers impactés
-
-<!-- Une ligne par fichier : POURQUOI il change, pas ce qu'il contient. -->
+<!-- What Romain will see working, not the list of files. Three lines. -->
 
 -
 
-## Instructions de test
+## Files impacted
 
-<!-- Les commandes exactes, puis les résultats réels sur le dernier commit. -->
+<!-- One line per file: WHY it changes, not what it contains. -->
+
+-
+
+## Test instructions
+
+<!-- The exact commands, then the real results on the last commit. -->
 
 ```bash
 bin/rails test
@@ -44,38 +44,38 @@ bundle exec bundler-audit --update
 bin/importmap audit
 ```
 
-| Contrôle | Résultat | Commit |
+| Check | Result | Commit |
 |---|---|---|
-| `bin/rails test` | <!-- n tests, n assertions, 0 échec --> | `<sha>` |
+| `bin/rails test` | <!-- n tests, n assertions, 0 failures --> | `<sha>` |
 | `bin/rails test:system` | | `<sha>` |
-| Lint et sécurité | | `<sha>` |
-| CI | <!-- lien --> | `<sha>` |
-| Recette (port 3100) | <!-- intégrée le JJ/MM, parcours testé --> | `<sha>` |
+| Lint and security | | `<sha>` |
+| CI | <!-- link --> | `<sha>` |
+| Recette (port 3100) | <!-- merged in on DD/MM, journey tested --> | `<sha>` |
 
-Parcours à suivre en recette :
+Journey to follow on the recette environment:
 
 1.
 
 ## UI/UX
 
-<!-- Si l'US touche une page : captures à 1512×982, 1280×800 et 390×844, avec des
-     données longues. Aucun défilement horizontal, cibles ≥ 44 px, contraste,
-     aucun texte anglais visible, états vides et erreurs qui mènent quelque part.
-     Sinon : « sans objet ». -->
+<!-- If the story touches a page: screenshots at 1512×982, 1280×800 and 390×844, with
+     long data. No horizontal scrolling, targets ≥ 44 px, contrast, no visible text in
+     the wrong language, empty states and errors that lead somewhere.
+     Otherwise: "not applicable". -->
 
-## QA idiomatique
+## Idiomatic QA
 
-<!-- Relecture du diff faite : conventions Rails, helpers natifs, pas de
-     factorisation excessive, commentaires d'intention en anglais, rien de mort. -->
+<!-- Diff read through: Rails conventions, native helpers, no over-factoring,
+     intent comments in English, nothing left dead. -->
 
-- [ ] Diff relu en entier
+- [ ] Whole diff read
 
 ## Definition of Done
 
-Suivie dans l'issue de l'US : les cases y sont cochées, pas ici.
+Tracked in the story's issue: the boxes are ticked there, not here.
 
-## Notes de déploiement
+## Deployment notes
 
-<!-- Migration, variable, tâche à lancer, interrupteur à activer, ordre à respecter.
-     Repris dans la rubrique « À savoir » du CHANGELOG.md au prochain déploiement.
-     Sinon : « aucune ». -->
+<!-- Migration, variable, task to run, switch to turn on, order to respect.
+     Carried over into the "À savoir" section of CHANGELOG.md at the next deployment.
+     Otherwise: "none". -->

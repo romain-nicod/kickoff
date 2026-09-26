@@ -1,28 +1,28 @@
 ---
-name: Tâche
-about: Une action concrète d'une user story, en sous-issue de celle-ci
+name: Task
+about: One concrete action of a user story, filed as its sub-issue
 title: "[Task] "
 labels: "Task"
 ---
 
-<!-- Titre : [Task] <action concrète>. Une tâche est toujours rattachée à une US
-     comme sous-issue ; la PR de l'US la ferme par `Closes #n`. -->
+<!-- Title: [Task] <concrete action>. A task is always attached to a story as a
+     sub-issue; the story's pull request closes it with `Closes #n`. -->
 
-## Story parente
+## Parent story
 
 - #
 
-## Livrable
+## Deliverable
 
-<!-- Ce qui existe une fois la tâche finie : un fichier, une migration, un écran,
-     une page du wiki. Concret : « migration qui ajoute `published_at` », pas
-     « travailler sur la publication ». -->
+<!-- What exists once the task is done: a file, a migration, a screen, a wiki
+     page. Concrete: "migration adding `published_at`", not "work on
+     publishing". -->
 
-## Critères de fin
+## Done when
 
 - [ ]
 - [ ]
 
 ## Notes
 
-<!-- Facultatif : fichiers touchés, piège rencontré, lien vers le commit. -->
+<!-- Optional: files touched, a trap met on the way, a link to the commit. -->

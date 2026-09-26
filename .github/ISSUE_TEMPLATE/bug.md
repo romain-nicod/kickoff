@@ -1,61 +1,61 @@
 ---
 name: Bug
-about: Un défaut constaté (recette, production, revue QA, test instable) — même cycle qu'une US
+about: A defect observed (recette, production, QA review, flaky test) — same cycle as a story
 title: "[BUG] "
 labels: "type:bug, à revoir par Romain"
 ---
 
-<!-- Titre : [BUG] <comportement fautif>. Romain lit les US et les bugs ; comme une US,
-     le bug passe par Backlog, puis Ready quand Romain l'a revu. -->
+<!-- Title: [BUG] <the faulty behaviour>. Romain reads the stories and the bugs;
+     like a story, a bug goes through Backlog, then Ready once he has reviewed it. -->
 
-## État
+## State
 
-- Board : **Backlog** — Romain passe le bug en *Ready* après revue, l'agent retire alors le label `à revoir par Romain`.
-- Branche : (créée à l'ouverture de la session) · PR : —
+- Board: **Backlog** — Romain moves the bug to *Ready* after review, and the agent then removes the `à revoir par Romain` label.
+- Branch: (created when the session opens) · PR: —
 
-## Constat
+## What happens
 
-<!-- Ce qui se passe, en une phrase, puis comment le reproduire. -->
+<!-- What happens, in one sentence, then how to reproduce it. -->
 
 1.
 2.
 3.
 
-- Où : production · recette · CI (test instable) · revue QA
-- Version (`VERSION`) et commit :
-- Largeur d'écran et navigateur :
-- Compte utilisé (fictif ; jamais un vrai mot de passe ici) :
+- Where: production · recette · CI (flaky test) · QA review
+- Version (`VERSION`) and commit:
+- Screen width and browser:
+- Account used (fictional; never a real password here):
 
-## Comportement attendu
+## Expected behaviour
 
-<!-- Citer le critère d'origine quand il existe : « #12 CA-03 ». -->
+<!-- Quote the original criterion when there is one: "#12 CA-03". -->
 
-## Critères d'acceptation
+## Acceptance criteria
 
-- [ ] **CA-01** — le comportement attendu est rétabli, vérifiable par quelqu'un d'autre
-- [ ] **CA-02** — un test de non-régression le prouve, vu rouge sur le code fautif
+- [ ] **CA-01** — the expected behaviour is back, verifiable by somebody else
+- [ ] **CA-02** — a regression test proves it, seen red against the faulty code
 
 ## Impacts
 
-<!-- Chaque ligne est remplie, ou porte « aucun » explicitement. -->
+<!-- Every line is filled in, or explicitly says "none". -->
 
-| Impact | À faire |
+| Impact | To do |
 |---|---|
-| Gravité : bloquant (parcours principal cassé, données en jeu) · majeur (un critère non tenu) · mineur | |
-| Données de production à corriger | aucune |
-| Documents : wiki (`docs/wiki/`), `README`, `.env.example` | aucun |
-| Migration de données | aucune |
-| Dépendance à une autre issue | aucune |
+| Severity: blocking (main journey broken, data at stake) · major (a criterion not met) · minor | |
+| Production data to correct | none |
+| Documents: wiki (`docs/wiki/`), `README`, `.env.example` | none |
+| Data migration | none |
+| Dependency on another issue | none |
 
 ## Definition of Done
 
-- [ ] Critères d'acceptation vérifiés un par un
-- [ ] Test de non-régression écrit et vu rouge avant la correction, puis vert
-- [ ] Suite complète et CI vertes sur le dernier commit
-- [ ] Contrôles de sécurité passés (Brakeman, bundler-audit, `importmap audit`)
-- [ ] Passe UI/UX faite, captures jointes à la PR à 1512×982, 1280×800 et 390×844 (si interface)
-- [ ] QA idiomatique du diff faite, code commenté
-- [ ] Piège ajouté à `docs/wiki/Pieges.md` s'il peut toucher d'autres US, apprentissages dans le vault
-- [ ] Testé en recette
-- [ ] PR relue et **mergée par Romain**
-- [ ] Déployé en production et vérifié, listé dans la rubrique « Corrections » du `CHANGELOG.md`
+- [ ] Acceptance criteria verified one by one
+- [ ] Regression test written and seen red before the fix, then green
+- [ ] Full suite and CI green on the last commit
+- [ ] Security checks passed (Brakeman, bundler-audit, `importmap audit`)
+- [ ] UI/UX pass done, screenshots attached to the pull request at 1512×982, 1280×800 and 390×844 (if there is an interface)
+- [ ] Idiomatic QA of the diff done, code commented
+- [ ] Trap added to `docs/wiki/Pieges.md` if it can hit other stories, lessons written to the vault
+- [ ] Tested on the recette environment
+- [ ] Pull request reviewed and **merged by Romain**
+- [ ] Deployed to production and verified, listed under "Corrections" in `CHANGELOG.md`

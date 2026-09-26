@@ -148,7 +148,7 @@ gh project item-add <n> --owner <propriétaire> --url <URL de l'issue>
 
    ```bash
    gh pr create --base main --head deploy/vX.Y.Z --title "[Déploiement] vX.Y.Z" \
-     --body-file .github/PULL_REQUEST_TEMPLATE/deploiement.md
+     --body-file .github/PULL_REQUEST_TEMPLATE/deployment.md
    ```
 
 4. CI verte, Romain merge. Déployer **le commit de merge** avec le script du projet.
