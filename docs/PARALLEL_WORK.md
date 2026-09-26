@@ -60,7 +60,7 @@ dependencies and the files they share. Two shapes, chosen **before** the
 first session opens:
 
 - **In sequence.** The story that writes a hot file goes first; the others
-  carry `Dépend de : #N` and start once it is merged.
+  carry `Depends on: #N` and start once it is merged.
 - **A floor, then a storey.** When every story of the batch needs the same
   hot files, the first story of the batch lays them down for all of them —
   migrations and `db/schema.rb`, routes, gems, navigation, seeds,

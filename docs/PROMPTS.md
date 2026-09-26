@@ -98,7 +98,7 @@ later.
 **Check before accepting:**
 - Every `FR-n` in the PRD is covered by at least one story, and no story invents a requirement that is not in it.
 - The acceptance criteria say what is observable, not how it is implemented.
-- No impact line is left blank: « aucun » is an answer, an empty cell is not.
+- No impact line is left blank: "none" is an answer, an empty cell is not.
 - The stories are created with the labels `type:user-story` and `à revoir par Romain`, in Backlog — Romain moves them to Ready.
 
 ## Design

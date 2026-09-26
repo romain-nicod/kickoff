@@ -245,7 +245,7 @@ Done. What is left, in this order:
      python3 scripts/check_placeholders.py
 
   5. Create the first user stories on .github/ISSUE_TEMPLATE/user_story.md,
-     in Backlog, labelled « à revoir par Romain ». Commit.
+     in Backlog, labelled "à revoir par Romain". Commit.
 """)
 
 
