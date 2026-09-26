@@ -1,24 +1,23 @@
 # {{PROJECT_NAME}} — AGENTS.md
 
-- Vault : `{{VAULT_FOLDER}}` (carte du projet, pièges, état d'avancement).
-- Méthode, à lire avant toute US : `/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md` (résumé en 8 lignes et § 10 bis d'abord).
-- Dépôt : https://github.com/{{REPO}} · board : <!-- URL du Project, affichée par scripts/setup_project.py --> · wiki : https://github.com/{{REPO}}/wiki (source : `docs/wiki/`).
-- Stack : Rails, PostgreSQL, Minitest, Capybara/Selenium. Commandes : `bin/setup`, `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`, `bundle exec bundler-audit --update`, `bin/importmap audit`.
-- Ports : dev `3000` dans `code/{{REPO_NAME}}` ; recette `3100` dans `code/{{REPO_NAME}}-recette` (branche locale `recette`, `bin/recette prepare|start`). Voir [docs/RECETTE.md](docs/RECETTE.md).
-- Issues sur les gabarits de `.github/ISSUE_TEMPLATE/` : `[US]` et `[BUG]`, revus par Romain qui les passe en *Ready* ; `[Task]`, sous-issues tenues par l'agent.
-- Une US = un worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, une branche `us-NNN-slug`, une PR.
-- Hygiène des branches : après merge constaté, supprimer branche locale et worktree ; branche fermée ou remplacée supprimée partout après bundle ; aucune `worktree-agent-*` après sa session ; contrôle mensuel ([CONTRIBUTING.md](CONTRIBUTING.md)).
-- Production : <!-- URL publique --> · déploiement : <!-- script du projet --> puis `python3 scripts/publish_release.py` ([docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
-- Emails : note vault `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · erreurs : Sentry (`SENTRY_DSN`).
+- Vault: `{{VAULT_FOLDER}}` (project map, traps, state of play).
+- Method, to be read before any story: `/Users/albert/Documents/Claude/ObsiClaud/dev/methode/Méthode - Livraison applicative par user story.md` (the eight-line summary and § 10 bis first).
+- Repository: https://github.com/{{REPO}} · board: <!-- Project URL, printed by scripts/setup_project.py --> · wiki: https://github.com/{{REPO}}/wiki (source: `docs/wiki/`).
+- Stack: Rails, PostgreSQL, Minitest, Capybara/Selenium. Commands: `bin/setup`, `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`, `bundle exec bundler-audit --update`, `bin/importmap audit`.
+- Ports: dev `3000` in `code/{{REPO_NAME}}`; recette `3100` in `code/{{REPO_NAME}}-recette` (local `recette` branch, `bin/recette prepare|start`). See [docs/RECETTE.md](docs/RECETTE.md).
+- Issues on the templates of `.github/ISSUE_TEMPLATE/`: `[US]` and `[BUG]`, reviewed by Romain who moves them to *Ready*; `[Task]`, sub-issues kept by the agent.
+- One story = one worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, one branch `us-NNN-slug`, one pull request.
+- Branch hygiene: once a merge is established, delete the local branch and the worktree; a branch closed or replaced is deleted everywhere once bundled; no `worktree-agent-*` survives its session; monthly check ([CONTRIBUTING.md](CONTRIBUTING.md)).
+- Production: <!-- public URL --> · deployment: <!-- the project's script --> then `python3 scripts/publish_release.py` ([docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md)).
+- Emails: vault note `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · errors: Sentry (`SENTRY_DSN`).
 
-## Interdits
+## Forbidden
 
-- Romain seul merge : jamais de merge, d'auto-merge ni de merge programmé par un agent (seule la branche locale `recette` fait exception).
-- Aucun secret dans Git ; aucune mention de l'assistant ou de son éditeur, nulle part ; aucune ligne `Co-authored-by:` dans un commit ou une PR.
-- Rien qui coûte de l'argent (dyno ponctuel, add-on, changement d'offre, worker, seconde base) sans l'accord explicite du titulaire du compte, demandé avant la commande et valable pour elle seule.
-- Identité Git du clone, avant tout commit : `git config --local user.name "Romain Nicod"` et `git config --local user.email 296897605+romain-nicod@users.noreply.github.com`.
-- Code, commentaires et noms de tests en anglais ; commits, issues, PR et interface en français.
+- Romain merges, nobody else: never a merge, an auto-merge or a scheduled merge by an agent (the local `recette` branch is the only exception).
+- No secret in Git; no mention of the assistant or of its editor, anywhere; no `Co-authored-by:` line in a commit or a pull request.
+- Git identity of the clone, before any commit: `git config --local user.name "Romain Nicod"` and `git config --local user.email 296897605+romain-nicod@users.noreply.github.com`.
+- **English everywhere in the repository**: code, comments, test names, commits, issues, pull requests, documentation. Three exceptions, and no fourth: the product's own interface follows the language of its users, a verbatim quote stays as it was said, and the method's vocabulary keeps the words that name things elsewhere — `recette` (a branch, a script, a port), the board statuses and the `à revoir par Romain` label. Renaming those is a migration, not a translation.
 
-## Pièges
+## Traps
 
-- Pièges transverses : [docs/wiki/Pieges.md](docs/wiki/Pieges.md).
+- Cross-cutting traps: [docs/wiki/Pieges.md](docs/wiki/Pieges.md).
