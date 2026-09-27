@@ -6,8 +6,24 @@ labels: "type:user-story, à revoir par Romain"
 ---
 
 <!-- Template of the "delivery by user story" method (§ 3 and § 4.7).
-     Title: [US] <need or journey>. Romain only reads the stories; the [Task]
-     issues are sub-issues of this one. -->
+     Title: [US] <need or journey>. Romain only reads the stories; the story is a
+     sub-issue of its [Epic], and the [Task] issues are sub-issues of this one. -->
+
+<!-- 🔴 The review header comes FIRST: it is what Romain reads before anything else
+     (method § 3 bis.3). One emoji: ⚠️ while a document waits for Romain or a
+     wireframe or spec is to be reviewed, 🟢 once the issue can move on without
+     him. Every line is filled in or says "none". The "To validate" line only
+     exists under ⚠️ and gives the document's PATH. The native relations
+     (sub-issue, blocked by) are authoritative; these lines mirror them. -->
+
+⚠️ **To validate by Romain**
+
+- Parent: #<epic> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
+- Impacted pages: none <!-- route and screen name: `/map` (Trip map) -->
+- Wireframes to review: none <!-- one link per screen: Trip map → <link> -->
+- Specs to review: none <!-- path of each spec -->
+
+**To validate:** `<path of the document>` — <the decision expected, in one line>
 
 ## State
 
@@ -36,7 +52,6 @@ As <who>, I want <what>, so that <why>.
 | Wireframe (approved at review, before *Ready*) | none |
 | Documents: data schema, wiki (`docs/wiki/`), `README`, `.env.example`, deployment | none |
 | Data migration | none |
-| Dependency on another story | none |
 
 ## Out of scope
 

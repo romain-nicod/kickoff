@@ -8,9 +8,19 @@ labels: "Task"
 <!-- Title: [Task] <concrete action>. A task is always attached to a story as a
      sub-issue; the story's pull request closes it with `Closes #n`. -->
 
-## Parent story
+<!-- 🔴 The review header comes FIRST: it is what Romain reads before anything else
+     (method § 3 bis.3). One emoji: ⚠️ while a document waits for Romain or a
+     wireframe or spec is to be reviewed, 🟢 once the issue can move on without
+     him. Every line is filled in or says "none". The "To validate" line only
+     exists under ⚠️ and gives the document's PATH. The native relations
+     (sub-issue, blocked by) are authoritative; these lines mirror them. -->
 
-- #
+🟢 **Nothing to validate**
+
+- Parent: #<story> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
+- Impacted pages: none <!-- route and screen name: `/map` (Trip map) -->
+- Wireframes to review: none <!-- one link per screen: Trip map → <link> -->
+- Specs to review: none <!-- path of each spec -->
 
 ## Deliverable
 
