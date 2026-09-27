@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- The maintenance page. One file, served by whatever answers when the
+     application cannot: the edge, the local proxy or a service worker.
+     See docs/OPERATIONS.md. It stays self-contained — no stylesheet, no
+     script, no image — because nothing else is reachable when it shows.
+     The text is in the language of the product's readers.
+     Contact: TO FILL IN — replace the address below, then delete this line. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<meta name="robots" content="noindex, nofollow">
+<!-- Reloads by itself: the site comes back without anyone touching anything. -->
+<meta http-equiv="refresh" content="30">
+<title>{{PROJECT_NAME}} fait une pause</title>
+<style>
+  :root { --fond: #fff; --texte: #111; --discret: #555; --filet: #111; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fond: #111; --texte: #eee; --discret: #aaa; --filet: #eee; }
+  }
+  body {
+    background: var(--fond);
+    color: var(--texte);
+    font: 16px/1.5 system-ui, sans-serif;
+    max-width: 34rem;
+    margin: 6rem auto;
+    padding: 0 1rem;
+  }
+  h1 { font-size: 1.25rem; margin: 0 0 1.5rem; }
+  p { margin: 0 0 1rem; }
+  .discret { color: var(--discret); font-size: .875rem; }
+  hr { border: 0; border-top: 1px solid var(--filet); margin: 2rem 0; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+  <h1>{{PROJECT_NAME}} fait une pause.</h1>
+
+  <p>Le site est en cours de mise à jour, ou le serveur qui l'héberge
+  est momentanément injoignable. Rien n'est perdu.</p>
+
+  <p>Cette page se recharge toute seule toutes les 30 secondes. Vous
+  pouvez la laisser ouverte.</p>
+
+  <hr>
+
+  <p>Si ça dure plus d'une heure, écrivez-nous :<br>
+  <a href="mailto:contact@example.org">contact@example.org</a></p>
+
+  <p class="discret">Ce n'est pas votre faute, et votre appareil n'y est pour rien.</p>
+</body>
+</html>

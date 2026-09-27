@@ -43,12 +43,14 @@ The `## vX.Y.Z — DD/MM/YYYY` section of `CHANGELOG.md`, visible in this pull r
 - [ ] The diff only touches `VERSION`, `CHANGELOG.md`, `docs/wiki/Release-notes.md` and the migration guard
 - [ ] Every migration in the table above is reviewed and approved
 - [ ] Nothing under "À savoir" needs a prior action that has not been taken
+- [ ] First deployment only: the checklist of `docs/OPERATIONS.md` § 3 is done, with the date each alert was fired
 
 ## After the merge — agent
 
 - [ ] Deploy **the merge commit** with the project's script: CI green, backup, rollback, verification
 - [ ] `python3 scripts/publish_release.py`: tag `vX.Y.Z` and GitHub release from the changelog section
 - [ ] Verified in production: <!-- URL and journeys checked -->
+- [ ] The maintenance page showed during the switch, and the external probe (M1) is green again
 - [ ] Stories of the batch moved to *Done*
 
 ## Rollback
