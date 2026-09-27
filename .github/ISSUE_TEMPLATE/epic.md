@@ -15,8 +15,8 @@ labels: "type:epic, à revoir par Romain"
 
 - Blocked by: none · Blocks: none · Milestones: vX.Y.0
 - Impacted pages: none <!-- route and screen name -->
-- Wireframes to review: none <!-- one link per screen -->
-- Specs to review: none <!-- path of each spec -->
+- Wireframes: none <!-- one link per impacted screen, created by the agent -->
+- Specs: none <!-- path of each spec, written by the agent when one is needed -->
 
 **To validate:** `<path of the document>` — <the decision expected, in one line>
 

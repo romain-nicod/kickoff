@@ -111,9 +111,14 @@ scratch file, never in the repository.
   to *Ready* at the latest.
 
 🔴 **The review header** opens every issue: ⚠️ *To validate by Romain* or 🟢 *Nothing to validate*,
-then parent · blocked by · blocks · milestone, impacted pages, wireframes to review (one link per
-screen), specs to review — each filled in or "none" — and, under ⚠️ only, **To validate:** the
-**path** of the document. The `à revoir par Romain` label follows the emoji.
+then parent · blocked by · blocks · milestone, impacted pages, wireframes (one link per impacted
+screen), specs — every one of them, not only those under review, each line filled in or "none" —
+and, under ⚠️ only, **To validate:** the **path** of the document. The `à revoir par Romain` label
+follows the emoji.
+
+🔴 **A screen impacted ⇒ the agent creates its wireframe and links it, every time**, when the issue is
+created, without being asked. **A spec needed ⇒ the agent writes it** and links it. "To be produced"
+is never a lasting state.
 
 ```bash
 gh issue create --repo <owner>/<name> --title "[US] <need or journey>" \
