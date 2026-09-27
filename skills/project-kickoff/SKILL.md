@@ -77,7 +77,7 @@ gh auth refresh -s project --hostname github.com
 python3 scripts/setup_project.py --dry-run && python3 scripts/setup_project.py
 ```
 
-Labels: `type:user-story`, `Task`, `type:bug`, `à revoir par Romain`, `status:blocked`. Board:
+Labels: `type:user-story`, `Task`, `type:bug`, `type:defect`, `remediation:validée`, `à revoir par Romain`, `status:blocked`. Board:
 `Backlog · Ready · In progress · En recette · In review · À déployer · Done`. Those names are
 identifiers: the scripts create them literally, and translating one breaks the board.
 
@@ -116,6 +116,10 @@ gh project item-add <n> --owner <owner> --url <issue URL>
 - **`[BUG] <the faulty behaviour>`** on `bug.md`, labels `type:bug` and `à revoir par Romain`: a defect
   observed on the recette environment, in production, in a QA review, or a flaky test. Same cycle as a
   story.
+- **`[DEFECT] <the error>`** on `defect.md`, label `type:defect`: an error in how the work was done —
+  a step skipped, a rule ignored, a check claimed without being run. Filed by the agent **in the session
+  that made it**, before anything else: what happened, why, previous occurrences, prevention. See
+  `docs/DEFECTS.md`.
 - From three issues to review on: vault note `<Project> - Revue des US - YYYYMMDD`, one checkbox and
   one comment line per issue.
 - **Romain moves them to *Ready*.** The agent then removes the label:
