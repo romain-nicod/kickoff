@@ -13,7 +13,8 @@ The deployment pull request that first reaches production checks they are done.
 ### One page, one file
 
 [`public/maintenance.html`](../public/maintenance.html): self-contained (no stylesheet, script or
-image to fetch), in the language of the product's readers, readable on a phone, light and dark, a
+image to fetch), generic and in English like the template — a project whose readers speak
+another language translates it —, readable on a phone, light and dark, a
 contact, and a reload every 30 s so the site comes back on its own. Whatever serves it answers
 **`503` with `Retry-After`**, so search engines do not index it. A static site moves the file to
 the root it serves; it stays **one** file whichever path serves it.
