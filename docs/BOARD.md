@@ -33,8 +33,9 @@ python3 scripts/setup_project.py
 ```
 
 The script creates the board, links it to the repository, sets the seven statuses, adds the issues it
-is missing (open ones in *Backlog*, closed ones in *Done*) and creates three views: *Kanban*,
-*À revoir par Romain*, *All items*. It never moves an item that already holds a status.
+is missing (open ones in *Backlog*, closed ones in *Done*) and creates four views: *Kanban*,
+*À revoir par Romain*, *Defects* (the `type:defect` issues: the agent's failures, apart from the
+product's bugs), *All items*. It never moves an item that already holds a status.
 
 ⚠️ Rewriting the options of *Status* gives them new identifiers: every item loses its status. On a
 board that already holds statuses the script stops; `--force-statuses` overrides it.

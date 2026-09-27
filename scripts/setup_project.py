@@ -45,6 +45,8 @@ COLOURS = ["GRAY", "BLUE", "YELLOW", "ORANGE", "PURPLE", "PINK", "GREEN"]
 VIEWS = [
     ("Kanban", "BOARD_LAYOUT", None),
     ("À revoir par Romain", "TABLE_LAYOUT", 'label:"à revoir par Romain"'),
+    # The agent's own failures, apart from the product's bugs (docs/DEFECTS.md).
+    ("Defects", "TABLE_LAYOUT", "label:type:defect"),
     ("All items", "TABLE_LAYOUT", None),
 ]
 
