@@ -1,0 +1,255 @@
+{
+  "_comment": [
+    "The delivery board, described once. scripts/setup_project.py applies it.",
+    "Sanitised from the HotelRooms board (ai-gmented-pm/hotelrooms, Le Wagon",
+    "certification, Bloc 2), which proved the shape on a four-developer team.",
+    "",
+    "Edit this file, re-run the script: it creates what is missing and never",
+    "deletes. A field or a view is matched BY NAME, so renaming one here",
+    "creates a second one on the board instead of renaming the first.",
+    "",
+    "What the API cannot set, and stays manual (docs/BOARD.md): the built-in",
+    "workflows, the grouping and the sorting of a view, and the two date",
+    "fields of the Roadmap layout."
+  ],
+  "title": "{{PROJECT_NAME}} — livraison",
+  "short_description": "Delivery board of {{PROJECT_NAME}}: one item per user story, the seven statuses of the method.",
+  "readme_file": ".github/board.md",
+  "status": [
+    {
+      "name": "Backlog",
+      "color": "GRAY",
+      "description": "Opened by the agent, label « à revoir par Romain »"
+    },
+    {
+      "name": "Ready",
+      "color": "BLUE",
+      "description": "Romain alone puts a story here"
+    },
+    {
+      "name": "In progress",
+      "color": "YELLOW",
+      "description": "The agent, when it opens the worktree"
+    },
+    {
+      "name": "En recette",
+      "color": "ORANGE",
+      "description": "Branch merged into recette, every test green"
+    },
+    {
+      "name": "In review",
+      "color": "PURPLE",
+      "description": "Pull request open, CI green"
+    },
+    {
+      "name": "À déployer",
+      "color": "PINK",
+      "description": "Set by the board workflow, on merge"
+    },
+    {
+      "name": "Done",
+      "color": "GREEN",
+      "description": "Deployment verified"
+    }
+  ],
+  "fields": [
+    {
+      "name": "MoSCoW",
+      "type": "SINGLE_SELECT",
+      "why": "What ships if time runs out. Named MoSCoW and not « Priorité » on purpose: a view filter addresses a field by its name in lowercase, and moscow: has no accent to get wrong.",
+      "options": [
+        {
+          "name": "Must have",
+          "color": "RED",
+          "description": "The release is worthless without it"
+        },
+        {
+          "name": "Should have",
+          "color": "ORANGE",
+          "description": "Painful to drop, not fatal"
+        },
+        {
+          "name": "Could have",
+          "color": "YELLOW",
+          "description": "Taken if the sprint allows"
+        },
+        {
+          "name": "Won't have",
+          "color": "GRAY",
+          "description": "Decided out of this release, kept for the record"
+        }
+      ]
+    },
+    {
+      "name": "Phase",
+      "type": "SINGLE_SELECT",
+      "why": "The stretch of the project a story belongs to. These options are placeholders — rename them to the project's own phases before the first story.",
+      "options": [
+        {
+          "name": "0 · Kickoff",
+          "color": "GRAY",
+          "description": "Working agreement, repository, board, environments"
+        },
+        {
+          "name": "1 · Walking skeleton",
+          "color": "BLUE",
+          "description": "One thin slice deployed end to end"
+        },
+        {
+          "name": "2 · Core flow",
+          "color": "GREEN",
+          "description": "The feature the product exists for"
+        },
+        {
+          "name": "3 · Quality & release",
+          "color": "PURPLE",
+          "description": "Tests, security, performance, first release"
+        },
+        {
+          "name": "4 · Feedback",
+          "color": "PINK",
+          "description": "Reprioritised after real use"
+        }
+      ]
+    },
+    {
+      "name": "Sprint",
+      "type": "ITERATION",
+      "why": "Iterations, so the Current sprint view can filter on sprint:@current and never be edited again.",
+      "iteration": {
+        "duration_days": 14,
+        "starts_on": "wednesday",
+        "count": 4
+      }
+    },
+    {
+      "name": "Estimate",
+      "type": "NUMBER",
+      "why": "Story points. Only useful once a few sprints give it a scale — leave it empty until then."
+    },
+    {
+      "name": "Start date",
+      "type": "DATE",
+      "why": "Left in English, and paired with Target date, because the Roadmap layout is configured on two date fields and these are the names it offers first."
+    },
+    {
+      "name": "Target date",
+      "type": "DATE",
+      "why": "See Start date."
+    }
+  ],
+  "views": [
+    {
+      "name": "Kanban",
+      "layout": "BOARD_LAYOUT",
+      "why": "Where the work stands. A board view created by the API is already grouped by Status; Status is therefore left out of the card.",
+      "fields": [
+        "Title",
+        "Assignees",
+        "MoSCoW",
+        "Sprint",
+        "Linked pull requests",
+        "Sub-issues progress"
+      ]
+    },
+    {
+      "name": "À revoir par Romain",
+      "layout": "TABLE_LAYOUT",
+      "filter": "label:\"à revoir par Romain\"",
+      "why": "Romain's own queue: what the agent opened and nobody has moved to Ready.",
+      "fields": [
+        "Title",
+        "Status",
+        "MoSCoW",
+        "Labels",
+        "Created"
+      ]
+    },
+    {
+      "name": "Current sprint",
+      "layout": "BOARD_LAYOUT",
+      "filter": "sprint:@current",
+      "why": "@current follows the iterations on its own — no filter to edit at each sprint.",
+      "fields": [
+        "Title",
+        "Assignees",
+        "Status",
+        "Estimate",
+        "Linked pull requests",
+        "Sub-issues progress"
+      ]
+    },
+    {
+      "name": "Prioritized backlog",
+      "layout": "TABLE_LAYOUT",
+      "filter": "-status:Done -moscow:\"Won't have\"",
+      "why": "What is left to do, worst first. Group it by MoSCoW by hand: the API does not set a grouping.",
+      "fields": [
+        "Title",
+        "MoSCoW",
+        "Phase",
+        "Estimate",
+        "Status",
+        "Assignees"
+      ]
+    },
+    {
+      "name": "Roadmap",
+      "layout": "ROADMAP_LAYOUT",
+      "filter": "-label:Task",
+      "why": "One milestone per release, side by side. A roadmap view refuses visible fields — its columns are its two date fields, and they are set by hand, like its grouping."
+    },
+    {
+      "name": "Epics",
+      "layout": "TABLE_LAYOUT",
+      "filter": "-label:Task",
+      "why": "Epic → story → task. Group it by Parent issue by hand.",
+      "fields": [
+        "Title",
+        "Status",
+        "Phase",
+        "Target date",
+        "Sub-issues progress"
+      ]
+    },
+    {
+      "name": "Defects",
+      "layout": "TABLE_LAYOUT",
+      "filter": "label:type:defect",
+      "why": "The agent's own failures, apart from the product's bugs (docs/DEFECTS.md).",
+      "fields": [
+        "Title",
+        "Status",
+        "Assignees",
+        "Created"
+      ]
+    },
+    {
+      "name": "Blocked",
+      "layout": "TABLE_LAYOUT",
+      "filter": "label:\"status:blocked\"",
+      "why": "The board has no Blocked status: without this view a blocked story looks exactly like work in progress.",
+      "fields": [
+        "Title",
+        "Status",
+        "Assignees",
+        "Labels",
+        "Updated"
+      ]
+    },
+    {
+      "name": "All items",
+      "layout": "TABLE_LAYOUT",
+      "why": "Everything, nothing hidden. GitHub's own first view, renamed.",
+      "fields": [
+        "Title",
+        "Status",
+        "MoSCoW",
+        "Phase",
+        "Sprint",
+        "Assignees",
+        "Linked pull requests"
+      ]
+    }
+  ]
+}

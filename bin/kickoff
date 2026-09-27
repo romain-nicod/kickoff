@@ -27,8 +27,8 @@ CONFIG = ROOT / "kickoff.yml"
 TEMPLATE_ONLY = ["README.md", "kickoff.yml", "stacks", "skills", "bin/kickoff"]
 
 # Text files we substitute into. Everything else is copied untouched.
-TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".py", ".erb", ".html", ".css",
-                 ".js", ".rb", ".example", ".txt", ""}
+TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".json", ".py", ".erb", ".html",
+                 ".css", ".js", ".rb", ".example", ".txt", ""}
 
 SKIP_DIRS = {".git", "node_modules", "tmp", "log", "vendor"}
 
