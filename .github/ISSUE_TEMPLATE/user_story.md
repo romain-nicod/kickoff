@@ -13,9 +13,12 @@ labels: "type:user-story, à revoir par Romain"
      (method § 3 bis.3). One checkbox per impacted screen, per wireframe to validate
      and per spec; Romain ticks what he has validated, and the issue turns 🟢 when
      every box is ticked. Each list is filled in or says "none". A screen impacted
-     means a wireframe the agent creates and links; a spec needed means one the
-     agent writes. Native relations (sub-issue, blocked by) are authoritative; the
-     last line mirrors them. -->
+     means a wireframe the agent creates and links — in Claude Design, live in the
+     session: one board per screen on the project's design canvas, the board's link
+     here, the canvas sources exported to projects/<domain>/<project>/wireframes/
+     (method § 3 bis.3, rule of 28/09/2026). A spec needed means one the agent
+     writes. Native relations (sub-issue, blocked by) are authoritative; the last
+     line mirrors them. -->
 
 ⚠️ **To validate by Romain**
 
@@ -23,7 +26,7 @@ labels: "type:user-story, à revoir par Romain"
 - [ ] none <!-- one per screen: Trip map — `/stages` -->
 
 **Wireframes to validate**
-- [ ] none <!-- one per impacted screen: Trip map → <link> -->
+- [ ] none <!-- one per impacted screen: Trip map → <link to its Claude Design board> -->
 
 **Specs to validate**
 - [ ] none <!-- one per spec: `<path>` -->
