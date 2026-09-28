@@ -9,6 +9,7 @@
 - One story = one worktree `code/{{REPO_NAME}}-worktrees/us-NNN-slug/`, one branch `us-NNN-slug`, one pull request.
 - Branch hygiene: once a merge is established, delete the local branch and the worktree; a branch closed or replaced is deleted everywhere once bundled; no `worktree-agent-*` survives its session; monthly check ([CONTRIBUTING.md](CONTRIBUTING.md)).
 - Production: <!-- public URL --> · deployment: <!-- the project's script --> then `python3 scripts/publish_release.py` ([docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
+- Operations ([docs/OPERATIONS.md](docs/OPERATIONS.md)): maintenance page served by: <!-- edge Worker, or local proxy + service worker --> · probe M1: <!-- tool, recipient --> · heartbeat M2: <!-- healthchecks.io check names -->.
 - Emails: vault note `dev/outils/Emails - Envoi SMTP Infomaniak et tests Mailpit.md` · errors: Sentry (`SENTRY_DSN`).
 
 ## Forbidden

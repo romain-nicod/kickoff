@@ -85,6 +85,10 @@ Whatever the hosting, it does at least this, in this order:
 5. run the migrations, then verify production (`/up`, one main journey);
 6. roll back to the previous version if the verification fails, and say so.
 
+While it runs, visitors get the maintenance page, never a raw `502` (case A1 of
+[OPERATIONS.md](OPERATIONS.md)). The **first** deployment to production also needs the checklist of
+OPERATIONS.md § 3: the maintenance page and the four monitors, each alert fired once.
+
 ## Rolling back
 
 An agent never pushes to `main`: no `git revert` pushed directly. Rolling back redeploys the previous

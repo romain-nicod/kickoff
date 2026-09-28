@@ -137,6 +137,11 @@ gh project item-add <n> --owner <owner> --url <issue URL>
 - **`[BUG] <the faulty behaviour>`** on `bug.md`, labels `type:bug` and `à revoir par Romain`: a defect
   observed on the recette environment, in production, in a QA review, or a flaky test. Same cycle as a
   story.
+- **Two stories exist in every project from day one**, whatever the need: `[US] Show a maintenance
+  page when the site does not answer` and `[US] Be warned when the site, its jobs or its backups
+  stop`. Their cases and services are numbered in `docs/OPERATIONS.md` (A1–B5, M1–M4); the
+  criteria cite those numbers, and say which cases the project's exposure leaves uncovered. The
+  first deployment to production waits for both.
 - From three issues to review on: vault note `<Project> - Revue des US - YYYYMMDD`, one checkbox and
   one comment line per issue.
 - **Romain moves them to *Ready*.** The agent then removes the label:
