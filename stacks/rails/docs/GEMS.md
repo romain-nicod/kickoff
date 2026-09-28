@@ -52,9 +52,20 @@ The tier *is* the decision.
 | `cloudinary` | Users upload files | An external account, and a paid one past the free tier |
 | `ruby_llm` | The product calls a language model | An API key, a budget, and authentication in front of it |
 | `neighbor` | Search must work on meaning, not words | A PostgreSQL extension, and a vector column tied to one embedding model |
+| `image_processing` + `ruby-vips` | The product resizes or crops an uploaded image | `libvips`, a system library, on every machine **and** on CI |
 
 🔴 `devise` and `pundit` are uncommented **together**. Authorization without
 authentication has no subject.
+
+🔴 `image_processing` and `ruby-vips` are uncommented **together** too, and
+`config.active_storage.variant_processor = :disabled` is **deleted**, not
+edited. Since `image_processing` 2.0 the processor is a soft dependency: the
+gem alone installs cleanly and produces nothing. Pin **`"~> 2.0"`** and never
+`"~> 1.2"`, which is what `rails new` writes to this day, Rails 8.1.4
+included — 1.14.0 is the last 1.x release, so that line is frozen and will
+never carry the hardening published in 2.0.x. Needs Rails >= 8.1.4: before
+that, Active Storage did not recognise the new `LoadError` and the
+application **did not boot**.
 
 ## Not picked — and why
 
