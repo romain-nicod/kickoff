@@ -22,7 +22,8 @@ agent's job, one `gh project item-edit` at a time — see docs/BOARD.md.
 
 Two things the API does not expose, walked through by hand in
 docs/BOARD.md: the board's built-in workflows (an issue closed by a merge
-goes to `À déployer`) and the grouping of the Kanban view.
+goes to `À déployer`), the grouping of the views and the date fields of
+the Roadmap view.
 """
 
 import argparse
@@ -46,6 +47,11 @@ VIEWS = [
     ("Kanban", "BOARD_LAYOUT", None),
     ("À revoir par Romain", "TABLE_LAYOUT", 'label:"à revoir par Romain"'),
     ("All items", "TABLE_LAYOUT", None),
+    # One milestone per release (method § 3 bis.2): the roadmap shows them
+    # side by side. Its date fields and its grouping are set by hand.
+    ("Roadmap", "ROADMAP_LAYOUT", "-label:Task"),
+    # Epic → story → task: a table grouped by parent issue, by hand too.
+    ("Epics", "TABLE_LAYOUT", "-label:Task"),
 ]
 
 
@@ -268,7 +274,8 @@ def main():
     print(f"\nboard ready: {project.get('url', f'#{number}')}")
     print("Left by hand, once (docs/BOARD.md): the built-in workflows — "
           "\"Item closed\" and \"Pull request merged\" set À déployer — "
-          "and the Kanban grouped by Status.")
+          "the Kanban grouped by Status, the Roadmap dated and grouped by "
+          "Milestone, the Epics view grouped by Parent issue.")
 
 
 if __name__ == "__main__":

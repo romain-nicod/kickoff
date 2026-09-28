@@ -8,6 +8,27 @@ labels: "type:bug, à revoir par Romain"
 <!-- Title: [BUG] <the faulty behaviour>. Romain reads the stories and the bugs;
      like a story, a bug goes through Backlog, then Ready once he has reviewed it. -->
 
+<!-- 🔴 The review header comes FIRST: it is what Romain reads before anything else
+     (method § 3 bis.3). One checkbox per impacted screen, per wireframe to validate
+     and per spec; Romain ticks what he has validated, and the issue turns 🟢 when
+     every box is ticked. Each list is filled in or says "none". A screen impacted
+     means a wireframe the agent creates and links; a spec needed means one the
+     agent writes. Native relations (sub-issue, blocked by) are authoritative; the
+     last line mirrors them. -->
+
+⚠️ **To validate by Romain**
+
+**Impacted screens**
+- [ ] none <!-- one per screen: Trip map — `/stages` -->
+
+**Wireframes to validate**
+- [ ] none <!-- one per impacted screen: Trip map → <link> -->
+
+**Specs to validate**
+- [ ] none <!-- one per spec: `<path>` -->
+
+Parent: #<epic> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
+
 ## State
 
 - Board: **Backlog** — Romain moves the bug to *Ready* after review, and the agent then removes the `à revoir par Romain` label.
@@ -45,7 +66,6 @@ labels: "type:bug, à revoir par Romain"
 | Production data to correct | none |
 | Documents: wiki (`docs/wiki/`), `README`, `.env.example` | none |
 | Data migration | none |
-| Dependency on another issue | none |
 
 ## Definition of Done
 

@@ -33,8 +33,8 @@ python3 scripts/setup_project.py
 ```
 
 The script creates the board, links it to the repository, sets the seven statuses, adds the issues it
-is missing (open ones in *Backlog*, closed ones in *Done*) and creates three views: *Kanban*,
-*À revoir par Romain*, *All items*. It never moves an item that already holds a status.
+is missing (open ones in *Backlog*, closed ones in *Done*) and creates five views: *Kanban*,
+*À revoir par Romain*, *All items*, *Roadmap* and *Epics*. It never moves an item that already holds a status.
 
 ⚠️ Rewriting the options of *Status* gives them new identifiers: every item loses its status. On a
 board that already holds statuses the script stops; `--force-statuses` overrides it.
@@ -48,9 +48,34 @@ The API exposes neither the built-in workflows nor the grouping of the views.
 3. **Pull request merged** → enable → `Status` = `À déployer`.
 4. **Auto-add to project** → enable → filter `is:issue is:open` on this repository.
 5. **Kanban** view → `⋯` → *Group by* → `Status`.
+6. **Roadmap** view → *Date fields* → start and target = `Milestone` → `⋯` → *Group by* →
+   `Milestone`. Each release then shows as a band ending on its due date.
+7. **Epics** view → `⋯` → *Group by* → `Parent issue`. Add the *Sub-issues progress* field if
+   GitHub does not show it.
 
 If the script could not set the statuses: `Status` → *Edit field* → create the options in the order of
 the table above, with exactly those names.
+
+## Epics, dependencies and milestones
+
+The rules are the method's (§ 3 bis); these are the commands.
+
+```bash
+# A story or a bug becomes a native sub-issue of its epic (same call for a task under its story)
+id=$(gh api repos/{{OWNER}}/<repo>/issues/<story> --jq .id)
+gh api repos/{{OWNER}}/<repo>/issues/<epic>/sub_issues -F sub_issue_id="$id"
+
+# <story> is blocked by <other>: a native relation, shown on the issue and on the board
+id=$(gh api repos/{{OWNER}}/<repo>/issues/<other> --jq .id)
+gh api repos/{{OWNER}}/<repo>/issues/<story>/dependencies/blocked_by -F issue_id="$id"
+
+# One milestone per release, with its due date; an issue gets it when it moves to Ready
+gh api repos/{{OWNER}}/<repo>/milestones -f title="vX.Y.0 — <theme>" -f due_on="YYYY-MM-DDT00:00:00Z"
+gh issue edit <n> --milestone "vX.Y.0 — <theme>"
+```
+
+After each change, the review header at the top of the issue body is brought in line: the native
+relation is authoritative, the header mirrors it.
 
 ## Moving a story
 

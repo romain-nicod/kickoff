@@ -6,8 +6,29 @@ labels: "type:user-story, à revoir par Romain"
 ---
 
 <!-- Template of the "delivery by user story" method (§ 3 and § 4.7).
-     Title: [US] <need or journey>. Romain only reads the stories; the [Task]
-     issues are sub-issues of this one. -->
+     Title: [US] <need or journey>. Romain only reads the stories; the story is a
+     sub-issue of its [Epic], and the [Task] issues are sub-issues of this one. -->
+
+<!-- 🔴 The review header comes FIRST: it is what Romain reads before anything else
+     (method § 3 bis.3). One checkbox per impacted screen, per wireframe to validate
+     and per spec; Romain ticks what he has validated, and the issue turns 🟢 when
+     every box is ticked. Each list is filled in or says "none". A screen impacted
+     means a wireframe the agent creates and links; a spec needed means one the
+     agent writes. Native relations (sub-issue, blocked by) are authoritative; the
+     last line mirrors them. -->
+
+⚠️ **To validate by Romain**
+
+**Impacted screens**
+- [ ] none <!-- one per screen: Trip map — `/stages` -->
+
+**Wireframes to validate**
+- [ ] none <!-- one per impacted screen: Trip map → <link> -->
+
+**Specs to validate**
+- [ ] none <!-- one per spec: `<path>` -->
+
+Parent: #<epic> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
 
 ## State
 
@@ -36,7 +57,6 @@ As <who>, I want <what>, so that <why>.
 | Wireframe (approved at review, before *Ready*) | none |
 | Documents: data schema, wiki (`docs/wiki/`), `README`, `.env.example`, deployment | none |
 | Data migration | none |
-| Dependency on another story | none |
 
 ## Out of scope
 
