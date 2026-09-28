@@ -105,6 +105,13 @@ later.
 
 ### Wireframes derived from the PRD
 
+> 🔴 **Where they are made (rule of 28/09/2026):** in Claude Design, live in the session — the
+> agent opens the project's design canvas (an artifact of the *Design* type), draws one board per
+> impacted screen in the product's own palette, and links each board from the header of its
+> story. The canvas sources (`*.dc.html`, `canvas.json`) are exported to
+> `projects/<domain>/<project>/wireframes/`. Not Figma, not a hand-drawn mock-up, never "to be
+> produced". A screen already built is redrawn as built before a story changes it.
+
 **When:** After the PRD, before the first view.
 
 **Have ready:** `docs/PRD.md` — the main journey and the `FR-n` list.
