@@ -110,11 +110,12 @@ scratch file, never in the repository.
 - one **milestone per release** (`vX.Y.0 — <theme>`, with a due date); an issue gets it when it moves
   to *Ready* at the latest.
 
-🔴 **The review header** opens every issue: ⚠️ *To validate by Romain* or 🟢 *Nothing to validate*,
-then parent · blocked by · blocks · milestone, impacted pages, wireframes (one link per impacted
-screen), specs — every one of them, not only those under review, each line filled in or "none" —
-and, under ⚠️ only, **To validate:** the **path** of the document. The `à revoir par Romain` label
-follows the emoji.
+🔴 **The review header** opens every issue, in English: ⚠️ *To validate by Romain* or 🟢 *Nothing to
+validate*, then **three checklists** — *Impacted screens*, *Wireframes to validate* (one link per
+screen), *Specs to validate* (one path per spec) — one checkbox per item, each list filled in or
+"none", and a last line with parent · blocked by · blocks · milestone. Romain ticks what he has
+validated; the issue turns 🟢 when every box is ticked, and the `à revoir par Romain` label follows
+the emoji.
 
 🔴 **A screen impacted ⇒ the agent creates its wireframe and links it, every time**, when the issue is
 created, without being asked. **A spec needed ⇒ the agent writes it** and links it. "To be produced"

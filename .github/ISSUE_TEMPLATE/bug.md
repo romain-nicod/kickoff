@@ -9,20 +9,25 @@ labels: "type:bug, à revoir par Romain"
      like a story, a bug goes through Backlog, then Ready once he has reviewed it. -->
 
 <!-- 🔴 The review header comes FIRST: it is what Romain reads before anything else
-     (method § 3 bis.3). One emoji: ⚠️ while a document waits for Romain or a
-     wireframe or spec is to be validated, 🟢 once the issue can move on without
-     him. Every line is filled in or says "none". The "To validate" line only
-     exists under ⚠️ and gives the document's PATH. The native relations
-     (sub-issue, blocked by) are authoritative; these lines mirror them. -->
+     (method § 3 bis.3). One checkbox per impacted screen, per wireframe to validate
+     and per spec; Romain ticks what he has validated, and the issue turns 🟢 when
+     every box is ticked. Each list is filled in or says "none". A screen impacted
+     means a wireframe the agent creates and links; a spec needed means one the
+     agent writes. Native relations (sub-issue, blocked by) are authoritative; the
+     last line mirrors them. -->
 
 ⚠️ **To validate by Romain**
 
-- Parent: #<epic> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
-- Impacted pages: none <!-- route and screen name: `/map` (Trip map) -->
-- Wireframes: none <!-- one link per impacted screen, created by the agent: Trip map → <link> -->
-- Specs: none <!-- path of each spec, written by the agent when one is needed -->
+**Impacted screens**
+- [ ] none <!-- one per screen: Trip map — `/stages` -->
 
-**To validate:** `<path of the document>` — <the decision expected, in one line>
+**Wireframes to validate**
+- [ ] none <!-- one per impacted screen: Trip map → <link> -->
+
+**Specs to validate**
+- [ ] none <!-- one per spec: `<path>` -->
+
+Parent: #<epic> · Blocked by: none · Blocks: none · Milestone: vX.Y.0
 
 ## State
 
