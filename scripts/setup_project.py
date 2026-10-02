@@ -109,11 +109,35 @@ def read_board():
 
 
 def check_scope():
+    """Fail with the reason that is true, not with the likeliest one.
+
+    This used to answer « missing project scope » to any non-zero exit.
+    On 02/10/2026 the token had the scope and the call was being refused
+    by GitHub's burst limit; the message sent the operator to
+    `gh auth refresh`, which fixed nothing. `gh project` renders that
+    refusal as « unknown owner type », because the owner lookup is what
+    fails — so the stderr has to be read, not assumed.
+    """
     result = gh(["project", "list", "--owner", OWNER, "--format", "json"],
                 check=False)
-    if result.returncode != 0:
-        sys.exit("The gh token is missing the project scope.\n"
-                 "Run: gh auth refresh -s project --hostname github.com")
+    if result.returncode == 0:
+        return
+    stderr = (result.stderr or "").strip()
+    throttled = ("rate limit" in stderr.lower()
+                 or "unknown owner type" in stderr.lower())
+    if throttled:
+        sys.exit("GitHub refused `gh project list`:\n"
+                 f"  {stderr}\n"
+                 "The quota is one per account and shared with every other "
+                 "tool and session. `gh api rate_limit` shows the hourly "
+                 "budget but NOT the burst limit, so it can read 5000/5000 "
+                 "while calls are refused. Wait, then re-run — this script "
+                 "is idempotent.")
+    sys.exit("GitHub refused `gh project list`:\n"
+             f"  {stderr}\n"
+             "If the token is missing the project scope, which "
+             "`gh auth login` does not grant:\n"
+             "  gh auth refresh -s project --hostname github.com")
 
 
 def find_project_by_repository():
