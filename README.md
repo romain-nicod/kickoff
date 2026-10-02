@@ -38,7 +38,7 @@ is left for you to do.
 | Axis | Files |
 |---|---|
 | **Agents** | `AGENTS.md` — 25 lines at most: vault folder, method, repository, board, wiki, commands, ports, deployment, three prohibitions — and `CLAUDE.md`, three lines pointing at it |
-| **Issues** | `.github/ISSUE_TEMPLATE/` — `[US]` (state, story, criteria `CA-01…`, impacts, out of scope, tasks, Definition of Done), `[Task]`, `[BUG]` |
+| **Issues** | `.github/ISSUE_TEMPLATE/` — `[US]` (state, story, criteria `CA-01…`, impacts, out of scope, tasks, Definition of Done), `[Task]`, `[BUG]`, `[DEFECT]` — every agent error, reviewed daily, `docs/DEFECTS.md` |
 | **Pull requests** | `.github/PULL_REQUEST_TEMPLATE.md` for a story; `.github/PULL_REQUEST_TEMPLATE/deployment.md` for `[Déploiement] vX.Y.Z` |
 | **Board and labels** | `scripts/setup_project.py` — the seven statuses; `.github/labels.yml`, `scripts/setup_repo.py`; `docs/BOARD.md`, `docs/LABELS.md` |
 | **Versions** | `VERSION`, `CHANGELOG.md` — each section is the release note —, `scripts/publish_release.py`, `scripts/wiki_release_notes.py` (the wiki page of the release notes), `docs/DEPLOYMENT.md` |

@@ -77,7 +77,7 @@ gh auth refresh -s project --hostname github.com
 python3 scripts/setup_project.py --dry-run && python3 scripts/setup_project.py
 ```
 
-Labels: `type:epic`, `type:user-story`, `Task`, `type:bug`, `à revoir par Romain`, `status:blocked`. Board:
+Labels: `type:epic`, `type:user-story`, `Task`, `type:bug`, `type:defect`, `remediation:validée`, `à revoir par Romain`, `status:blocked`. Board:
 `Backlog · Ready · In progress · En recette · In review · À déployer · Done`. Those names are
 identifiers: the scripts create them literally, and translating one breaks the board.
 
@@ -137,6 +137,10 @@ gh project item-add <n> --owner <owner> --url <issue URL>
 - **`[BUG] <the faulty behaviour>`** on `bug.md`, labels `type:bug` and `à revoir par Romain`: a defect
   observed on the recette environment, in production, in a QA review, or a flaky test. Same cycle as a
   story.
+- **`[DEFECT] <the error>`** on `defect.md`, label `type:defect`: an error in how the work was done —
+  a step skipped, a rule ignored, a check claimed without being run. Filed by the agent **in the session
+  that made it**, before anything else: what happened, why, previous occurrences, prevention. See
+  `docs/DEFECTS.md`.
 - **Two stories exist in every project from day one**, whatever the need: `[US] Show a maintenance
   page when the site does not answer` and `[US] Be warned when the site, its jobs or its backups
   stop`. Their cases and services are numbered in `docs/OPERATIONS.md` (A1–B5, M1–M4); the
