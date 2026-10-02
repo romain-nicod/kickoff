@@ -26,6 +26,7 @@ Ask once for what cannot be worked out:
 | Repository `owner/name` | a new private repository on the **personal account** (Q8) |
 | The project's folder in the vault | first line of `AGENTS.md` |
 | Production hosting, if it is known | `AGENTS.md`, `docs/DEPLOYMENT.md` |
+| The public domain, and whether weight or licence rules out Cloudflare | `docs/EXPOSURE.md` — a Cloudflare Tunnel unless one of the two applies |
 | The need, in whatever form it comes | the first `[US]` issues |
 
 Check the active account before creating anything: `gh api user --jq .login`.

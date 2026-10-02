@@ -7,7 +7,7 @@ Four environments, and no shared staging: the local recette environment stands i
 | Development | `code/{{REPO_NAME}}/` and one worktree per story, `code/{{REPO_NAME}}-worktrees/us-NNN-slug/` | `3000` (another port per worktree running at the same time) | fixtures and seeds | the story's session, on its branch |
 | Test | the worktree's `test` database, then CI | — | fixtures | `bin/rails test`, `bin/rails test:system` |
 | Recette | `code/{{REPO_NAME}}-recette/`, local `recette` branch | `3100` | synthetic only | the agent merges the *En recette* stories there; Romain tests there — [RECETTE.md](RECETTE.md) |
-| Production | <!-- host and URL --> | — | real | the deployment script, on the merge commit of the `[Déploiement]` pull request — [DEPLOYMENT.md](DEPLOYMENT.md) |
+| Production | <!-- host and URL --> — reached through a Cloudflare Tunnel by default, [EXPOSURE.md](EXPOSURE.md) | — | real | the deployment script, on the merge commit of the `[Déploiement]` pull request — [DEPLOYMENT.md](DEPLOYMENT.md) |
 
 ## Development
 
