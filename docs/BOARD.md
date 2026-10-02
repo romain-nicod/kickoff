@@ -78,6 +78,29 @@ The script creates the board, links it to the repository, writes its description
 seven statuses, creates the fields and the views of `board.json`, and adds the issues it is missing
 (open ones in *Backlog*, closed ones in *Done*).
 
+### On a project that already has a board
+
+The same two commands. **The board is found by its link to the repository**, not by its title, so a
+board already on the repository's Projects tab is reused whatever it is called — and the script then
+only adds the fields and views it is missing. Run on an existing project, a match by title would
+create a second board beside the real one: the title in `board.json` carries `{{PROJECT_NAME}}` until
+`bin/kickoff` substitutes it, and the boards in service were named by hand, some « — delivery » and
+some « — livraison ».
+
+The script prints which route found the board, so the reuse is visible rather than assumed:
+
+```
+board #12 « Mac Studio — delivery », already linked to romain-nicod/sysadmin-macstudio-project-management
+```
+
+Two boards linked to one repository is a question only a human can answer: the script stops, lists
+them, and waits for `--project <number>`.
+
+⚠️ **Pace a roll-out across several projects.** `gh project item-list` is a GraphQL call per board and
+GitHub answers `API rate limit exceeded` on a burst well before the hourly quota is spent — measured
+on 2026-10-02 with 4 885 of 5 000 points left. One repository at a time, and re-run the ones that
+failed: the script is idempotent.
+
 **It never deletes and never renames.** A field and a view are matched by name, so renaming one in
 `board.json` creates a second one next to the first instead of renaming it. An existing field is left
 untouched, its options included: rewriting the options of a single-select erases the value every item
