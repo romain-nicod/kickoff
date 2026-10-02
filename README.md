@@ -46,6 +46,7 @@ is left for you to do.
 | **Recette** | `docs/RECETTE.md`, `docs/ENVIRONMENTS.md`; on the rails layer `bin/recette` and `lib/recette.rb` |
 | **Wiki** | `docs/wiki/` — the pages, reviewed in pull requests — and `.github/workflows/wiki.yml`, which publishes them; `docs/WIKI.md` |
 | **Engineering** | `CONTRIBUTING.md`, `.github/workflows/ci.yml` (stack layer), `docs/CODE_HYGIENE.md`, `docs/TESTS.md`, `docs/SECRETS.md`, `.env.example`; `docs/PARALLEL_WORK.md` — several stories at once without two writers overwriting each other |
+| **Baseline** | `baseline.yml` — what every repository guarantees —, `scripts/audit_baseline.py` which proves each entry on every repository, `docs/BASELINE.md` |
 | **Quality** | `GOLDEN_RULES.md`, `docs/QUALITY.md`, `docs/NAMING.md`; `scripts/check_placeholders.py` — what the template left blank and nobody filled, which no linter, test or scan can see |
 | **Product and design** | `docs/PRD.md`, `docs/SCHEMA.md`, `docs/SYSTEM_DESIGN.md`, `docs/DESIGN_CHECKLIST.md`, `docs/PROMPTS.md` |
 | **Boilerplate** | `docs/BOILERPLATE.md`, `docs/GEMS.md` (stack layer) — `rails-ready`, our Rails template, and what it decides for you |
