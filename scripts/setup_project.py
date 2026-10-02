@@ -19,6 +19,10 @@ Then:
     python3 scripts/setup_project.py
     python3 scripts/setup_project.py --dry-run
 
+The board itself is found by its LINK to the repository, not by its
+title: the titles in service predate this template. Failing that, by
+title; failing that, it is created. `--project N` names it outright.
+
 Idempotent, and never destructive: re-running reuses the board, creates
 only the fields and views that are missing, adds only the issues that are
 absent, and never moves an item that already has a status. Nothing is
@@ -105,11 +109,87 @@ def read_board():
 
 
 def check_scope():
+    """Fail with the reason that is true, not with the likeliest one.
+
+    This used to answer « missing project scope » to any non-zero exit.
+    On 02/10/2026 the token had the scope and the call was being refused
+    by GitHub's burst limit; the message sent the operator to
+    `gh auth refresh`, which fixed nothing. `gh project` renders that
+    refusal as « unknown owner type », because the owner lookup is what
+    fails — so the stderr has to be read, not assumed.
+    """
     result = gh(["project", "list", "--owner", OWNER, "--format", "json"],
                 check=False)
+    if result.returncode == 0:
+        return
+    stderr = (result.stderr or "").strip()
+    throttled = ("rate limit" in stderr.lower()
+                 or "unknown owner type" in stderr.lower())
+    if throttled:
+        sys.exit("GitHub refused `gh project list`:\n"
+                 f"  {stderr}\n"
+                 "The quota is one per account and shared with every other "
+                 "tool and session. `gh api rate_limit` shows the hourly "
+                 "budget but NOT the burst limit, so it can read 5000/5000 "
+                 "while calls are refused. Wait, then re-run — this script "
+                 "is idempotent.")
+    sys.exit("GitHub refused `gh project list`:\n"
+             f"  {stderr}\n"
+             "If the token is missing the project scope, which "
+             "`gh auth login` does not grant:\n"
+             "  gh auth refresh -s project --hostname github.com")
+
+
+def find_project_by_repository():
+    """The board already linked to this repository, if there is exactly one.
+
+    Matching by title does not survive a second project. The template's
+    title carries `{{PROJECT_NAME}}` until `bin/kickoff` substitutes it,
+    and the boards created before this script existed were named by
+    hand — « Mac Studio — delivery » next to « Engineering Portfolio —
+    livraison ». Run against them, a match by title would create a
+    second board beside the real one, silently.
+
+    The link between a board and its repository is a fact GitHub holds:
+    a board on the repository's Projects tab IS this project's board,
+    whatever it is called. Two linked boards is a question only a human
+    can answer, so the script stops and asks for --project.
+    """
+    owner, name = REPO.split("/", 1)
+    query = """
+      query($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          projectsV2(first: 20) {
+            nodes { id number title url closed }
+          }
+        }
+      }
+    """
+    result = gh(["api", "graphql", "-f", "query=" + query,
+                 "-f", "owner=" + owner, "-f", "name=" + name], check=False)
     if result.returncode != 0:
-        sys.exit("The gh token is missing the project scope.\n"
-                 "Run: gh auth refresh -s project --hostname github.com")
+        return None
+    repository = (json.loads(result.stdout).get("data") or {}).get("repository")
+    if not repository:
+        return None
+    boards = [node for node in (repository.get("projectsV2") or {}).get("nodes", [])
+              if not node.get("closed")]
+    if len(boards) > 1:
+        sys.exit("several boards are linked to " + REPO + ":\n"
+                 + "\n".join("  #%s  %s" % (b["number"], b["title"])
+                              for b in boards)
+                 + "\nPass --project <number> to say which one to apply to.")
+    return boards[0] if boards else None
+
+
+def find_project_by_number(number):
+    """The board the operator named. It must exist — a typo here would
+    otherwise fall through to a creation nobody asked for."""
+    result = gh(["project", "view", str(number), "--owner", OWNER,
+                 "--format", "json"], check=False)
+    if result.returncode != 0:
+        sys.exit("no board #%s under %s" % (number, OWNER))
+    return json.loads(result.stdout)
 
 
 def find_project(title):
@@ -392,13 +472,33 @@ def main():
     parser.add_argument("--force-statuses", action="store_true",
                         help="rewrite Status even if items already carry "
                              "one (they lose it)")
+    parser.add_argument("--project", type=int, metavar="N",
+                        help="apply to this board instead of looking for "
+                             "it; needed when the repository has two")
     args = parser.parse_args()
 
     spec = read_board()
     title = spec["title"]
 
     check_scope()
-    project = find_project(title)
+
+    # Three routes, narrowest first. The board of an existing project is
+    # found by its link to the repository, never by its title: the titles
+    # in service predate this template and do not follow it.
+    if args.project:
+        project = find_project_by_number(args.project)
+        print("  board #%s, named on the command line" % project["number"])
+    else:
+        project = find_project_by_repository()
+        if project:
+            print("  board #%s « %s », already linked to %s"
+                  % (project["number"], project["title"], REPO))
+        else:
+            project = find_project(title)
+            if project:
+                print("  board #%s, matched by title « %s »"
+                      % (project["number"], title))
+
     if not project:
         if args.dry_run:
             print(f"  would create the board « {title} » with Status "
