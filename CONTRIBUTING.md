@@ -23,9 +23,13 @@ Any other address makes GitHub add a co-author at every squash merge.
 
 ## Merging
 
-A pull request is merged with a **merge commit**, never squashed: it keeps all of its commits, with
-their messages, so it can be read commit by commit. `python3 scripts/setup_repo.py` allows that mode
-only.
+The *Delivery by user story* method is authoritative here, § 6: a pull request is merged with a
+**merge commit**, never squashed. This page does not restate the rule or its reasons — one place
+decides, the others point at it.
+
+What belongs here is the mechanism: `python3 scripts/setup_repo.py` posts
+`allow_merge_commit=true`, `allow_squash_merge=false`, `allow_rebase_merge=false`, then **reads the
+four settings back** — an exit code of 0 only proves the request was accepted.
 
 ## Branch hygiene
 
