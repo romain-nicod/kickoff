@@ -36,6 +36,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 TRACKED = [
     "README.md", "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md",
     "GOLDEN_RULES.md",
+    # The contact a reader sees when the site is down (docs/OPERATIONS.md).
+    "public/maintenance.html",
 ]
 TRACKED_GLOBS = ["docs/*.md"]
 

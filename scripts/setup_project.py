@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Create the GitHub board (Projects v2) of the delivery method and file
-every issue into it.
+"""Create the GitHub board (Projects v2) described by .github/board.json
+and file every issue into it.
+
+The board is DESCRIBED in one place and APPLIED here. Adding a view or a
+field is an edit to `.github/board.json`, never to this script.
 
 The seven statuses are those of the method, in its order:
 
@@ -16,13 +19,22 @@ Then:
     python3 scripts/setup_project.py
     python3 scripts/setup_project.py --dry-run
 
-Idempotent: re-running reuses the board, adds only the missing issues and
-never moves an item that already has a status. Moving items is the
-agent's job, one `gh project item-edit` at a time — see docs/BOARD.md.
+Idempotent, and never destructive: re-running reuses the board, creates
+only the fields and views that are missing, adds only the issues that are
+absent, and never moves an item that already has a status. Nothing is
+ever deleted or renamed — a field and a view are matched BY NAME, so
+renaming one in board.json creates a second one next to the first.
 
-Two things the API does not expose, walked through by hand in
-docs/BOARD.md: the board's built-in workflows (an issue closed by a merge
-goes to `À déployer`) and the grouping of the Kanban view.
+The one exception is the built-in Status field, whose options must be
+REPLACED to become the method's. That gives them new ids and every item
+loses its status, so the script refuses on a board that already holds
+statuses unless --force-statuses is given.
+
+THREE THINGS THE API DOES NOT EXPOSE, walked through by hand in
+docs/BOARD.md: the board's built-in workflows, the grouping and the
+sorting of a view, and the two date fields of the Roadmap layout.
+A board view created here IS already grouped by Status — that one is not
+manual, contrary to what this script said before it was measured.
 """
 
 import argparse
@@ -30,23 +42,24 @@ import json
 import subprocess
 import sys
 import time
+from datetime import date, timedelta
+from pathlib import Path
 
 from kickoff_lib import repo, owner as repo_owner
 
+ROOT = Path(__file__).resolve().parent.parent
+BOARD = ROOT / ".github" / "board.json"
+
 OWNER = repo_owner()
 REPO = repo()
-TITLE = "{{PROJECT_NAME}} — livraison"
 
-STATUSES = ["Backlog", "Ready", "In progress", "En recette", "In review",
-            "À déployer", "Done"]
-COLOURS = ["GRAY", "BLUE", "YELLOW", "ORANGE", "PURPLE", "PINK", "GREEN"]
+WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
+            "saturday", "sunday"]
 
-# Created when missing, matched by name, never recreated.
-VIEWS = [
-    ("Kanban", "BOARD_LAYOUT", None),
-    ("À revoir par Romain", "TABLE_LAYOUT", 'label:"à revoir par Romain"'),
-    ("All items", "TABLE_LAYOUT", None),
-]
+# Set on a view by `configuration: {visibleFieldIds: […]}`, the only part
+# of a view's configuration the API accepts. It applies the SET of
+# columns, not their order: GitHub re-sorts them its own way.
+VIEW_FEATURES = "GraphQL-Features: projects_v2_views"
 
 
 def gh(args, check=True, retries=3):
@@ -70,6 +83,27 @@ def gh(args, check=True, retries=3):
     return result
 
 
+def graphql(query, check=True, **variables):
+    args = ["api", "graphql", "-H", VIEW_FEATURES, "-f", f"query={query}"]
+    for name, value in variables.items():
+        args += ["-f", f"{name}={value}"]
+    result = gh(args, check=check)
+    if result.returncode != 0 or not result.stdout:
+        return None
+    return json.loads(result.stdout).get("data")
+
+
+def read_board():
+    if not BOARD.exists():
+        sys.exit(f"{BOARD.relative_to(ROOT)} is missing")
+    spec = json.loads(BOARD.read_text(encoding="utf-8"))
+    readme = spec.get("readme_file")
+    if readme:
+        path = ROOT / readme
+        spec["readme"] = path.read_text(encoding="utf-8") if path.exists() else None
+    return spec
+
+
 def check_scope():
     result = gh(["project", "list", "--owner", OWNER, "--format", "json"],
                 check=False)
@@ -78,35 +112,66 @@ def check_scope():
                  "Run: gh auth refresh -s project --hostname github.com")
 
 
-def find_project():
+def find_project(title):
     listing = json.loads(gh(["project", "list", "--owner", OWNER,
                              "--format", "json"]).stdout)
     for project in listing.get("projects", []):
-        if project["title"] == TITLE:
+        if project["title"] == title:
             return project
     return None
 
 
-def create_project():
+def create_project(title):
     created = json.loads(gh(["project", "create", "--owner", OWNER,
-                             "--title", TITLE, "--format", "json"]).stdout)
+                             "--title", title, "--format", "json"]).stdout)
     print(f"  board created: #{created['number']}")
     return created
 
 
 def link_repository(number, dry_run):
     """Show the board in the repository's Projects tab. Harmless when the
-    link already exists: gh then refuses, and the refusal is ignored."""
+    link already exists: gh then refuses, and the refusal is ignored.
+
+    Without this, the board exists only under its OWNER — it is absent
+    from every repository page, which is the usual reason somebody says
+    "I cannot find my board".
+    """
     if dry_run:
         print(f"  would link the board to {REPO}")
         return
     gh(["project", "link", str(number), "--owner", OWNER, "--repo", REPO],
        check=False)
+    print(f"  linked to {REPO}")
+
+
+def describe(project_id, spec, dry_run):
+    """The board's own description and README — the first thing anybody
+    who opens the board reads."""
+    short = spec.get("short_description")
+    readme = spec.get("readme")
+    if not short and not readme:
+        return
+    if dry_run:
+        print("  would set the board description and README")
+        return
+
+    fields = [f'projectId: "{project_id}"']
+    if short:
+        fields.append(f"shortDescription: {json.dumps(short, ensure_ascii=False)}")
+    if readme:
+        fields.append(f"readme: {json.dumps(readme, ensure_ascii=False)}")
+    query = ("mutation { updateProjectV2(input: {%s}) "
+             "{ projectV2 { id } } }" % ", ".join(fields))
+    if graphql(query, check=False) is None:
+        print("  ⚠️  description and README unchanged")
+    else:
+        print("  description and README set")
 
 
 def fields(number):
     listing = json.loads(gh(["project", "field-list", str(number),
-                             "--owner", OWNER, "--format", "json"]).stdout)
+                             "--owner", OWNER, "--limit", "50",
+                             "--format", "json"]).stdout)
     return {f["name"]: f for f in listing["fields"]}
 
 
@@ -117,7 +182,16 @@ def option_id(field, name):
     return None
 
 
-def set_status_options(field, items_with_status, force, dry_run):
+def options_literal(options):
+    return ", ".join(
+        "{name: %s, color: %s, description: %s}"
+        % (json.dumps(o["name"], ensure_ascii=False),
+           o.get("color", "GRAY"),
+           json.dumps(o.get("description", ""), ensure_ascii=False))
+        for o in options)
+
+
+def set_status_options(field, statuses, items_with_status, force, dry_run):
     """Replace the options of the built-in Status field by the method's.
 
     `gh project field-create` cannot touch Status: only the GraphQL
@@ -127,9 +201,10 @@ def set_status_options(field, items_with_status, force, dry_run):
 
     Returns True when the options are the method's once it has run.
     """
+    wanted = [s["name"] for s in statuses]
     current = [option["name"] for option in field.get("options", [])]
-    if current == STATUSES:
-        print(f"  Status: {' · '.join(STATUSES)} (already in place)")
+    if current == wanted:
+        print(f"  Status: {' · '.join(wanted)} (already in place)")
         return True
 
     if items_with_status and not force:
@@ -142,99 +217,150 @@ def set_status_options(field, items_with_status, force, dry_run):
         return False
 
     if dry_run:
-        print(f"  would set Status: {' · '.join(STATUSES)}")
+        print(f"  would set Status: {' · '.join(wanted)}")
         return True
 
-    options = ", ".join(
-        "{name: %s, color: %s, description: \"\"}"
-        % (json.dumps(name, ensure_ascii=False), colour)
-        for name, colour in zip(STATUSES, COLOURS))
     query = """
     mutation {
       updateProjectV2Field(input: {
         fieldId: "%s"
         singleSelectOptions: [%s]
       }) { projectV2Field { ... on ProjectV2SingleSelectField { id } } }
-    }""" % (field["id"], options)
+    }""" % (field["id"], options_literal(statuses))
 
-    result = gh(["api", "graphql", "-f", f"query={query}"], check=False)
-    if result.returncode == 0:
-        print(f"  Status: {' · '.join(STATUSES)}")
+    if graphql(query, check=False) is not None:
+        print(f"  Status: {' · '.join(wanted)}")
         return True
     print("  ⚠️  Status options unchanged — set them by hand (docs/BOARD.md)")
-    print(f"      {result.stderr.strip()}")
     return False
 
 
-def ensure_views(project_id):
-    """Create the missing views, and rename GitHub's lone default table."""
-    q = ('query($p:ID!){node(id:$p){... on ProjectV2'
-         '{views(first:20){nodes{id name layout}}}}}')
-    existing = json.loads(gh(["api", "graphql", "-f", f"query={q}",
-                              "-f", f"p={project_id}"]).stdout)
-    by_name = {v["name"]: v for v in existing["data"]["node"]["views"]["nodes"]}
+def next_weekday(name):
+    """The next occurrence of that weekday, today included."""
+    target = WEEKDAYS.index(name.lower())
+    today = date.today()
+    return today + timedelta(days=(target - today.weekday()) % 7)
+
+
+def iteration_literal(config):
+    """The iterations of a Sprint field. `iterations` is required by the
+    API — an iteration field cannot be created empty."""
+    duration = int(config.get("duration_days", 14))
+    start = next_weekday(config.get("starts_on", "monday"))
+    count = int(config.get("count", 4))
+    iterations = ", ".join(
+        '{title: "Sprint %d", startDate: "%s", duration: %d}'
+        % (n + 1, (start + timedelta(days=duration * n)).isoformat(), duration)
+        for n in range(count))
+    return ('{startDate: "%s", duration: %d, iterations: [%s]}'
+            % (start.isoformat(), duration, iterations))
+
+
+def ensure_fields(project_id, number, spec, dry_run):
+    """Create the fields board.json asks for and the board does not have.
+
+    An existing field is LEFT ALONE, options included: rewriting the
+    options of a single-select erases the value every item carries, and
+    a field the team has filled in is worth more than a template.
+    """
+    present = fields(number)
+    for field in spec.get("fields", []):
+        name, kind = field["name"], field["type"]
+        if name in present:
+            print(f"  field: {name} (already there, left untouched)")
+            continue
+        if dry_run:
+            print(f"  would create field: {name} ({kind})")
+            continue
+
+        extra = ""
+        if kind == "SINGLE_SELECT":
+            extra = f", singleSelectOptions: [{options_literal(field['options'])}]"
+        elif kind == "ITERATION":
+            extra = f", iterationConfiguration: {iteration_literal(field.get('iteration', {}))}"
+
+        query = ("mutation { createProjectV2Field(input: {projectId: \"%s\", "
+                 "dataType: %s, name: %s%s}) { projectV2Field { "
+                 "... on ProjectV2FieldCommon { id name } } } }"
+                 % (project_id, kind, json.dumps(name, ensure_ascii=False), extra))
+        if graphql(query, check=False) is None:
+            print(f"  ⚠️  field not created: {name} — create it by hand")
+        else:
+            print(f"  field: {name} ({kind})")
+
+
+def ensure_views(project_id, number, spec, dry_run):
+    """Create the missing views, set their filter and their visible
+    fields, and rename GitHub's lone default table."""
+    query = ('query($p:ID!){node(id:$p){... on ProjectV2'
+             '{views(first:50){nodes{id name layout}}}}}')
+    data = graphql(query, p=project_id)
+    by_name = {v["name"]: v for v in data["node"]["views"]["nodes"]}
 
     # GitHub names the first view "View 1": it is All items under another
     # name, so it is renamed rather than left as a duplicate.
-    if "View 1" in by_name and "All items" not in by_name:
-        m = ('mutation($v:ID!,$n:String!){updateProjectV2View'
-             '(input:{viewId:$v,name:$n}){projectV2View{id name}}}')
-        gh(["api", "graphql", "-f", f"query={m}",
-            "-f", f"v={by_name['View 1']['id']}", "-f", "n=All items"],
-           check=False)
+    if "View 1" in by_name and "All items" not in by_name and not dry_run:
+        rename = ('mutation($v:ID!,$n:String!){updateProjectV2View'
+                  '(input:{viewId:$v,name:$n}){projectV2View{id name}}}')
+        graphql(rename, check=False, v=by_name["View 1"]["id"], n="All items")
         by_name["All items"] = by_name.pop("View 1")
 
-    for name, layout, view_filter in VIEWS:
-        view = by_name.get(name)
-        if not view:
-            m = ('mutation($p:ID!,$n:String!,$l:ProjectV2ViewLayout!)'
-                 '{createProjectV2View(input:{projectId:$p,name:$n,'
-                 'layout:$l}){projectV2View{id name}}}')
-            out = gh(["api", "graphql", "-f", f"query={m}",
-                      "-f", f"p={project_id}", "-f", f"n={name}",
-                      "-f", f"l={layout}"], check=False)
-            if not out.stdout:
+    field_ids = {name: f["id"] for name, f in fields(number).items()}
+
+    for view in spec.get("views", []):
+        name = view["name"]
+        existing = by_name.get(name)
+        if not existing:
+            if dry_run:
+                print(f"  would create view: {name} ({view['layout']})")
                 continue
-            view = json.loads(out.stdout)["data"]["createProjectV2View"]["projectV2View"]
+            create = ('mutation($p:ID!,$n:String!,$l:ProjectV2ViewLayout!)'
+                      '{createProjectV2View(input:{projectId:$p,name:$n,'
+                      'layout:$l}){projectV2View{id name}}}')
+            data = graphql(create, check=False, p=project_id, n=name,
+                           l=view["layout"])
+            if data is None:
+                print(f"  ⚠️  view not created: {name}")
+                continue
+            existing = data["createProjectV2View"]["projectV2View"]
             print(f"  view: {name}")
+        elif dry_run:
+            print(f"  view: {name} (already there) — filter and columns refreshed")
+            continue
 
-        if view_filter:
-            m = ('mutation($v:ID!,$f:String!){updateProjectV2View'
-                 '(input:{viewId:$v,filter:$f}){projectV2View{id}}}')
-            gh(["api", "graphql", "-f", f"query={m}", "-f", f"v={view['id']}",
-                "-f", f"f={view_filter}"], check=False)
+        # The filter and the visible columns ARE refreshed on an existing
+        # view: they are the view's definition, they hold no data, and a
+        # filter left stale is a view that quietly lies.
+        if view.get("filter"):
+            update = ('mutation($v:ID!,$f:String!){updateProjectV2View'
+                      '(input:{viewId:$v,filter:$f}){projectV2View{id filter}}}')
+            if graphql(update, check=False, v=existing["id"],
+                       f=view["filter"]) is None:
+                print(f"      ⚠️  filter refused: {view['filter']}")
+
+        # Measured: "Roadmap views do not support visible fields." The
+        # columns of a roadmap are its date fields, set by hand.
+        if view["layout"] == "ROADMAP_LAYOUT":
+            continue
+
+        wanted = [field_ids[f] for f in view.get("fields", []) if f in field_ids]
+        missing = [f for f in view.get("fields", []) if f not in field_ids]
+        if missing:
+            print(f"      ⚠️  {name}: unknown field(s) {', '.join(missing)}")
+        if wanted:
+            ids = ", ".join(f'"{i}"' for i in wanted)
+            columns = ("mutation { updateProjectV2View(input: {viewId: \"%s\", "
+                       "configuration: {visibleFieldIds: [%s]}}) "
+                       "{ projectV2View { id } } }" % (existing["id"], ids))
+            if graphql(columns, check=False) is None:
+                print(f"      ⚠️  columns of {name} unchanged")
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--force-statuses", action="store_true",
-                        help="rewrite Status even if items already carry "
-                             "one (they lose it)")
-    args = parser.parse_args()
-
-    check_scope()
-    project = find_project()
-    if not project:
-        if args.dry_run:
-            print(f"  would create the board « {TITLE} » with Status "
-                  f"{' · '.join(STATUSES)}")
-            print("\nDry run — nothing was written.")
-            return
-        project = create_project()
-    number, project_id = project["number"], project["id"]
-
-    link_repository(number, args.dry_run)
-
+def add_issues(number, project_id, status_field, status_ok, dry_run):
     items = json.loads(gh(["project", "item-list", str(number), "--owner",
                            OWNER, "--limit", "500", "--format",
                            "json"]).stdout)["items"]
     on_board = {i.get("content", {}).get("url") for i in items}
-    with_status = [i for i in items if i.get("status")]
-
-    status_ok = set_status_options(fields(number)["Status"], with_status,
-                                   args.force_statuses, args.dry_run)
-    status_field = fields(number)["Status"]
 
     issues = json.loads(gh(["issue", "list", "--repo", REPO, "--state", "all",
                             "--limit", "500", "--json",
@@ -246,7 +372,7 @@ def main():
         # existed is history, and lands in Done. Nothing else is decided
         # here: where a story stands is set by whoever works on it.
         wanted = "Done" if issue["state"] == "CLOSED" else "Backlog"
-        if args.dry_run:
+        if dry_run:
             print(f"  would add: {issue['title']} → {wanted}")
             continue
         added = json.loads(gh(["project", "item-add", str(number), "--owner",
@@ -259,16 +385,56 @@ def main():
                 "--single-select-option-id", oid], check=False)
         print(f"  added: {issue['title']} → {wanted if oid else 'no status'}")
 
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--force-statuses", action="store_true",
+                        help="rewrite Status even if items already carry "
+                             "one (they lose it)")
+    args = parser.parse_args()
+
+    spec = read_board()
+    title = spec["title"]
+
+    check_scope()
+    project = find_project(title)
+    if not project:
+        if args.dry_run:
+            print(f"  would create the board « {title} » with Status "
+                  f"{' · '.join(s['name'] for s in spec['status'])}")
+            print("\nDry run — nothing was written.")
+            return
+        project = create_project(title)
+    number, project_id = project["number"], project["id"]
+
+    link_repository(number, args.dry_run)
+    describe(project_id, spec, args.dry_run)
+
+    items = json.loads(gh(["project", "item-list", str(number), "--owner",
+                           OWNER, "--limit", "500", "--format",
+                           "json"]).stdout)["items"]
+    with_status = [i for i in items if i.get("status")]
+
+    status_ok = set_status_options(fields(number)["Status"], spec["status"],
+                                   with_status, args.force_statuses,
+                                   args.dry_run)
+
+    ensure_fields(project_id, number, spec, args.dry_run)
+    add_issues(number, project_id, fields(number)["Status"], status_ok,
+               args.dry_run)
+
     if args.dry_run:
+        ensure_views(project_id, number, spec, args.dry_run)
         print("\nDry run — nothing was written.")
         return
 
-    ensure_views(project_id)
+    ensure_views(project_id, number, spec, args.dry_run)
 
     print(f"\nboard ready: {project.get('url', f'#{number}')}")
-    print("Left by hand, once (docs/BOARD.md): the built-in workflows — "
-          "\"Item closed\" and \"Pull request merged\" set À déployer — "
-          "and the Kanban grouped by Status.")
+    print("Left by hand, once (docs/BOARD.md): the built-in workflows, the "
+          "grouping and sorting of Prioritized backlog / Roadmap / Epics, "
+          "and the two date fields of the Roadmap layout.")
 
 
 if __name__ == "__main__":

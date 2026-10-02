@@ -1,6 +1,6 @@
 ---
 name: project-kickoff
-description: Start a Rails web project from the kickoff template, applying the delivery-by-user-story method — repository, a 25-line AGENTS.md, labels, the seven-status board, wiki, local recette environment, [US], [Task] and [BUG] issues on their templates, deployment pull request and release notes. Use when starting a new project ("kick off", "new project", "nouveau projet", "lancer un projet", "set up the repo", "bootstrap"), when turning a need into user stories on a board, or when preparing a [Déploiement] pull request and its GitHub release.
+description: Start a Rails web project from the kickoff template, applying the delivery-by-user-story method — repository, a 25-line AGENTS.md, labels, the seven-status board with its Roadmap and Epics views, wiki, local recette environment, [Epic], [US], [Task] and [BUG] issues on their templates with dependencies and release milestones, deployment pull request and release notes. Use when starting a new project ("kick off", "new project", "nouveau projet", "lancer un projet", "set up the repo", "bootstrap"), when turning a need into user stories on a board, or when preparing a [Déploiement] pull request and its GitHub release.
 ---
 
 # Starting a project with kickoff
@@ -77,13 +77,14 @@ gh auth refresh -s project --hostname github.com
 python3 scripts/setup_project.py --dry-run && python3 scripts/setup_project.py
 ```
 
-Labels: `type:user-story`, `Task`, `type:bug`, `type:defect`, `remediation:validée`, `à revoir par Romain`, `status:blocked`. Board:
+Labels: `type:epic`, `type:user-story`, `Task`, `type:bug`, `type:defect`, `remediation:validée`, `à revoir par Romain`, `status:blocked`. Board:
 `Backlog · Ready · In progress · En recette · In review · À déployer · Done`. Those names are
 identifiers: the scripts create them literally, and translating one breaks the board.
 
 Then walk Romain, step by step, through what the API does not do:
 
-- the board's workflows and the Kanban grouping: `docs/BOARD.md`, "To do by hand";
+- the board's workflows, the Kanban grouping, the Roadmap dates and the Epics grouping:
+  `docs/BOARD.md`, "To do by hand";
 - the wiki's first page: `docs/WIKI.md`, "First publication".
 
 ## 4. `AGENTS.md`, 25 lines at most
@@ -96,9 +97,29 @@ Check: `wc -l AGENTS.md CLAUDE.md`.
 ## 5. Creating the issues on their templates
 
 **A need Romain states becomes an `[US]` right away**; a need too big becomes several stories. The body
-follows `.github/ISSUE_TEMPLATE/user_story.md`: state, story, `CA-01…` criteria, impacts (each one
-filled in or "none"), out of scope, tasks, DoD. Write the body in a scratch file, never in the
-repository.
+follows `.github/ISSUE_TEMPLATE/user_story.md`: **review header first**, then state, story, `CA-01…`
+criteria, impacts (each one filled in or "none"), out of scope, tasks, DoD. Write the body in a
+scratch file, never in the repository.
+
+🔴 **Epic → story → task, dependencies, milestone** (method § 3 bis) — commands in `docs/BOARD.md`,
+"Epics, dependencies and milestones":
+
+- every `[US]` and `[BUG]` is a native sub-issue of an **`[Epic]`** (`epic.md`, label `type:epic`);
+  no orphan story;
+- a dependency is a native *blocked by* relation, never only a sentence;
+- one **milestone per release** (`vX.Y.0 — <theme>`, with a due date); an issue gets it when it moves
+  to *Ready* at the latest.
+
+🔴 **The review header** opens every issue, in English: ⚠️ *To validate by Romain* or 🟢 *Nothing to
+validate*, then **three checklists** — *Impacted screens*, *Wireframes to validate* (one link per
+screen), *Specs to validate* (one path per spec) — one checkbox per item, each list filled in or
+"none", and a last line with parent · blocked by · blocks · milestone. Romain ticks what he has
+validated; the issue turns 🟢 when every box is ticked, and the `à revoir par Romain` label follows
+the emoji.
+
+🔴 **A screen impacted ⇒ the agent creates its wireframe and links it, every time**, when the issue is
+created, without being asked. **A spec needed ⇒ the agent writes it** and links it. "To be produced"
+is never a lasting state.
 
 ```bash
 gh issue create --repo <owner>/<name> --title "[US] <need or journey>" \
@@ -120,6 +141,11 @@ gh project item-add <n> --owner <owner> --url <issue URL>
   a step skipped, a rule ignored, a check claimed without being run. Filed by the agent **in the session
   that made it**, before anything else: what happened, why, previous occurrences, prevention. See
   `docs/DEFECTS.md`.
+- **Two stories exist in every project from day one**, whatever the need: `[US] Show a maintenance
+  page when the site does not answer` and `[US] Be warned when the site, its jobs or its backups
+  stop`. Their cases and services are numbered in `docs/OPERATIONS.md` (A1–B5, M1–M4); the
+  criteria cite those numbers, and say which cases the project's exposure leaves uncovered. The
+  first deployment to production waits for both.
 - From three issues to review on: vault note `<Project> - Revue des US - YYYYMMDD`, one checkbox and
   one comment line per issue.
 - **Romain moves them to *Ready*.** The agent then removes the label:
@@ -165,7 +191,7 @@ gh project item-add <n> --owner <owner> --url <issue URL>
    python3 scripts/publish_release.py
    ```
 
-6. The issues of the batch move to *Done*.
+6. The issues of the batch move to *Done*, and the release's milestone is closed.
 
 ## 8. Traps
 

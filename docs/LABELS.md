@@ -9,12 +9,13 @@ issue still carries).
 
 | Label | Set by | When |
 |---|---|---|
+| `type:epic` | `[Epic]` template | a capability given to the user; every story and bug is its native sub-issue, and it closes when they all are |
 | `type:user-story` | `[US]` template | every user story; Romain reads the stories and the bugs |
 | `Task` | `[Task]` template | a concrete action of a story, filed as its sub-issue; kept by the agent |
 | `type:bug` | `[BUG]` template | a defect observed on the recette environment, in production, in a QA review, or a flaky test; same cycle as a story |
 | `type:defect` | `[DEFECT]` template | an error in how the work was done — agent or process, not product; filed in the session that made it — [DEFECTS.md](DEFECTS.md) |
 | `remediation:validée` | Romain | he accepts the remediation proposed on a defect; the daily review then applies it |
-| `à revoir par Romain` | `[US]` and `[BUG]` templates | created by the agent; **removed by the agent** once Romain has moved the issue to *Ready* |
+| `à revoir par Romain` | `[Epic]`, `[US]` and `[BUG]` templates | follows the ⚠️ of the issue's review header: set with ⚠️, **removed by the agent** with 🟢, once Romain has validated and moved the issue to *Ready* |
 | `status:blocked` | by hand | stopped by something outside the story — say what, in a comment |
 
 The `à revoir par Romain` name is an identifier: the issue templates apply it literally, and GitHub

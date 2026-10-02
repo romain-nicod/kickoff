@@ -1,11 +1,14 @@
 # The labels this repository declares, created by scripts/setup_repo.py.
 # Their meaning, and when each one is applied: docs/LABELS.md.
 #
-# The first four come from the delivery method and are the same on every
+# The first five come from the delivery method and are the same on every
 # project. The issue templates apply them; a label missing from the
 # repository is silently dropped by GitHub, so this file must be applied
 # before the first issue is opened.
 
+- name: "type:epic"
+  color: "5319E7"
+  description: "Epic [Epic] — a capability; its stories and bugs are its sub-issues"
 - name: "type:user-story"
   color: "1D76DB"
   description: "User story [US] — reviewed by Romain before Ready"

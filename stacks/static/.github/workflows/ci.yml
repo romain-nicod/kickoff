@@ -1,5 +1,12 @@
 name: CI
 
+# 🔴 ONE run per branch (method § 6 ter): a new push cancels the run it
+# supersedes. No `paths-ignore` here, on purpose: on a static site the
+# documentation IS the content, and the link job checks the `.md` files.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   pull_request:
   push:

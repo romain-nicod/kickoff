@@ -105,6 +105,7 @@ Added on top:
 | Solid Queue inside Puma in development | A second terminal, permanently open, that you forget to start |
 | A `Procfile` with a `worker` process | The production counterpart of the line above |
 | `mission_control-jobs` | No visibility on jobs that fail |
+| `config.active_storage.variant_processor = :disabled`, and `gem "image_processing"` removed from the generated Gemfile | An optional capability shipped switched on, pinned to a 1.x line frozen at 1.14.0 — plus a warning at **every** boot telling you to add back a gem the project never needed |
 | `dotenv-rails`, `.env`, `.env.example` | Keys in the code |
 | `hotwire-livereload` | Reloading by hand every ten seconds |
 | `pry-byebug`, `pry-rails`, `httplog` | Debugging an outgoing API call blind |

@@ -75,3 +75,21 @@ Three guards, each written after a defect went through a green suite on the firs
 `bin/rails test`, `bin/rails test:system`, `bin/rubocop`, `bin/brakeman --no-pager`,
 `bundle exec bundler-audit --update` and `bin/importmap audit`: green locally, then in CI, before
 opening the pull request.
+
+### How the CI is split, and why
+
+Three jobs, not six (method § 6 ter — rules set on 26/09/2026, after a plan of 3 000 minutes ran
+out in half a month):
+
+| Job | What it runs |
+|---|---|
+| `checks` | the tracked-files guard, RuboCop, Brakeman, bundler-audit, importmap audit — everything that needs neither a database nor a browser |
+| `test` | `bin/rails test` |
+| `system_test` | `bin/rails test:system`, screenshots kept on failure |
+
+- **One run per branch**: a new push cancels the previous one; on `main`, nothing is cancelled.
+- **Paths with no executable code are ignored.** ⚠️ A check that must run on a documentation-only
+  pull request — the template placeholder gate, for instance — goes in **its own workflow, without
+  the filter**: that is exactly where a placeholder hole slips in.
+- **One more job is one more `bundle install`**, billed on every run: add one only when it needs a
+  service the others do not have.

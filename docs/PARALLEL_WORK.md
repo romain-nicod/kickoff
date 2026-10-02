@@ -22,8 +22,17 @@ stayed green, and the duplicate was found three days later by accident.
 ## 1. Where a story's worktree lives
 
 ```bash
-git -C code/{{REPO_NAME}} worktree add ../{{REPO_NAME}}-worktrees/us-301-record-a-person -b us-301-record-a-person
+git -C code/{{REPO_NAME}} fetch origin
+git -C code/{{REPO_NAME}} worktree add ../{{REPO_NAME}}-worktrees/us-301-record-a-person -b us-301-record-a-person origin/main
 ```
+
+🔴 **From `origin/main`, fetched first — never from whatever the checkout
+holds.** `worktree add` without a start point branches from the current
+HEAD, which is the last thing somebody checked out there: on 28/09/2026 a
+main checkout sat on a feature branch three weeks behind `main`, and a survey
+made on it concluded « no budget, no planner » while both were on `main`. The
+same rule holds for reading: the state of the project is `origin/main` after
+a fetch (`git show origin/main:<path>`), not a working copy.
 
 Never two writers in one directory. Removing the worktree once the pull
 request is merged is part of branch hygiene: [`CONTRIBUTING.md`](../CONTRIBUTING.md).
