@@ -1,0 +1,182 @@
+# The baseline every repository of the account guarantees.
+#
+# Read by scripts/audit_baseline.py. What each entry means, and why the
+# list stops where it stops: docs/BASELINE.md.
+#
+# Deliberately a flat list, parsed without a YAML library — the same
+# trade as .github/labels.yml: a template that must run anywhere does not
+# earn a dependency.
+#
+# Each entry carries:
+#   id          stable, quoted in reports; never reused for another rule
+#   statement   what is true when the entry passes, in one sentence
+#   severity    blocking | finding — blocking means the audit exits non-zero
+#   when        birth | always | publication — the moment the rule bites
+#   check       the function of the audit that proves it; `none` means
+#               nothing proves it yet, and the audit says so out loud
+#   proof       the command a human can run to see the same thing
+#   note        why the rule exists, or what it deliberately does not cover
+#
+# 🔴 An entry with `check: none` is NOT an invariant. It is an intention
+# waiting for a check, and the audit counts it separately. A manifest that
+# hides its holes is worse than a shorter one.
+
+- id: "licence-on-a-public-repo"
+  statement: "A public repository carries a LICENSE file GitHub recognises"
+  severity: "blocking"
+  when: "birth"
+  check: "licence_present"
+  proof: "gh api repos/OWNER/NAME --jq .license.key"
+  note: "No licence means All Rights Reserved: nobody may legally reuse the code. On a repository published as a portfolio piece, that contradicts the point of publishing it."
+
+- id: "licence-decided-on-a-private-repo"
+  statement: "A private repository has a licence decided, so publishing it stays a switch"
+  severity: "finding"
+  when: "birth"
+  check: "licence_decided"
+  proof: "gh api repos/OWNER/NAME --jq .license.key"
+  note: "🔴 A finding, not a bar — and the split is on purpose. Eleven private repositories carry no licence; nothing is exposed, so calling that blocking next to a public repository with no licence would have drowned the signal that matters."
+
+- id: "licence-fits-software"
+  statement: "A repository holding code does not carry a Creative Commons licence"
+  severity: "finding"
+  when: "birth"
+  check: "licence_fits_software"
+  proof: "gh repo view OWNER/NAME --json licenseInfo,language"
+  note: "Creative Commons itself advises against CC licences for software: they say nothing about source code, patents or warranty. CC BY stays right for documents and design work. Settled by the licence story."
+
+- id: "merge-keeps-commits"
+  statement: "Squash merge is off, merge commit is on, and the head branch is deleted on merge"
+  severity: "blocking"
+  when: "birth"
+  check: "merge_settings"
+  proof: "gh api repos/OWNER/NAME --jq '[.allow_squash_merge,.allow_merge_commit,.delete_branch_on_merge]'"
+  note: "A squash merge flattens one commit per task into one commit per story, and the reviewer loses the reading order."
+
+- id: "main-protected"
+  statement: "`main` refuses a force-push and a deletion"
+  severity: "blocking"
+  when: "birth"
+  check: "main_protected"
+  proof: "gh api repos/OWNER/NAME/branches/main/protection"
+  note: "Branch protection is unavailable on a private repository on a free plan. The audit reports that as a refusal of the plan, not as a failure of the repository."
+
+- id: "required-checks"
+  statement: "No pull request is mergeable without named checks green"
+  severity: "blocking"
+  when: "birth"
+  check: "required_checks"
+  proof: "gh api repos/OWNER/NAME/branches/main/protection --jq .required_status_checks"
+  note: "scripts/setup_repo.py sends required_status_checks: None, so protection exists and requires nothing. This is what let two breaking defects reach main on one project in a single day."
+
+- id: "labels-declared"
+  statement: "Every label of .github/labels.yml exists on the repository"
+  severity: "finding"
+  when: "birth"
+  check: "labels_declared"
+  proof: "gh label list --repo OWNER/NAME"
+  note: "GitHub silently drops a label an issue template applies but the repository does not declare. A missing type:defect label makes the defect rule unapplicable without any error."
+
+- id: "agents-md-present"
+  statement: "The repository carries an AGENTS.md at its root"
+  severity: "blocking"
+  when: "birth"
+  check: "agents_md_present"
+  proof: "ls AGENTS.md"
+  note: "It is the one file an agent reads first. Its absence is not a style issue: the agent then works from guesses."
+
+- id: "agents-md-names-live-repos"
+  statement: "Every repository AGENTS.md names still exists under that name"
+  severity: "finding"
+  when: "always"
+  check: "agents_md_names_live_repos"
+  proof: "gh api repos/OWNER/NAME --jq .full_name   # a different name means a rename happened"
+  note: "GitHub redirects a renamed repository, so a stale name keeps working and nothing ever complains. Found the hard way when engineering-portfolio became project-portfolio on 02/10/2026."
+
+- id: "no-copied-method-docs"
+  statement: "A project repository does not carry its own copy of the generic method documents"
+  severity: "finding"
+  when: "always"
+  check: "no_copied_method_docs"
+  proof: "ls docs/QUALITY.md docs/TESTS.md docs/BOARD.md"
+  note: "Measured 02/10/2026: ten repositories carried 12 to 17 copied documents each, around 140 copies, and twelve of seventeen had already drifted in one of them. A copy is a candidate truth."
+
+- id: "ci-cancels-superseded-runs"
+  statement: "A pull-request workflow cancels its own superseded runs"
+  severity: "finding"
+  when: "birth"
+  check: "ci_concurrency"
+  proof: "grep -A2 '^concurrency:' .github/workflows/*.yml"
+  note: "One project ran 47 workflow runs in a day without it. The shared Actions allowance is the account's, so one project exhausts every project's CI."
+
+- id: "ci-installs-once"
+  statement: "A workflow does not install the toolchain more than once per run"
+  severity: "finding"
+  when: "birth"
+  check: "ci_installs_once"
+  proof: "grep -c 'setup-ruby\\|setup-node' .github/workflows/ci.yml"
+  note: "Lint, security, audits and tests in four jobs means four installs. One job, one install."
+
+- id: "ci-ignores-docs-only-changes"
+  statement: "A change that touches no executable file does not start the suite"
+  severity: "finding"
+  when: "birth"
+  check: "ci_paths_ignore"
+  proof: "grep -A4 'paths-ignore' .github/workflows/*.yml"
+  note: "The template check of the templates themselves keeps its own workflow with no filter, on purpose."
+
+- id: "commits-in-english"
+  statement: "Commit subjects are written in English"
+  severity: "finding"
+  when: "always"
+  check: "commits_in_english"
+  proof: "git log --format=%s -200"
+  note: "History is the only part of a repository that cannot be rewritten once cloned. The three written exceptions of AGENTS.md (the product's interface, a verbatim quote, the method's named things) are not commit messages. The check reads markers, not grammar: it finds French, it does not prove English."
+
+- id: "history-carries-no-local-paths"
+  statement: "No commit message carries a local path or a vault path"
+  severity: "finding"
+  when: "publication"
+  check: "history_local_paths"
+  proof: "git log --format='%H %s%n%b' | grep -n '/Users/'"
+  note: "Noise, not a leak — but noise that becomes public the day the repository does, and that cannot be taken back."
+
+- id: "history-carries-no-assistant-mention"
+  statement: "No commit message mentions the assistant or carries a Co-authored-by line"
+  severity: "blocking"
+  when: "always"
+  check: "history_assistant_mention"
+  proof: "git log --format='%H %s%n%b' | grep -in 'co-authored-by\\|claude\\|anthropic'"
+  note: "Romain's rule of 12/09/2026, across every project. An address other than the noreply one also makes GitHub add a co-author at merge."
+
+- id: "no-tracked-runtime-or-secret-files"
+  statement: "Git tracks no runtime directory, no .env and no key"
+  severity: "blocking"
+  when: "always"
+  check: "tracked_runtime_files"
+  proof: "git ls-files | grep -E '^(log|tmp|storage)/|\\.env$|master\\.key$|\\.pem$'"
+  note: "A rails new on a clone that already had a .gitignore used to commit hundreds of runtime files. 🔴 A green result says nothing about the history: a secret committed once stays leaked and is revoked at the source, never removed by a git rm."
+
+- id: "secret-scan-is-recent"
+  statement: "A secret scan ran on this repository recently enough"
+  severity: "finding"
+  when: "always"
+  check: "none"
+  proof: ""
+  note: "Waiting for the scheduled scan of the gitleaks story. 🔴 Deliberately `check: none` rather than absent: an invariant nobody proves must be visible as such. And a green scan proves only that no known pattern matched — one real passphrase in a project went through gitleaks unseen."
+
+- id: "publication-gate-run"
+  statement: "Before going public, the repository passed the publication gate"
+  severity: "blocking"
+  when: "publication"
+  check: "none"
+  proof: ""
+  note: "Waiting for the publishability story. What no scanner finds: an identifiable third party, a private project name, a private figure. A human reads this one; the machine only prepares it."
+
+- id: "french-names-kept-on-purpose"
+  statement: "The French names a script compares literally are an accepted exception, not an oversight"
+  severity: "finding"
+  when: "always"
+  check: "none"
+  proof: ""
+  note: "🔴 Not a rule to apply: a decision to keep visible. AGENTS.md is authoritative on it and already names the three exceptions — the product's interface, a verbatim quote, and the method's named things (`recette`, the board statuses, the `à revoir par Romain` label). Renaming those is a migration across live boards, not a translation. This entry exists so the exception is read, and nothing is repeated here."
